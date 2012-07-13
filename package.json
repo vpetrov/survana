@@ -1,6 +1,6 @@
 {
 	"name":		"idata",
-	"version":	"0.0.1a",
+	"version":	"0.0.1b",
 	"author":	"Victor Petrov <victor_petrov@harvard.edu>",
 	"description":"A framework for creating and deploying iData questionnaires",
 	"repository":{
