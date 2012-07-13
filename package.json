@@ -1,0 +1,6 @@
+{
+	"name":"idata",
+	"version":"0.0.1",
+	"author":"Victor Petrov <victor_petrov@harvard.edu>",
+	"description":"An iData module for creating and deploying iData questionnaires"	
+}
