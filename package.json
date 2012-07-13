@@ -1,6 +1,12 @@
 {
-	"name":"idata",
-	"version":"0.0.1",
-	"author":"Victor Petrov <victor_petrov@harvard.edu>",
-	"description":"An iData module for creating and deploying iData questionnaires"	
+	"name":		"idata",
+	"version":	"0.0.1",
+	"author":	"Victor Petrov <victor_petrov@harvard.edu>",
+	"description":"A framework for creating and deploying iData questionnaires",
+	"repository":{
+		"type":	"git",
+		"url":	"https://github.com/vpetrov/idata.git"
+	},
+	"keywords":["idata","questionnaire","form","mobile"],
+	"license":"New BSD"
 }
