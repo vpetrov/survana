@@ -10,7 +10,5 @@
 	"keywords":["idata","questionnaire","form","mobile"],
 	"license":"New BSD",
 	"dependencies":{
-		"express":	">= 3.0",
-		"ejs": ">= 0.7.2"
 	}
 }
