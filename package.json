@@ -10,5 +10,6 @@
 	"keywords":["idata","questionnaire","form","mobile"],
 	"license":"New BSD",
 	"dependencies":{
+        "logule":">= 0.8.1"
 	}
 }
