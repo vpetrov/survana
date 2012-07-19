@@ -1,4 +1,5 @@
 var express=require('express');
+var DB=require('./db');
 var mprefix='idata';
 var log=require('logule');
 var path=require('path');
@@ -97,7 +98,8 @@ function routing(app,mroutes)
 
 exports.run=function(config)
 {
-    var app=express.createServer();
+    var app=module.app=express.createServer();
+    module.config=config;
 
     log.info('Waking up');
 
@@ -120,6 +122,7 @@ exports.run=function(config)
     app.mergeConfig=mergeConfig;
     app.addModule=addModule;
     app.routing=routing;
+    app.db=DB;
 	
     //root module must be added last, to prevent regex paths
     //from conflicting
@@ -139,7 +142,7 @@ exports.run=function(config)
 	//load last module
     if (last)
         addModule(app,last,config.modules[last]);
-
-	app.log.info('HTTP Server listening on '+config.host+':'+config.port);
-    app.listen(config.port,config.host);
+        
+	module.app.log.info('HTTP Server listening on '+module.config.host+':'+module.config.port);
+	module.app.listen(module.config.port,module.config.host);
 }
