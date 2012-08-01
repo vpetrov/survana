@@ -1,16 +1,18 @@
 {
-	"name":		"idata",
+	"name":		"survana",
 	"version":	"0.0.1b",
 	"author":	"Victor Petrov <victor_petrov@harvard.edu>",
-	"description":"A framework for creating and deploying iData questionnaires",
+	"description":"A framework for creating and deploying questionnaires",
 	"repository":{
 		"type":	"git",
-		"url":	"https://github.com/vpetrov/idata.git"
+		"url":	"https://github.com/vpetrov/survana.git"
 	},
-	"keywords":["idata","questionnaire","form","mobile"],
+	"keywords":["survana","questionnaire","form","survey","mobile","iOS","iPad","Android"],
 	"license":"New BSD",
 	"dependencies":{
-        "logule":">= 0.8.1",
-        "mongodb":">= 1.0.2"
+        "logule":   ">= 0.8.1",
+        "mongodb":  ">= 1.0.2",
+        "express":  "2.5.11",
+        "ejs":      "*"
 	}
 }

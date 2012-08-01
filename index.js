@@ -1,9 +1,9 @@
 var express=require('express');
 var DB=require('./db');
-var mprefix='idata';
+var mprefix='survana';
 var log=require('logule');
 var path=require('path');
-var brand='iData';
+var brand='Survana';
 var ejs=require('ejs');
 
 ejs.open='{{';
@@ -12,17 +12,17 @@ ejs.close='}}';
 function addModule(app,name,mconf)
 {
     var mname=mprefix+'-'+name;
-    
+
     var module=require(mname);
-    
+
     //merge app config with module config
 	module.config==mergeConfig(module.config,mconf);
-	
+
 	//set the brand name (allows for easier change later on)
 	module.config.brand=brand;
 
     app.log.info('Mounting '+mname+' on '+module.config.prefix)
-    
+
 	//mount module
     app.use(module.config.prefix,module.server(app,express));
 
@@ -41,7 +41,7 @@ function mergeConfig(source,config)
 			//override value in source
 			source[p]=config[p];
 	}
-	
+
 	return source;
 }
 
@@ -49,19 +49,19 @@ function routing(app,mroutes)
 {
 	//path to <module>/routes/
 	var route_dir=path.normalize(path.join(app.dirname,'/routes'));
-	
+
 	//loop over all methods: GET/POST/PUT/DELETE
 	for (var m in mroutes)
 	{
 		var routes=mroutes[m];
-		
+
 		//loop over all routes defined for each method
 		for (var r in routes)
 		{
 			var route=routes[r];
 			var cname='index';
 			var action='index';
-			
+
 			//objects have the form: controller:action
 			if (typeof(route)==='object')
 			{
@@ -70,7 +70,7 @@ function routing(app,mroutes)
 					cname=c;
 					action=route[c];
 					//it doesn't make sense to have more than 1 controller/route
-					break; 
+					break;
 				}
 			}
 			else
@@ -79,21 +79,31 @@ function routing(app,mroutes)
 
 			//load the controller
 			var controller=require(path.join(route_dir,cname));
-			
+
 			if (typeof(controller[action])!=='function')
 			{
 				app.log.error("route ["+m+" '"+r+"']:","no such action:",cname+'::'+action);
 				continue;
 			}
-			
+
 			var method=m.toLowerCase();
-			
+
 			//link the route to the action
 			app[method](r,controller[action]);
-			
+
 			app.log.debug('['+m+" '"+r+"'] ->",cname+'::'+action);
 		}
 	}
+}
+
+function globalErrorHandler(err,req,res,next)
+{
+    throw err;
+
+    res.send({
+        success:0,
+        message:err.toString()
+    },500);
 }
 
 exports.run=function(config)
@@ -108,31 +118,36 @@ exports.run=function(config)
         app.use(express.bodyParser());
         app.use(app.router);
         app.log=log;
-    });
-    
-    app.configure('dev',function(){
-    	
-    });
-    
-    app.configure('prod',function(){
-    	app.log.suppress('debug');
+        app.error(globalErrorHandler);
     });
 
-	//expose utility methods    
+    app.configure('dev',function(){
+        app.use(express.errorHandler({
+            showStack: true,
+            dumpExceptions: true
+        }));
+    });
+
+    app.configure('prod',function(){
+    	app.log.suppress('debug');
+        app.use(express.errorHandler());
+    });
+
+	//expose utility methods
     app.mergeConfig=mergeConfig;
     app.addModule=addModule;
     app.routing=routing;
     app.db=DB;
-	
+
     //root module must be added last, to prevent regex paths
     //from conflicting
     var last=null;
 
     //load modules
     for (var m in config.modules)
-    {   
+    {
         var mconf=config.modules[m];				//module config
-    
+
         if (mconf.prefix==='/')						//check mount point
             last=m;									//if /, leave for last
         else
@@ -142,7 +157,7 @@ exports.run=function(config)
 	//load last module
     if (last)
         addModule(app,last,config.modules[last]);
-        
+
 	module.app.log.info('HTTP Server listening on '+module.config.host+':'+module.config.port);
 	module.app.listen(module.config.port,module.config.host);
 }
