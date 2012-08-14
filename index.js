@@ -1,9 +1,8 @@
 var express=require('express');
 var DB=require('./db');
-var mprefix='survana';
+var sconfig=require("./config");
 var log=require('logule');
 var path=require('path');
-var brand='Survana';
 var ejs=require('ejs');
 
 ejs.open='{{';
@@ -11,15 +10,17 @@ ejs.close='}}';
 
 function addModule(app,name,mconf)
 {
-    var mname=mprefix+'-'+name;
+    var mname=sconfig.module_prefix+'-'+name;
 
     var module=require(mname);
 
+    mconf=mergeConfig(sconfig,mconf);
+
     //merge app config with module config
-	module.config==mergeConfig(module.config,mconf);
+	module.config=mergeConfig(module.config,mconf);
 
 	//set the brand name (allows for easier change later on)
-	module.config.brand=brand;
+	module.config.brand=sconfig.brand;
 
     app.log.info('Mounting '+mname+' on '+module.config.prefix)
 
