@@ -1,6 +1,6 @@
 {
 	"name":		"survana",
-	"version":	"0.0.1d",
+	"version":	"0.0.1e",
 	"author":	"Victor Petrov <victor_petrov@harvard.edu>",
 	"description":"A framework for creating and deploying questionnaires",
 	"repository":{
@@ -10,9 +10,9 @@
 	"keywords":["survana","questionnaire","form","survey","mobile","iOS","iPad","Android"],
 	"license":"New BSD",
 	"dependencies":{
-        "logule":   ">= 0.8.1",
-        "mongodb":  ">= 1.0.2",
-        "express":  "2.5.11",
+        "logule":   "1.0.x",
+        "mongodb":  "1.0.x",
+        "express":  "2.5.x",
         "ejs":      "*"
 	}
 }

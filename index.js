@@ -1,7 +1,7 @@
 var express=require('express');
 var DB=require('./db');
 var sconfig=require("./config");
-var log=require('logule');
+var log=require('logule').init(module);
 var path=require('path');
 var ejs=require('ejs');
 
