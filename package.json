@@ -1,6 +1,6 @@
 {
 	"name":		"survana",
-	"version":	"0.0.1e",
+	"version":	"0.0.1f",
 	"author":	"Victor Petrov <victor_petrov@harvard.edu>",
 	"description":"A framework for creating and deploying questionnaires",
 	"repository":{
@@ -13,6 +13,10 @@
         "logule":   "1.0.x",
         "mongodb":  "1.0.x",
         "express":  "2.5.x",
-        "ejs":      "*"
-	}
+        "ejs":      "*",
+        "vows":     "0.6.x"
+	},
+    "scripts": {
+        "test": "vows --spec"
+    }
 }
