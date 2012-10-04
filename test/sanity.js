@@ -1,7 +1,7 @@
 var vows=require('vows');
 var assert=require('assert');
 
-var suite=vows.describe('config');
+var suite=vows.describe('sanity');
 
 suite.addBatch({
     'config':{
