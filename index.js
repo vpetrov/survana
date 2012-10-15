@@ -4,9 +4,14 @@ var sconfig=require("./config");
 var log=require('logule').init(module);
 var path=require('path');
 var ejs=require('ejs');
+var ursa=require('ursa');
+var fs=require('fs');
 
 ejs.open='{{';
 ejs.close='}}';
+
+global.obj=require('./lib/obj');
+global.arrays=require('./lib/arrays');
 
 function addModule(app,name,mconf)
 {
@@ -24,8 +29,13 @@ function addModule(app,name,mconf)
 
     app.log.info('Mounting '+mname+' on '+module.config.prefix)
 
+    var mserver=module.server(app,express); //get access to the module's 'app' instance
+    mserver.use(globalErrorHandler);        //register global error handler
+    mserver.publicKey=app.publicKey;        //transfer server public key
+    mserver.privateKey=app.privateKey;      //transfer server private key
+
 	//mount module
-    app.use(module.config.prefix,module.server(app,express));
+    app.use(module.config.prefix,mserver);
 
     return module;
 }
@@ -99,12 +109,33 @@ function routing(app,mroutes)
 
 function globalErrorHandler(err,req,res,next)
 {
-    throw err;
+    var app=req.app;
+    var log=app.log;    //use app-specific logger
+
+    log.error(err.message);
 
     res.send({
         success:0,
-        message:err.toString()
+        message:err.message
     },500);
+}
+
+function getServerKey(encryption)
+{
+    var key=null;
+    var keypath=path.join(module.parent.dirname,encryption.key);
+
+    //if the key has already been generated, use it; if not - generate new key
+    if (fs.exists(keypath))
+        key=ursa.coerceKey(fs.readFileSync(keypath));
+    else
+    {
+        key=ursa.generatePrivateKey(encryption.bits);               //generate new key
+        fs.writeFileSync(keypath,key);                              //save key to disk
+        fs.writeFileSync(keypath+'.pem',key.toPublicPem());         //save public key in PEM format
+    }
+
+    return key;
 }
 
 exports.run=function(config)
@@ -112,26 +143,17 @@ exports.run=function(config)
     var app=module.app=express.createServer();
     module.config=config;
 
+    var key=getServerKey(config.encryption);
+
     log.info('Waking up');
 
     app.configure(function(){
         app.use(express.methodOverride());
         app.use(express.bodyParser());
         app.use(app.router);
+        app.use(globalErrorHandler);
+
         app.log=log;
-        app.error(globalErrorHandler);
-    });
-
-    app.configure('dev',function(){
-        app.use(express.errorHandler({
-            showStack: true,
-            dumpExceptions: true
-        }));
-    });
-
-    app.configure('prod',function(){
-    	app.log.suppress('debug');
-        app.use(express.errorHandler());
     });
 
 	//expose utility methods
@@ -139,6 +161,8 @@ exports.run=function(config)
     app.addModule=addModule;
     app.routing=routing;
     app.db=DB;
+    app.publicKey=ursa.coercePublicKey(key.toPublicPem());
+    app.privateKey=ursa.coercePrivateKey(key);
 
     //root module must be added last, to prevent regex paths
     //from conflicting

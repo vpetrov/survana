@@ -14,7 +14,8 @@
         "mongodb":  "1.0.x",
         "express":  "2.5.x",
         "ejs":      "*",
-        "vows":     "0.6.x"
+        "vows":     "0.6.x",
+        "ursa":     "0.7.x"
 	},
     "scripts": {
         "test": "vows --spec test/*"
