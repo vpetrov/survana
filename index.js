@@ -12,6 +12,7 @@ ejs.close='}}';
 
 global.obj=require('./lib/obj');
 global.arrays=require('./lib/arrays');
+global.ROOT=path.dirname(process.mainModule.filename);
 
 function addModule(app,name,mconf)
 {
@@ -122,20 +123,65 @@ function globalErrorHandler(err,req,res,next)
 
 function getServerKey(encryption)
 {
-    var key=null;
-    var keypath=path.join(module.parent.dirname,encryption.key);
+    if (!encryption.key)
+        throw Error('Configuration: No encryption key defined (encryption.key)');
 
-    //if the key has already been generated, use it; if not - generate new key
-    if (fs.exists(keypath))
-        key=ursa.coerceKey(fs.readFileSync(keypath));
+    var key=null;                                                   //an instance of an 'ursa' private key
+    var keyPath=path.join(ROOT,encryption.key).split('.');          //join application root dir and 'key' config value
+
+    //remove file extension by deleting the last string after a dot
+    if (keyPath.length>1)
+        keyPath.pop();
+
+    //join all strings
+    keyPath=keyPath.join('.');
+
+    var privateKeyPath=keyPath+'.private';  //append ".private" to private keys
+    var publicKeyPath =keyPath+'.public';   //append ".public"  to public keys
+
+    //if the private key has already been generated, use it - the public key can be regenerated from it
+    if (fs.existsSync(privateKeyPath))
+        key=ursa.coercePrivateKey(fs.readFileSync(privateKeyPath)); //load private key from disk
     else
     {
-        key=ursa.generatePrivateKey(encryption.bits);               //generate new key
-        fs.writeFileSync(keypath,key);                              //save key to disk
-        fs.writeFileSync(keypath+'.pem',key.toPublicPem());         //save public key in PEM format
+        //if not - generate a new key
+        key=ursa.generatePrivateKey(encryption.bits);               //generate new key with specified # of bits
+
+        fs.writeFileSync(privateKeyPath,key.toPrivatePem());        //save key to disk
+        fs.writeFileSync(publicKeyPath,key.toPublicPem());          //save public key in PEM format
+
+        /* Note: The public key is saved so that it could be shared with other modules for signing purposes. The idea is
+                 to let the user copy 'local.public' to 'user@server:/www/private/harvard.public' (i.e. some other
+                 survana component that needs to interact with this instance of survana) and then the user can point
+                 a specific component (such as 'survana-study') to this public key, which would then allow this instance
+                 to send signed requests to the other instance.
+
+           TODO: Use a database to store the keys. Provide an UI for key exchanges and remote instance registration
+        */
     }
 
     return key;
+}
+
+function readKeys(items)
+{
+    //load all keys
+    for (var i in items)
+    {
+        //skip elements without a 'key' property
+        if (!items[i]['key'])
+            continue;
+
+        var keypath=items[i].key;
+
+        if (!fs.existsSync(keypath))
+            throw Error("'"+i+"': no key could be found at location '"+keypath+"'");
+
+        //read the key and store it instead of the 'key' property
+        items[i].key=fs.readFileSync(keypath);
+    }
+
+    return items;
 }
 
 exports.run=function(config)
@@ -160,6 +206,7 @@ exports.run=function(config)
     app.mergeConfig=mergeConfig;
     app.addModule=addModule;
     app.routing=routing;
+    app.readKeys=readKeys;
     app.db=DB;
     app.publicKey=ursa.coercePublicKey(key.toPublicPem());
     app.privateKey=ursa.coercePrivateKey(key);
