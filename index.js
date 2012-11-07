@@ -6,6 +6,7 @@ var path=require('path');
 var ejs=require('ejs');
 var ursa=require('ursa');
 var fs=require('fs');
+var util=require('./util');
 
 ejs.open='{{';
 ejs.close='}}';
@@ -34,6 +35,8 @@ function addModule(app,name,mconf)
     mserver.use(globalErrorHandler);        //register global error handler
     mserver.publicKey=app.publicKey;        //transfer server public key
     mserver.privateKey=app.privateKey;      //transfer server private key
+    mserver.keyID=app.keyID;
+    mserver.randomId=util.randomId;
 
 	//mount module
     app.use(module.config.prefix,mserver);
@@ -113,7 +116,7 @@ function globalErrorHandler(err,req,res,next)
     var app=req.app;
     var log=app.log;    //use app-specific logger
 
-    log.error(err.message);
+    log.error(err.message,err.stack);
 
     res.send({
         success:0,
@@ -178,7 +181,8 @@ function readKeys(items)
             throw Error("'"+i+"': no key could be found at location '"+keypath+"'");
 
         //read the key and store it instead of the 'key' property
-        items[i].key=fs.readFileSync(keypath);
+        items[i].key=ursa.coercePublicKey(fs.readFileSync(keypath));
+        items[i].keyID=items[i].key.toPublicSshFingerprint('hex');
     }
 
     return items;
@@ -210,6 +214,7 @@ exports.run=function(config)
     app.db=DB;
     app.publicKey=ursa.coercePublicKey(key.toPublicPem());
     app.privateKey=ursa.coercePrivateKey(key);
+    app.keyID=app.publicKey.toPublicSshFingerprint('hex');
 
     //root module must be added last, to prevent regex paths
     //from conflicting
