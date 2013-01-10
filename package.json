@@ -1,6 +1,6 @@
 {
 	"name":		"survana",
-	"version":	"0.0.1f",
+	"version":	"0.1.1",
 	"author":	"Victor Petrov <victor_petrov@harvard.edu>",
 	"description":"A framework for creating and deploying questionnaires",
 	"repository":{
