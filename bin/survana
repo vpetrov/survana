@@ -1,0 +1,76 @@
+#!/usr/bin/env node
+
+var program = require('commander'),
+    mkdirp = require('mkdirp'),
+    pkg = require('../package.json'),
+    os = require('os'),
+    async = require('async');
+
+var modules = [
+    "survana-study",
+    "survana-admin",
+    "survana-store"
+];
+
+// end-of-line code
+var eol = ('win32' == os.platform()) ? '\r\n' : '\n'
+
+//Templates
+var app_js = [
+    "var survana=require('survana');",
+    "var config=require('./config');",
+    "",
+    "survana.run(config);"
+].join(eol);
+
+/**
+ * Mkdir -p.
+ *
+ * @param {String} path
+ * @param {Function} fn
+ * @param {Number} mode
+ */
+function mkdir(path, fn, mode) {
+  if (mode === undefined) {
+    mode = 0755;
+  }
+
+  mkdirp(path, mode, function(err){
+    if (err) throw err;
+    console.log('   \033[36mcreate\033[0m : ' + path);
+    fn && fn();
+  });
+}
+
+function shouldInstallModule(name,callback)
+{
+    program.confirm('install '+name+'?',function(ok){
+        if (ok)
+            callback(null,name);
+    });
+
+
+}
+
+function install()
+{
+    console.log('installing',modules);
+}
+
+// -- MAIN --
+
+program
+    .version(pkg.version)
+    .option('-a, --all','Install all Survana modules')
+    .option('-A, --admin','Install the Admin module')
+    .option('-S, --study','Install the Study module')
+    .option('-T, --store','Install the Store module')
+    .parse(process.argv);
+
+// Path
+var path = program.args.shift() || '.';
+
+if (program.all) {
+    program.admin=program.study=program.store=true;
+}
+
