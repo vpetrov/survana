@@ -68,10 +68,12 @@ function mergeConfig(source,config)
 	return source;
 }
 
-function routing(app,mroutes)
+function routing(app,mconfig,custom)
 {
 	//path to <module>/routes/
-	var route_dir=path.normalize(path.join(app.dirname,'/routes'));
+	var mroutes     =   mconfig.routes,
+        route_dir   =   path.normalize(path.join(app.dirname,'/routes')),
+        middleware;
 
 	//loop over all methods: GET/POST/PUT/DELETE
 	for (var m in mroutes)
@@ -111,10 +113,20 @@ function routing(app,mroutes)
 
 			var method=m.toLowerCase();
 
-			//link the route to the action
-			app[method](r,controller[action]);
+            //call custom function to determine middleware, if any
+            if (custom) {
+                middleware = custom(app, mconfig, m,r,cname,action,controller,controller[action]);
+            }
 
-			app.log.debug('['+m+" '"+r+"'] ->",cname+'::'+action);
+            //link the route to the action
+            if (middleware) {
+                app[method](r,middleware,controller[action]);
+            } else {
+                app[method](r,controller[action]);
+            }
+
+
+			app.log.debug('['+m+" '"+r+"'] ->",cname+'::'+action+'   '+(middleware?'[M]':'[-]'));
 		}
 	}
 }
@@ -126,10 +138,18 @@ function globalErrorHandler(err,req,res,next)
 
     log.error(err.message,err.stack);
 
-    res.send({
-        success:0,
-        message:err.message
-    },500);
+    if (req.header('Content-Type') === 'application/json') {
+        res.send({
+            success:0,
+            message:err.message
+        },500);
+    } else {
+        res.render('error',{
+            req:req,
+            app:app,
+            err:err
+        })
+    }
 }
 
 function getServerKey(encryption)
@@ -206,6 +226,7 @@ exports.run=function(config)
     log.info('Waking up');
 
     app.configure(function(){
+        app.set('views', __dirname + '/views');
         app.use(express.methodOverride());
         app.use(express.bodyParser());
         app.use(app.router);
@@ -232,6 +253,8 @@ exports.run=function(config)
     for (var m in config.modules)
     {
         var mconf=config.modules[m];				//module config
+
+        mconf.publicURL = config.publicURL;
 
         if (mconf.prefix==='/')						//check mount point
             last=m;									//if /, leave for last
