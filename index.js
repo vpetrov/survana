@@ -6,23 +6,34 @@
  * @license New BSD License (see LICENSE file for details).
  */
 
-var express=require('express');
-var DB=require('./db');
-var sconfig=require("./config");
-var log=require('logule').init(module);
-var path=require('path');
-var ejs=require('ejs');
-var ursa=require('ursa');
-var fs=require('fs');
-var util=require('./util');
+var express =   require('express'),
+    DB      =   require('./db'),
+    sconfig =   require("./config"),
+    log     =   require('logule').init(module),
+    path    =   require('path'),
+    ejs     =   require('ejs'),
+    ursa    =   require('ursa'),
+    fs      =   require('fs'),
+    util    =   require('./util'),
+    //constants
+    HTTP_SERVER_ERROR = 500;
 
-ejs.open='{{';
-ejs.close='}}';
+ejs.open    =   '{{';
+ejs.close   =   '}}';
 
-global.obj=require('./lib/obj');
-global.arrays=require('./lib/arrays');
-global.ROOT=path.dirname(process.mainModule.filename);
+/* Globals */
+global.obj          =   require('./lib/obj');
+global.arrays       =   require('./lib/arrays');
+global.ClientError  =   require('./lib/clienterror');
+global.ROOT         =   path.dirname(process.mainModule.filename);
 
+/**
+ * Mount a new Survana module
+ * @param app
+ * @param name
+ * @param mconf
+ * @return {Object}
+ */
 function addModule(app,name,mconf)
 {
     var mname=sconfig.module_prefix+'-'+name;
@@ -52,6 +63,13 @@ function addModule(app,name,mconf)
     return module;
 }
 
+/**
+ * Overrides default module config with the global config
+ * TODO: Consider using obj.merge() or obj.override()
+ * @param source
+ * @param config
+ * @return {Object}
+ */
 function mergeConfig(source,config)
 {
 	//iterate over each key in config
@@ -136,13 +154,13 @@ function globalErrorHandler(err,req,res,next)
     var app=req.app;
     var log=app.log;    //use app-specific logger
 
-    log.error(err.message,err.stack);
+    log.error(err.message, err.stack);
 
     if (req.header('Content-Type') === 'application/json') {
         res.send({
             success:0,
             message:err.message
-        },500);
+        },err.code || HTTP_SERVER_ERROR);
     } else {
         res.render('error',{
             req:req,
