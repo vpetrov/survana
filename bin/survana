@@ -139,7 +139,8 @@ function AESCBCDecrypt(encrypted_data, password) {
         key,
         iv,
         decipher,
-        content;
+        content,
+        i;
 
     md5_hash[0] = crypto.createHash("md5").update(data00).digest("binary");
 
@@ -286,7 +287,7 @@ if (program.encrypted) {
         decoded,
         decrypted_responses = [];
 
-    for (i = 0; i < responses.length; i++) {
+    for (var i = 0; i < responses.length; i++) {
         try {
             response = responses[i];
 
@@ -298,6 +299,8 @@ if (program.encrypted) {
             decoded = AESCBCDecrypt(response.payload.data, password);
 
             decrypted_responses.push(JSON.parse(decoded));
+
+            console.log(i + '. ' + keyID);
 
         } catch (err) {
             console.error('Error: Failed to decrypt response: ' + err);
