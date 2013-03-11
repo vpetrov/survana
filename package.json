@@ -18,7 +18,8 @@
         "ursa":     "0.7.x",
         "commander":"1.1.x",
         "mkdirp":   "0.3.x",
-        "async":    "0.1.x"
+        "async":    "0.1.x",
+        "request":  "*"
 	},
     "scripts": {
         "test": "vows --spec test/*"
