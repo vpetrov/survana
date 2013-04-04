@@ -8,7 +8,8 @@ var program = require('commander'),
     ursa = require('ursa'),
     fs = require('fs'),
     request = require('request'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    mailer = require('nodemailer');
 
 var modules = [
     "survana-study",
@@ -128,6 +129,48 @@ function createSignature(secretKeys) {
     return payload;
 }
 
+function loadSignature(file) {
+    var responses;
+
+    if (!fs.existsSync(file)) {
+        console.error('Signature file does not exist: ', file);
+        process.exit(1);
+    }
+
+    try {
+        signature = JSON.parse(fs.readFileSync(file));
+    } catch (parse_error) {
+        console.error('Error: Invalid signature file format: ' + file);
+        process.exit(1);
+    }
+
+    return signature;
+}
+
+function saveSignature(file, signature) {
+    if (fs.existsSync(file)) {
+        console.error("WARNING: Signature file already exists: ", file,". New signature will not be saved.");
+        return;
+    }
+    
+    fs.writeFileSync(file, JSON.stringify(signature), 'utf8');
+    console.log("Saved key signature to ", file);
+}
+
+function sendNotificationEmail(address, host, file, callback) {
+    var smtpTransport = mailer.createTransport('smtp', {
+        name: "survana.org",
+        host: host
+    });
+
+    smtpTransport.sendMail({
+        from: "Survana <no-reply@survana.org>",
+        to: address,
+        subject: "New responses are available!",
+        text:"Hello, we've just stored new responses into " + file + ". You might want to decrypt that file with the secret key.",
+    }, callback);
+}
+
 function AESCBCDecrypt(encrypted_data, password) {
     var data = new Buffer(encrypted_data, "base64"),
         salt = data.toString("binary", 8, 16),
@@ -170,11 +213,14 @@ program
     .option('-A, --admin',      'Install the Admin module')
     .option('-S, --study',      'Install the Study module')
     .option('-T, --store',      'Install the Store module')
+    .option('-n, --notify <email>', 'Send e-mail to this address when new responses are downloaded (see --download).')
     .option('-d, --download <url>',   'Import data from a Survana store URL')
     .option('-k, --key <path>', 'Study private key')
+    .option('-s, --signature <path>', 'Signature of the private key')
     .option('-e, --encrypted <path>', 'Path to encrypted responses')
-    .option('-o, --output <path>', 'Save responses to file')
+    .option('-o, --output <path>', 'Save result to file')
     .option('-f, --force',      'Overwrite existing files')
+    .option('--smtp <host>',    'Address of the SMTP mail server')
     .parse(process.argv);
 
 // Path
@@ -190,7 +236,7 @@ if (program.all) {
 if (program.download) {
 
     if (program.output && fs.existsSync(program.output)) {
-        if (!program.force) {
+        if (!program.force && !program.notify) {
             console.error('Error: File ' + program.output + ' already exists. Use --force to overwrite.');
             process.exit(1);
         }
@@ -200,8 +246,15 @@ if (program.download) {
         process.exit(1);
     }
 
-    secretKeys = readSecretKeys(program.key);
-    payload = createSignature(secretKeys);
+    if (program.key) {
+        secretKeys = readSecretKeys(program.key);
+        payload = createSignature(secretKeys);
+        if (program.signature) {
+            saveSignature(program.signature, payload);
+        }
+    } else if (program.signature) {
+        payload = loadSignature(program.signature);
+    }
 
     //construct the request option object
     requestOpt = {
@@ -237,12 +290,40 @@ if (program.download) {
 
         console.log('Saving ' + body.data.length + ' responses to ' + program.output);
 
-        var data = JSON.stringify(body.data, null, 2);
+        var data = JSON.stringify(body.data, null, 2),
+            original_data,
+            should_notify = true;
+
+        if (fs.existsSync(program.output)) {
+            original_data = fs.readFileSync(program.output, 'utf8');
+        }
 
         //save responses to file
         fs.writeFileSync(program.output, data, 'utf8')
 
-        console.log('Done.');
+        if (program.notify) {
+            //Load original data
+            var should_notify = true;
+
+            if (original_data && original_data === data) {
+                should_notify = false;
+            }
+
+            if (should_notify) {
+                console.log('Sending e-mail');
+                sendNotificationEmail(program.notify, program.smtp, program.output, function (err, result) {
+                    if (err) {
+                        console.error('Failed to send notification e-mail to ',program.notify,': ',err.message);
+                        process.exit(1);
+                    } else {
+                        console.log('E-mail sent successfully.');
+                        process.exit(0);
+                    }
+                });
+            } else {
+                console.log('Not sending notification e-mail.');
+            }
+        }
     });
 }
 
@@ -264,6 +345,11 @@ if (program.encrypted) {
     } else if (!program.output) {
         console.error('No output file specified. Please use --output to give a path to a file where responses should' +
             ' be stored.');
+        process.exit(1);
+    }
+
+    if (!program.key) {
+        console.error("You must specify the path to your secret key file in order to decrypt responses. A signature file will not suffice either.");
         process.exit(1);
     }
 
@@ -310,4 +396,13 @@ if (program.encrypted) {
     console.log('Saving ' + decrypted_responses.length + ' decrypted responses to ' + program.output);
     fs.writeFileSync(program.output, JSON.stringify(decrypted_responses,null,2));
     console.log('Done.');
+}
+
+if (!program.download && !program.encrypted && program.key && program.signature) {
+    var secretKeys,
+        sig;
+
+    secretKeys = readSecretKeys(program.key);
+    sig = createSignature(secretKeys);
+    saveSignature(program.signature, sig);
 }
