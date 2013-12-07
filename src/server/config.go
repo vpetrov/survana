@@ -13,7 +13,7 @@ const (
 	DEFAULT_SSL_CERT = "ssl/cert.pem"
 	DEFAULT_SSL_KEY  = "ssl/key.pem"
 	DEFAULT_WWW      = "/www/survana"
-    DEFAULT_DB_URL   = "mongodb://localhost/survana"
+	DEFAULT_DB_URL   = "mongodb://localhost/survana"
 )
 
 type Config struct {
@@ -24,7 +24,7 @@ type Config struct {
 	WWW        string
 	SSLCert    string
 	SSLKey     string
-    DbUrl      string
+	DbUrl      string
 }
 
 // Creates a new configuration object and sets empty values to default
@@ -69,9 +69,9 @@ func NewConfig(src io.Reader) (config *Config, err error) {
 		config.SSLKey = DEFAULT_SSL_KEY
 	}
 
-    if len(config.DbUrl) == 0 {
-        config.DbUrl = DEFAULT_DB_URL
-    }
+	if len(config.DbUrl) == 0 {
+		config.DbUrl = DEFAULT_DB_URL
+	}
 
 	return
 }

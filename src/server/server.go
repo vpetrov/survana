@@ -1,31 +1,31 @@
 package main
 
 import (
-        "flag"
-        "net/http"
-        "crypto/tls"
-        "neuroinfo.org/survana"
-        "neuroinfo.org/survana/admin"
-        "labix.org/v2/mgo"
-        "os/user"
-        "net"
-        "log"
-        "os"
-        "strconv"
-        "syscall"
-       )
+	"crypto/tls"
+	"flag"
+	"labix.org/v2/mgo"
+	"log"
+	"net"
+	"net/http"
+	"neuroinfo.org/survana"
+	"neuroinfo.org/survana/admin"
+	"os"
+	"os/user"
+	"strconv"
+	"syscall"
+)
 
 const (
-        DEFAULT_CONFIG       = "survana.json"
-        MAX_PRIVILEGED_PORT  = 1024
-        ROOT_UID             = 0
-        DEFAULT_CONFIG_PERMS = 0600
-    )
+	DEFAULT_CONFIG       = "survana.json"
+	MAX_PRIVILEGED_PORT  = 1024
+	ROOT_UID             = 0
+	DEFAULT_CONFIG_PERMS = 0600
+)
 
-var  configFile string
+var configFile string
 
 func main() {
-    log.Println("Starting Survana")
+	log.Println("Starting Survana")
 	//detect current user and effective user id
 	cuser, err := user.Current()
 	if err != nil {
@@ -33,23 +33,23 @@ func main() {
 	}
 
 	//parse command-line arguments
-    ParseArguments()
+	ParseArguments()
 
-    //read configuration file
-    config, err := ReadConfiguration(configFile)
-    if err != nil {
-        panic(err)
-    }
+	//read configuration file
+	config, err := ReadConfiguration(configFile)
+	if err != nil {
+		panic(err)
+	}
 
-    if len(config.Username) == 0 {
-        config.Username = cuser.Username
-    }
+	if len(config.Username) == 0 {
+		config.Username = cuser.Username
+	}
 
-    //open the port as the current user
-    listener, err := Listen(config)
-    if err != nil {
-        panic(err)
-    }
+	//open the port as the current user
+	listener, err := Listen(config)
+	if err != nil {
+		panic(err)
+	}
 
 	//switch to unprivileged mode
 	if config.Username != cuser.Username {
@@ -59,19 +59,19 @@ func main() {
 		}
 	}
 
-    //Mount all modules
-    err = EnableModules(config)
-    if err != nil {
-        panic(err)
-    }
+	//Mount all modules
+	err = EnableModules(config)
+	if err != nil {
+		panic(err)
+	}
 
-	log.Println("Listening on ", config.IP + ":" + config.Port, "as", config.Username)
+	log.Println("Listening on ", config.IP+":"+config.Port, "as", config.Username)
 
-    //Go!
+	//Go!
 	err = http.Serve(listener, nil)
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 }
 
 func ParseArguments() {
@@ -91,9 +91,9 @@ func ReadConfiguration(path string) (config *Config, err error) {
 	}
 	defer file.Close()
 
-    config, err = NewConfig(file)
+	config, err = NewConfig(file)
 
-    return
+	return
 }
 
 func DecreasePrivilegesTo(username string) (err error) {
@@ -128,6 +128,7 @@ func DecreasePrivilegesTo(username string) (err error) {
 
 	return
 }
+
 // Starts a net.Listener on the specified address, using the specified SSL certificate and key
 func Listen(config *Config) (tlsListener net.Listener, err error) {
 	log.Printf("Reading SSL certificate (%s) and SSL key (%s)", config.SSLCert, config.SSLKey)
@@ -141,7 +142,7 @@ func Listen(config *Config) (tlsListener net.Listener, err error) {
 	}
 
 	//listen on the specified IP and port
-	socket, err := net.Listen("tcp", config.IP + ":" + config.Port)
+	socket, err := net.Listen("tcp", config.IP+":"+config.Port)
 	if err != nil {
 		return
 	}
@@ -155,17 +156,17 @@ func Listen(config *Config) (tlsListener net.Listener, err error) {
 //Create and mount all known modules
 func EnableModules(config *Config) error {
 
-    dbSession, err := mgo.Dial(config.DbUrl)
-    if err != nil {
-        return err
-    }
+	dbSession, err := mgo.Dial(config.DbUrl)
+	if err != nil {
+		return err
+	}
 
-    //close db connection
-    defer dbSession.Close()
+	//close db connection
+	defer dbSession.Close()
 
-    //ADMIN
-    admin_module := admin.NewModule(config.WWW + "/admin", dbSession)
-    survana.Modules.Mount(admin_module.Module, "/admin")
+	//ADMIN
+	admin_module := admin.NewModule(config.WWW+"/admin", dbSession)
+	survana.Modules.Mount(admin_module.Module, "/admin")
 
-    return nil
+	return nil
 }
