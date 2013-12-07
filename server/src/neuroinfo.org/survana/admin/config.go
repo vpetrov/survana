@@ -1,5 +1,8 @@
 package admin
 
+import ()
+
 type Config struct {
-    Secret string
+    Prefix string
+	Key string
 }
