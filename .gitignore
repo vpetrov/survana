@@ -7,11 +7,9 @@ lib-cov
 *.pid
 *.gz
 
-pids
-logs
-results
 .idea
-private/*
-
-node_modules
-npm-debug.log
+bin
+pkg
+.DS_Store
+src/labix.org
+src/server/server
