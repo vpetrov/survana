@@ -12,10 +12,6 @@ type MongoDB struct {
     Database  *mgo.Database
 }
 
-const (
-        SESSION_COLLECTION = "sessions"
-      )
-
 var (
         session *mgo.Session
         sessionInfo mgo.BuildInfo
@@ -73,8 +69,8 @@ func (db *MongoDB) Version() string {
     return sessionInfo.Version
 }
 
-func (db *MongoDB) FindSession(id string, result *map[string]string) (err error) {
-	err = db.Database.C(SESSION_COLLECTION).Find(bson.M{"id": id}).One(result)
+func (db *MongoDB) FindId(id string, collection string, result interface{}) (err error) {
+	err = db.Database.C(collection).Find(bson.M{"id": id}).One(result)
 
     if err == mgo.ErrNotFound {
         err = ErrNotFound

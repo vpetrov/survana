@@ -13,8 +13,7 @@ const (
 //the future, Id's can be regenerated on every request.
 //Id and Authenticated are aliases for Values['id'] and Values['authenticated']
 type Session struct {
-	db            Database          //pointer to the datastore
-	_id           bson.ObjectId     //the ID in the database
+    db            Database
 	Id            string            //the publicly visible session id
 	Authenticated bool              //whether the user has logged in or not
 	Values        map[string]string //all other values go here
@@ -23,11 +22,32 @@ type Session struct {
 //creates a new Session object with no Id.
 func NewSession(db Database) *Session {
 	return &Session{
-		db:            db,
-		Id:            "",
+        db:            db,
 		Authenticated: false,
 		Values:        make(map[string]string, 0),
 	}
+}
+
+// Loads session info from the database
+func FindSession(id string) (session *Session, err error) {
+    err = s.db.FindId(s.Id, SESSION_COLLECTION, session)
+
+	//if the session doesn't exist, return error
+	if err != nil {
+		return
+	}
+
+	//auth status
+	if s.Values["authenticated"] == "1" {
+		s.Authenticated = true
+	} else {
+		s.Authenticated = false
+	}
+
+	s.Values["id"] = id
+	s.Id = id
+
+	return
 }
 
 //Creates a new session or resumes a previous session.
@@ -54,29 +74,6 @@ func CreateSession(db Database, id string) (session *Session, err error) {
 	}
 
 	//otherwise, just return the error
-	return
-}
-
-// Loads session info from the database
-func (s *Session) Load(id string) (err error) {
-
-    err = s.db.FindSession(id, &s.Values)
-
-	//if the session doesn't exist, return error
-	if err != nil {
-		return
-	}
-
-	//auth status
-	if s.Values["authenticated"] == "1" {
-		s.Authenticated = true
-	} else {
-		s.Authenticated = false
-	}
-
-	s.Values["id"] = id
-	s.Id = id
-
 	return
 }
 

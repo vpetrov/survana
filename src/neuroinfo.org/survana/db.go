@@ -14,7 +14,7 @@ type Database interface {
     Connect() error
     Disconnect() error
 
-    FindSession(string, *map[string]string) error
+    FindId(string, string, interface{}) error
 }
 
 type DbObject interface {
@@ -33,3 +33,4 @@ func NewDatabase(u url.URL) Database {
 
     return nil
 }
+
