@@ -3,17 +3,16 @@ package main
 import (
 	"crypto/tls"
 	"flag"
-	"labix.org/v2/mgo"
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"neuroinfo.org/survana"
 	"neuroinfo.org/survana/admin"
 	"os"
 	"os/user"
 	"strconv"
 	"syscall"
-    "net/url"
 )
 
 const (
@@ -24,9 +23,9 @@ const (
 )
 
 var (
-        configFile string
-        DB survana.Database
-    )
+	configFile string
+	DB         survana.Database
+)
 
 func main() {
 	log.Println("Starting Survana")
@@ -78,7 +77,7 @@ func main() {
 		panic(err)
 	}
 
-    db.Disconnect()
+	DB.Disconnect()
 }
 
 func ParseArguments() {
@@ -171,29 +170,30 @@ func EnableModules(config *Config) (err error) {
 	return nil
 }
 
-func GetDB(url string, dbname string) Database {
-    url, err := url.Parse(url)
-    if err != nil {
-        panic(err)
-    }
-
-    if len(dbname) == 0 {
-        panic("Invalid database name")
-    }
-
-    url.Path := "/" + dbname
-
-	DB = survana.NewDatabase(config.DbUrl);
+func GetDB(u string, dbname string) survana.Database {
+	dburl, err := url.Parse(u)
 	if err != nil {
-		return err
+		panic(err)
 	}
 
-    err := DB.Connect()
-    if err != nil {
-        panic(err)
-    }
+	if len(dbname) == 0 {
+		panic("Invalid database name")
+	}
 
-    log.Println("Connected to", DB.SystemInformation(), DB.Version())
+	dburl.Path = "/" + dbname
 
-    return DB
+	DB = survana.NewDatabase(dburl)
+	if err != nil {
+		panic(err)
+	}
+
+	err = DB.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("Connected to", DB.SystemInformation())
+	log.Println("Database version:", DB.Version())
+
+	return DB
 }

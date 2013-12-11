@@ -1,10 +1,10 @@
 package admin
 
 import (
+	_ "log"
 	"net/http"
 	"neuroinfo.org/survana"
 	"time"
-    _ "log"
 )
 
 const (
@@ -24,11 +24,11 @@ func NewModule(path string, db survana.Database) *Admin {
 
 	m := &Admin{
 		Module: &survana.Module{
-			Name:      NAME,
-			Path:      path,
-			Db:        db,
-			Router:    mux,
-            Log:       db.NewLogger("logs", NAME),
+			Name:   NAME,
+			Path:   path,
+			Db:     db,
+			Router: mux,
+			Log:    db.NewLogger("logs", NAME),
 		},
 		mux: mux,
 	}
@@ -50,12 +50,12 @@ func (a *Admin) RegisterHandlers() {
 	app.Get("/", a.Index)
 	app.Get("/home", survana.Protect(a.Home))
 
-    //LOGIN
+	//LOGIN
 	app.Get("/login", a.LoginPage)
 	app.Post("/login", a.Login)
 
-    //LOGOUT
-    app.Get("/logout", a.Logout)
+	//LOGOUT
+	app.Get("/logout", a.Logout)
 }
 
 // displays the index page
@@ -91,9 +91,9 @@ func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
 		survana.NoContent(w)
 		return
 	} else {
-    //    user := survana.NewUser("victor.petrov@survana.org", "Victor Petrov")
-    //    user.Login()
-    }
+		//    user := survana.NewUser("victor.petrov@survana.org", "Victor Petrov")
+		//    user.Login()
+	}
 
 	// attempt to read the login details
 	form := &struct {
@@ -114,14 +114,14 @@ func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
 		return
 	}
 
-    //mark the session as authenticated
+	//mark the session as authenticated
 	session.Authenticated = true
 
 	// update the session
 	err = session.Save(a.Module.Db)
 	if err != nil {
 		survana.Error(w, err)
-        return
+		return
 	}
 
 	//set the cookie
@@ -130,7 +130,7 @@ func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
 		Value:    session.Id,
 		Path:     a.Module.MountPoint,
 		Expires:  time.Now().Add(survana.SESSION_TIMEOUT),
-        Secure:   true,
+		Secure:   true,
 		HttpOnly: true,
 	})
 
@@ -142,38 +142,38 @@ func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
 //returns 204 No Content on success
 //returns 500 Internal Server Error on failure
 func (a *Admin) Logout(w http.ResponseWriter, r *survana.Request) {
-    session, err := r.Session()
+	session, err := r.Session()
 
-    if err != nil {
-        survana.Error(w, err)
-        return
-    }
+	if err != nil {
+		survana.Error(w, err)
+		return
+	}
 
-    if !session.Authenticated {
-        survana.NoContent(w)
-        return
-    }
+	if !session.Authenticated {
+		survana.NoContent(w)
+		return
+	}
 
-    err = session.Delete(a.Module.Db)
-    if err != nil {
-        survana.Error(w, err)
-        return
-    }
+	err = session.Delete(a.Module.Db)
+	if err != nil {
+		survana.Error(w, err)
+		return
+	}
 
-    //To delete the cookie, we set its value to some bogus string,
-    //and the expiration to one second past the beginning of unix time.
+	//To delete the cookie, we set its value to some bogus string,
+	//and the expiration to one second past the beginning of unix time.
 	http.SetCookie(w, &http.Cookie{
 		Name:     survana.SESSION_ID,
 		Value:    "Homer",
 		Path:     a.Module.MountPoint,
 		Expires:  time.Unix(1, 0),
-        Secure:   true,
+		Secure:   true,
 		HttpOnly: true,
 	})
 
-    //return 204 No Content on success
-    survana.NoContent(w)
+	//return 204 No Content on success
+	survana.NoContent(w)
 
-    //note that the user has logged out
-    go a.Module.Log.Printf("logout")
+	//note that the user has logged out
+	go a.Module.Log.Printf("logout")
 }

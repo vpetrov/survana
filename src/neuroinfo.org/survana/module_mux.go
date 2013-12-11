@@ -55,7 +55,7 @@ func (mux *ModuleMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//route the request
 	module.Router.Route(w, request)
 
-	go module.Log.Printf("%s|%s|%s|%s", r.Method, r.URL.Path, time.Since(startTime).String(),r.UserAgent())
+	go module.Log.Printf("%s|%s|%s|%s", r.Method, r.URL.Path, time.Since(startTime).String(), r.UserAgent())
 }
 
 //Registers a new Module for a URL path

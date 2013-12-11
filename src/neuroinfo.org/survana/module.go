@@ -28,8 +28,8 @@ type Module struct {
 	Path           string
 	SessionTimeout time.Duration
 
-	Db        Database
-    Log        *log.Logger
+	Db  Database
+	Log *log.Logger
 
 	Router    Router
 	Templates *template.Template

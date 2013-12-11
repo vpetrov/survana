@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	_ "log"
 	"net/http"
 	"net/url"
-    _ "log"
 )
 
 //An interface for any type that can route Survana requests
@@ -60,13 +60,13 @@ func (r *Request) Session() (*Session, error) {
 	session_id, _ := r.Cookie(SESSION_ID)
 
 	//create a new session.
-    r.session, err = FindSession(session_id, r.Module.Db)
+	r.session, err = FindSession(session_id, r.Module.Db)
 
-    //if the session was not found, create a new one
-    if r.session == nil {
-        r.session = NewSession()
-        r.session.Id = r.Module.Db.UniqueId()
-    }
+	//if the session was not found, create a new one
+	if r.session == nil {
+		r.session = NewSession()
+		r.session.Id = r.Module.Db.UniqueId()
+	}
 
 	return r.session, err
 }

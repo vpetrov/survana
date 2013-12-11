@@ -1,11 +1,11 @@
 package db
 
 import (
-        "errors"
-       )
+	"errors"
+)
 
 var (
-        ErrNotFound = errors.New("Not found")
-        ErrInvalidId = errors.New("Invalid id")
-        ErrInvalidCollection = errors.New("Invalid collection")
-    )
+	ErrNotFound          = errors.New("Not found")
+	ErrInvalidId         = errors.New("Invalid id")
+	ErrInvalidCollection = errors.New("Invalid collection")
+)

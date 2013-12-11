@@ -1,9 +1,9 @@
 package survana
 
 import (
+	_ "log"
 	"net/http"
 	"strings"
-    _ "log"
 )
 
 //a map of module-relative paths to their handlers

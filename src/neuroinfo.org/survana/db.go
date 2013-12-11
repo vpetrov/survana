@@ -1,39 +1,40 @@
 package survana
 
 import (
-        "neuroinfo.org/survana/db"
-        "net/url"
-        "log"
-       )
+	"log"
+	"net/url"
+	"neuroinfo.org/survana/db"
+)
 
 type Database interface {
-    Name() string
-    URL() *url.URL
-    SystemInformation() string
-    Version() string
+	Name() string
+	URL() *url.URL
+	SystemInformation() string
+	Version() string
 
-    Connect() error
-    Disconnect() error
+	Connect() error
+	Disconnect() error
 
-    FindId(id string, presult db.Object) error
-    Delete(o db.Object) error
-    Save(o db.Object) error
+	FindId(id string, presult db.Object) error
+	Delete(o db.Object) error
+	Save(o db.Object) error
 
-    UniqueId() string
-    IsValidId(id string) bool
+	UniqueId() string
+	IsValidId(id string) bool
 
-    NewLogger(collection string, prefix string) *log.Logger
+	NewLogger(collection string, prefix string) *log.Logger
 }
 
 const (
-        MONGODB = "mongodb"
-      )
+	MONGODB = "mongodb"
+)
 
 //factory method to instantiate database drivers based on the ID
 func NewDatabase(u *url.URL) Database {
-    switch (u.Scheme) {
-        case MONGODB: return db.NewMongoDB(u)
-    }
+	switch u.Scheme {
+	case MONGODB:
+		return db.NewMongoDB(u)
+	}
 
-    return nil
+	return nil
 }
