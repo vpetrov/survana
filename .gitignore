@@ -6,10 +6,12 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.swp
 
 .idea
 bin
 pkg
 .DS_Store
 src/labix.org
+src/code.google.com
 src/server/server

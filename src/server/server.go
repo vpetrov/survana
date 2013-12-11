@@ -13,6 +13,7 @@ import (
 	"os/user"
 	"strconv"
 	"syscall"
+    "net/url"
 )
 
 const (
@@ -22,10 +23,14 @@ const (
 	DEFAULT_CONFIG_PERMS = 0600
 )
 
-var configFile string
+var (
+        configFile string
+        DB survana.Database
+    )
 
 func main() {
 	log.Println("Starting Survana")
+
 	//detect current user and effective user id
 	cuser, err := user.Current()
 	if err != nil {
@@ -68,10 +73,12 @@ func main() {
 	log.Println("Listening on ", config.IP+":"+config.Port, "as", config.Username)
 
 	//Go!
-	err = http.Serve(listener, nil)
+	err = http.Serve(listener, survana.Modules)
 	if err != nil {
 		panic(err)
 	}
+
+    db.Disconnect()
 }
 
 func ParseArguments() {
@@ -154,19 +161,39 @@ func Listen(config *Config) (tlsListener net.Listener, err error) {
 }
 
 //Create and mount all known modules
-func EnableModules(config *Config) error {
+func EnableModules(config *Config) (err error) {
 
-	dbSession, err := mgo.Dial(config.DbUrl)
+	//ADMIN
+	admin_module := admin.NewModule(config.WWW+"/admin", GetDB(config.DbUrl, "admin"))
+
+	survana.Modules.Mount(admin_module.Module, "/admin")
+
+	return nil
+}
+
+func GetDB(url string, dbname string) Database {
+    url, err := url.Parse(url)
+    if err != nil {
+        panic(err)
+    }
+
+    if len(dbname) == 0 {
+        panic("Invalid database name")
+    }
+
+    url.Path := "/" + dbname
+
+	DB = survana.NewDatabase(config.DbUrl);
 	if err != nil {
 		return err
 	}
 
-	//close db connection
-	defer dbSession.Close()
+    err := DB.Connect()
+    if err != nil {
+        panic(err)
+    }
 
-	//ADMIN
-	admin_module := admin.NewModule(config.WWW+"/admin", dbSession)
-	survana.Modules.Mount(admin_module.Module, "/admin")
+    log.Println("Connected to", DB.SystemInformation(), DB.Version())
 
-	return nil
+    return DB
 }

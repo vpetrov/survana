@@ -4,7 +4,6 @@ import (
 	"errors"
 	"html/template"
 	"io/ioutil"
-	"labix.org/v2/mgo"
 	"log"
 	"net/http"
 	"os"
@@ -29,8 +28,7 @@ type Module struct {
 	Path           string
 	SessionTimeout time.Duration
 
-	DbSession *mgo.Session
-	Db        *mgo.Database
+	Db        Database
 
 	Router    Router
 	Templates *template.Template

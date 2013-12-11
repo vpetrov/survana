@@ -2,25 +2,18 @@ package survana
 
 import (
 	"errors"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
 	"log"
 )
 
 const (
 	SESSION_ID         = "SSESSIONID"
-	SESSION_COLLECTION = "sessions"
-)
-
-var (
-	ErrSessionNotFound = errors.New("Session not found")
 )
 
 //Represents a user's session. Id and _id are kept separate so that in
 //the future, Id's can be regenerated on every request.
 //Id and Authenticated are aliases for Values['id'] and Values['authenticated']
 type Session struct {
-	db            *mgo.Database     //pointer to the datastore
+	db            Database          //pointer to the datastore
 	_id           bson.ObjectId     //the ID in the database
 	Id            string            //the publicly visible session id
 	Authenticated bool              //whether the user has logged in or not
@@ -28,7 +21,7 @@ type Session struct {
 }
 
 //creates a new Session object with no Id.
-func NewSession(db *mgo.Database) *Session {
+func NewSession(db Database) *Session {
 	return &Session{
 		db:            db,
 		Id:            "",
@@ -38,7 +31,7 @@ func NewSession(db *mgo.Database) *Session {
 }
 
 //Creates a new session or resumes a previous session.
-func CreateSession(db *mgo.Database, id string) (session *Session, err error) {
+func CreateSession(db Database, id string) (session *Session, err error) {
 	//create an empty session object
 	session = NewSession(db)
 	validId := IsValidSessionId(id)
@@ -67,14 +60,10 @@ func CreateSession(db *mgo.Database, id string) (session *Session, err error) {
 // Loads session info from the database
 func (s *Session) Load(id string) (err error) {
 
-	err = s.db.C(SESSION_COLLECTION).Find(bson.M{"id": id}).One(&s.Values)
+    err = s.db.FindSession(id, &s.Values)
 
 	//if the session doesn't exist, return error
 	if err != nil {
-		if err == mgo.ErrNotFound {
-			err = ErrSessionNotFound
-		}
-
 		return
 	}
 
@@ -109,7 +98,7 @@ func (s *Session) Save() (err error) {
 	//sync Id
 	s.Values["id"] = s.Id
 
-	log.Println("saving session", s.Id, " to collection", SESSION_COLLECTION, " in database", s.db.Name)
+	log.Println("saving session", s.Id, " to collection", SESSION_COLLECTION, " in database", s.db.Name())
 
 	// new sessions won't have valid IDs. Providing an empty/invalid ID to
 	// to mgo.UpsertId will cause an error to be returned. Since MongoDB will

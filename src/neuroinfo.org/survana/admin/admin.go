@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"labix.org/v2/mgo"
 	"net/http"
 	"neuroinfo.org/survana"
 	"time"
@@ -18,7 +17,7 @@ type Admin struct {
 }
 
 // creates a new Admin module
-func NewModule(path string, dbsession *mgo.Session) *Admin {
+func NewModule(path string, db survana.Database) *Admin {
 
 	mux := survana.NewRESTMux()
 
@@ -26,8 +25,7 @@ func NewModule(path string, dbsession *mgo.Session) *Admin {
 		Module: &survana.Module{
 			Name:      NAME,
 			Path:      path,
-			DbSession: dbsession,
-			Db:        dbsession.DB(NAME),
+			Db:        db,
 			Router:    mux,
 		},
 		mux: mux,
@@ -86,7 +84,10 @@ func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
 	if session.Authenticated {
 		survana.NoContent(w)
 		return
-	}
+	} else {
+        user := survana.NewUser("victor.petrov@survana.org", "Victor Petrov")
+        user.Login()
+    }
 
 	// attempt to read the login details
 	form := &struct {

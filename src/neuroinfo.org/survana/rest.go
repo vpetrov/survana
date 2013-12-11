@@ -3,6 +3,7 @@ package survana
 import (
 	"net/http"
 	"strings"
+    "log"
 )
 
 //a map of module-relative paths to their handlers
@@ -26,6 +27,8 @@ func NewRESTMux() *RESTMux {
 
 // finds and invokes the handlers for the given request
 func (h *RESTMux) Route(w http.ResponseWriter, r *Request) {
+    log.Println(r.Request.Method, r.URL.Path)
+
 	handler := h.FindHandler(r)
 
 	if handler == nil {
