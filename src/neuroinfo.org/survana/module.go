@@ -29,6 +29,7 @@ type Module struct {
 	SessionTimeout time.Duration
 
 	Db        Database
+    Log        *log.Logger
 
 	Router    Router
 	Templates *template.Template

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+    _ "log"
 )
 
 //An interface for any type that can route Survana requests
@@ -58,9 +59,14 @@ func (r *Request) Session() (*Session, error) {
 	//get the session id cookie, if it exists
 	session_id, _ := r.Cookie(SESSION_ID)
 
-	//create a new session. if the session_id is invalid,
-	//the function will generate a new id
-	r.session, err = CreateSession(r.Module.Db, session_id)
+	//create a new session.
+    r.session, err = FindSession(session_id, r.Module.Db)
+
+    //if the session was not found, create a new one
+    if r.session == nil {
+        r.session = NewSession()
+        r.session.Id = r.Module.Db.UniqueId()
+    }
 
 	return r.session, err
 }

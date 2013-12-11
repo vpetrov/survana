@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"neuroinfo.org/survana"
 	"time"
+    _ "log"
 )
 
 const (
@@ -27,6 +28,7 @@ func NewModule(path string, db survana.Database) *Admin {
 			Path:      path,
 			Db:        db,
 			Router:    mux,
+            Log:       db.NewLogger("logs", NAME),
 		},
 		mux: mux,
 	}
@@ -48,8 +50,12 @@ func (a *Admin) RegisterHandlers() {
 	app.Get("/", a.Index)
 	app.Get("/home", survana.Protect(a.Home))
 
+    //LOGIN
 	app.Get("/login", a.LoginPage)
 	app.Post("/login", a.Login)
+
+    //LOGOUT
+    app.Get("/logout", a.Logout)
 }
 
 // displays the index page
@@ -85,8 +91,8 @@ func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
 		survana.NoContent(w)
 		return
 	} else {
-        user := survana.NewUser("victor.petrov@survana.org", "Victor Petrov")
-        user.Login()
+    //    user := survana.NewUser("victor.petrov@survana.org", "Victor Petrov")
+    //    user.Login()
     }
 
 	// attempt to read the login details
@@ -108,11 +114,14 @@ func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
 		return
 	}
 
-	// update the session
+    //mark the session as authenticated
 	session.Authenticated = true
-	err = session.Save()
+
+	// update the session
+	err = session.Save(a.Module.Db)
 	if err != nil {
 		survana.Error(w, err)
+        return
 	}
 
 	//set the cookie
@@ -121,9 +130,50 @@ func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
 		Value:    session.Id,
 		Path:     a.Module.MountPoint,
 		Expires:  time.Now().Add(survana.SESSION_TIMEOUT),
+        Secure:   true,
 		HttpOnly: true,
 	})
 
 	//return 204 No Content to indicate success
 	survana.NoContent(w)
+}
+
+//Logs out a user.
+//returns 204 No Content on success
+//returns 500 Internal Server Error on failure
+func (a *Admin) Logout(w http.ResponseWriter, r *survana.Request) {
+    session, err := r.Session()
+
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    if !session.Authenticated {
+        survana.NoContent(w)
+        return
+    }
+
+    err = session.Delete(a.Module.Db)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    //To delete the cookie, we set its value to some bogus string,
+    //and the expiration to one second past the beginning of unix time.
+	http.SetCookie(w, &http.Cookie{
+		Name:     survana.SESSION_ID,
+		Value:    "Homer",
+		Path:     a.Module.MountPoint,
+		Expires:  time.Unix(1, 0),
+        Secure:   true,
+		HttpOnly: true,
+	})
+
+    //return 204 No Content on success
+    survana.NoContent(w)
+
+    //note that the user has logged out
+    go a.Module.Log.Printf("logout")
 }
