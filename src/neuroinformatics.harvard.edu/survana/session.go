@@ -2,7 +2,7 @@ package survana
 
 import (
 	_ "log"
-	sdb "neuroinfo.org/survana/db"
+	sdb "neuroinformatics.harvard.edu/survana/db"
 )
 
 const (

@@ -3,7 +3,7 @@ package survana
 import (
 	"log"
 	"net/url"
-	"neuroinfo.org/survana/db"
+	"neuroinformatics.harvard.edu/survana/db"
 )
 
 type Database interface {

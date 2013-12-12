@@ -1,8 +1,8 @@
 package survana
 
 import (
-	sdb "neuroinfo.org/survana/db"
-	"neuroinfo.org/survana/mock"
+	sdb "neuroinformatics.harvard.edu/survana/db"
+	"neuroinformatics.harvard.edu/survana/mock"
 	"testing"
 )
 

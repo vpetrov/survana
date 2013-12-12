@@ -3,7 +3,7 @@ package mock
 import (
 	"log"
 	"net/url"
-	"neuroinfo.org/survana/db"
+	"neuroinformatics.harvard.edu/survana/db"
 	"os"
 )
 

@@ -27,7 +27,7 @@ set window=0
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 let v:this_session=expand("<sfile>:p")
 silent only
-cd ~/code/nrg/survana/src/neuroinfo.org/survana
+cd ~/code/nrg/survana/src/neuroinformatics.harvard.edu/survana
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif

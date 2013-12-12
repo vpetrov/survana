@@ -3,7 +3,7 @@ package admin
 import (
 	_ "log"
 	"net/http"
-	"neuroinfo.org/survana"
+	"neuroinformatics.harvard.edu/survana"
 	"time"
 )
 
