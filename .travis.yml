@@ -5,6 +5,6 @@ go:
   - 1.1
   - tip
 
-install: GOPATH=$HOME/gopath/src/github.com/vpetrov/survana make travis
+install: GOPATH=$HOME/gopath/src/github.com/vpetrov/survana make
 
 script: make test
