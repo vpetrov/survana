@@ -6,5 +6,5 @@ go:
   - tip
 
 install:
-  - go get https://code.google.com/p/goauth2/
-  - go get https://labix.org/v2/mgo
+  - go get code.google.com/p/goauth2/
+  - go get labix.org/v2/mgo
