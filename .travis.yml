@@ -4,3 +4,8 @@ go:
   - 1.0
   - 1.1
   - tip
+
+install:
+  - go get github.com/vpetrov/survana
+  - go get code.google.com/p/goauth2/
+  - go get labix.org/v2/mgo
