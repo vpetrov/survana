@@ -9,7 +9,5 @@ all:
 	@go install server
 
 test:
-	@export GOPATH=${HOME}/gopath/src/${REPOSITORY}
-	@echo GOPATH: ${GOPATH}
 	go test ${COVER} neuroinformatics.harvard.edu/survana
 	
