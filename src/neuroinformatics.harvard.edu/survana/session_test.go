@@ -1,8 +1,6 @@
 package survana
 
 import (
-	sdb "neuroinformatics.harvard.edu/survana/db"
-	"neuroinformatics.harvard.edu/survana/mock"
 	"testing"
 )
 
@@ -30,11 +28,11 @@ func TestNewSession(t *testing.T) {
 }
 
 func TestFindSession(t *testing.T) {
-	db := mock.NewDatabase()
-	db.OnFindId = func(v sdb.Object) {
+	db := NewMockDatabase()
+	db.OnFindId = func(v DbObject) {
 		s, ok := v.(*Session)
 		if !ok {
-			t.Fatalf("mock.Database did not return a *Session")
+			t.Fatalf("MockDatabase did not return a *Session")
 		}
 
 		*s = *mock_session
@@ -65,7 +63,7 @@ func TestFindSession(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	//create new database mock
-	db := mock.NewDatabase()
+	db := NewMockDatabase()
 
 	//create a new session object
 	session := NewSession()
@@ -84,7 +82,7 @@ func TestDelete(t *testing.T) {
 
 func TestSave(t *testing.T) {
 	//create new database mock
-	db := mock.NewDatabase()
+	db := NewMockDatabase()
 
 	//create a new session object
 	session := NewSession()
