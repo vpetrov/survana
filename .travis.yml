@@ -7,4 +7,4 @@ go:
 
 install: GOPATH=$HOME/gopath/src/github.com/vpetrov/survana make
 
-script: make test
+script: GOPATH=$HOME/gopath/src/github.com/vpetrov/survana make test
