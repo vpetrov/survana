@@ -1,4 +1,4 @@
-package db
+package survana
 
 import (
 	"labix.org/v2/mgo/bson"

@@ -1,4 +1,4 @@
-package db
+package survana
 
 import (
 	"labix.org/v2/mgo"
@@ -68,7 +68,7 @@ func (db *MongoDB) Version() string {
 	return "MongoDB " + sessionInfo.Version
 }
 
-func (db *MongoDB) FindId(id string, result Object) (err error) {
+func (db *MongoDB) FindId(id string, result DbObject) (err error) {
 	collection := result.Collection()
 	if len(collection) == 0 {
 		return ErrInvalidCollection
@@ -90,7 +90,7 @@ func (db *MongoDB) FindId(id string, result Object) (err error) {
 // to mgo.UpsertId will cause an error to be returned. Since MongoDB will
 // do this exact same operation and the IDs are unique, we can safely
 // generate an ID here and use mgo.UpsertId(), instead of Insert/Update.
-func (db *MongoDB) Save(obj Object) (err error) {
+func (db *MongoDB) Save(obj DbObject) (err error) {
 	dbid := obj.DbId()
 	var mgoid bson.ObjectId
 	var ok bool
@@ -128,8 +128,7 @@ func (db *MongoDB) Save(obj Object) (err error) {
 	return
 }
 
-//TODO: stub
-func (db *MongoDB) Delete(obj Object) (err error) {
+func (db *MongoDB) Delete(obj DbObject) (err error) {
 	//get the interface{} value
 	dbid := obj.DbId()
 	if dbid == nil {

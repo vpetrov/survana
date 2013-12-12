@@ -2,7 +2,6 @@ package survana
 
 import (
 	_ "log"
-	sdb "neuroinformatics.harvard.edu/survana/db"
 )
 
 const (
@@ -50,7 +49,7 @@ func FindSession(id string, db Database) (session *Session, err error) {
 	//if the session doesn't exist, return error
 	if err != nil {
 		//use nil session to show that it was not found
-		if err == sdb.ErrNotFound {
+		if err == ErrNotFound {
 			err = nil
 		}
 		return nil, err

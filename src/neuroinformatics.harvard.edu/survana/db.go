@@ -3,9 +3,17 @@ package survana
 import (
 	"log"
 	"net/url"
-	"neuroinformatics.harvard.edu/survana/db"
 )
 
+//An object that can be stored in a database.
+type DbObject interface {
+	DbId() interface{}
+	SetDbId(id interface{})
+
+	Collection() string
+}
+
+//A database connection
 type Database interface {
 	Name() string
 	URL() *url.URL
@@ -15,9 +23,9 @@ type Database interface {
 	Connect() error
 	Disconnect() error
 
-	FindId(id string, presult db.Object) error
-	Delete(o db.Object) error
-	Save(o db.Object) error
+	FindId(id string, presult DbObject) error
+	Delete(o DbObject) error
+	Save(o DbObject) error
 
 	UniqueId() string
 	IsValidId(id string) bool
@@ -25,6 +33,7 @@ type Database interface {
 	NewLogger(collection string, prefix string) *log.Logger
 }
 
+//supported databases
 const (
 	MONGODB = "mongodb"
 )
@@ -32,8 +41,8 @@ const (
 //factory method to instantiate database drivers based on the ID
 func NewDatabase(u *url.URL) Database {
 	switch u.Scheme {
-	case MONGODB:
-		return db.NewMongoDB(u)
+        case MONGODB:
+            return NewMongoDB(u)
 	}
 
 	return nil

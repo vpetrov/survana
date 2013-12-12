@@ -1,4 +1,4 @@
-package db
+package survana
 
 import (
 	"errors"
