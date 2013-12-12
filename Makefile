@@ -6,4 +6,4 @@ all:
 test:
 	@export GOPATH=${HOME}/gopath/src/${REPOSITORY}
 	@echo GOPATH: ${GOPATH}
-	go test --coverprofile=cover.out neuroinformatics.harvard.edu/survana
+	go test neuroinformatics.harvard.edu/survana
