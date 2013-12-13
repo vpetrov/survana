@@ -41,8 +41,8 @@ const (
 //factory method to instantiate database drivers based on the ID
 func NewDatabase(u *url.URL) Database {
 	switch u.Scheme {
-        case MONGODB:
-            return NewMongoDB(u)
+	case MONGODB:
+		return NewMongoDB(u)
 	}
 
 	return nil

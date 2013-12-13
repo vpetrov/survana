@@ -1,11 +1,16 @@
 package survana
 
 import (
-	"errors"
+	"encoding/json"
 	"log"
 	"net/http"
 	"runtime"
 )
+
+type JSONResponse struct {
+	Success bool        `json:"success"`
+	Message interface{} `json:"message,omitempty"`
+}
 
 //A handler that filters all requests that have not been authenticated
 //returns 401 Unauthorized if the user's session hasn't been marked as authenticated
@@ -18,9 +23,9 @@ func Protect(handler RequestHandler) RequestHandler {
 			Error(w, err)
 		}
 
-		//if the session hasn't been authorized, unauthorized!
+		//if the session hasn't been authorized, redirect
 		if !session.Authenticated {
-			Unauthorized(w, errors.New("not logged in"))
+			Redirect(w, r, "/login")
 			return
 		}
 
@@ -41,9 +46,47 @@ func Error(w http.ResponseWriter, err error) {
 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 }
 
-//redirects a request to a path
+//redirects a request to a path relative to the module
+//if the request is an
 func Redirect(w http.ResponseWriter, r *Request, redirectPath string) {
-	http.Redirect(w, r.Request, r.Module.MountPoint+redirectPath, http.StatusSeeOther)
+	FullRedirect(w, r, r.Module.MountPoint+redirectPath)
+}
+
+//redirects an external resource
+func FullRedirect(w http.ResponseWriter, r *Request, url string) {
+	if r.Request.Header.Get("X-Requested-With") == "XMLHttpRequest" {
+		XHRRedirect(w, r, url)
+	} else {
+		http.Redirect(w, r.Request, url, http.StatusSeeOther)
+	}
+}
+
+//redirects to a full URL
+func XHRRedirect(w http.ResponseWriter, r *Request, url string) {
+	data := &struct {
+		Redirect string `json:"redirect,omitempty"`
+	}{
+		Redirect: url,
+	}
+
+	JSONResult(w, false, data)
+}
+
+//sends a { 'success': <bool>, 'message': <custom data> } response to the client
+func JSONResult(w http.ResponseWriter, success bool, data interface{}) {
+
+	result := &JSONResponse{
+		Success: success,
+		Message: data,
+	}
+
+	jsondata, err := json.Marshal(result)
+	if err != nil {
+		Error(w, err)
+		return
+	}
+
+	w.Write(jsondata)
 }
 
 //returns 401 Bad Request

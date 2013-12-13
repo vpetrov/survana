@@ -2,9 +2,9 @@ package survana
 
 import (
 	"encoding/json"
-	"errors"
+	"io"
 	"io/ioutil"
-	_ "log"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -25,6 +25,7 @@ type Request struct {
 	URL     *url.URL
 	Module  *Module // the module that's handling the request
 	session *Session
+	user    *User
 }
 
 // returns a new Request object
@@ -71,6 +72,33 @@ func (r *Request) Session() (*Session, error) {
 	return r.session, err
 }
 
+//returns nil, nil if the user was not found
+func (r *Request) User() (*User, error) {
+	var err error
+
+	//if a user already exists, return it
+	if r.user != nil {
+		return r.user, nil
+	}
+
+	//get the current session
+	session, err := r.Session()
+	if err != nil {
+		return nil, err
+	}
+
+	//if there is no user id, return 'not found'
+	if len(session.UserId) == 0 {
+		return nil, nil
+	}
+
+	//find the user by id (email)
+	r.user, err = FindUser(session.UserId, r.Module.Db)
+
+	//if the user was not found, return nil, otherwise return the user
+	return r.user, err
+}
+
 // returns the value of the cookie by name
 func (r *Request) Cookie(name string) (value string, ok bool) {
 	ok = false
@@ -86,20 +114,26 @@ func (r *Request) Cookie(name string) (value string, ok bool) {
 
 // Parses the request body as a JSON-encoded form
 func (r *Request) ParseForm(v interface{}) (err error) {
-	// read the body
-	body, err := ioutil.ReadAll(r.Request.Body)
+	return r.JSONBody(r.Request.Body, v)
+}
 
+func (r *Request) JSONBody(body io.ReadCloser, v interface{}) (err error) {
+
+	// read the body
+	data, err := ioutil.ReadAll(body)
 	if err != nil {
 		return
 	}
 
-	if len(body) == 0 {
-		err = errors.New("empty request body")
+	if len(data) == 0 {
+		err = ErrEmptyRequest
 		return
 	}
 
+	log.Println("API data:", string(data))
+
 	//parse the JSON body
-	err = json.Unmarshal(body, v)
+	err = json.Unmarshal(data, v)
 
 	return
 }

@@ -1,9 +1,10 @@
 package admin
 
 import (
-	_ "log"
+	"log"
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
+	"code.google.com/p/goauth2/oauth"
 	"time"
 )
 
@@ -47,12 +48,13 @@ func (a *Admin) RegisterHandlers() {
 	//must end with slash
 	app.Static("/assets/")
 
-	app.Get("/", a.Index)
-	app.Get("/home", survana.Protect(a.Home))
+	app.Get("/", survana.Protect(a.Index))
 
 	//LOGIN
-	app.Get("/login", a.LoginPage)
-	app.Post("/login", a.Login)
+	app.Get("/login", a.Login)
+    app.Get("/login/google", a.LoginWithGoogle)
+    app.Get("/login/google/response", a.GoogleResponse)
+    app.Get("/register", a.Register)
 
 	//LOGOUT
 	app.Get("/logout", a.Logout)
@@ -63,59 +65,99 @@ func (a *Admin) Index(w http.ResponseWriter, r *survana.Request) {
 	a.RenderTemplate(w, "index", nil)
 }
 
-// displays the home page
-func (a *Admin) Home(w http.ResponseWriter, r *survana.Request) {
-	a.RenderTemplate(w, "home", nil)
-}
-
 // displays the login page
-func (a *Admin) LoginPage(w http.ResponseWriter, r *survana.Request) {
-	a.RenderTemplate(w, "login/index", nil)
+func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
+	a.RenderTemplate(w, "login", nil)
 }
 
-// checks the login details and creates a user session
-// returns 204 if the user is already logged in or if the request succeeded
-// returns 401 if the key was incorrect
-// returns 500 on all other errors
-func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
-
-	session, err := r.Session()
-
-	if err != nil {
-		survana.Error(w, err)
-		return
+func (a *Admin) LoginWithGoogle(w http.ResponseWriter, r *survana.Request) {
+	config := &oauth.Config{
+		ClientId:     "566666928472-gta9d42i4ac9hf4lkndh6g1tdea3umj0.apps.googleusercontent.com",
+		ClientSecret: "NOeyzLMyc9BsjhbvFJieC0sg",
+		RedirectURL:  "https://localhost:4443/admin/login/google/response",
+		Scope:        "email profile",
+		AuthURL:      "https://accounts.google.com/o/oauth2/auth",
+		TokenURL:     "https://accounts.google.com/o/oauth2/token",
 	}
 
-	// if the user was already authenticated, return early
-	if session.Authenticated {
-		survana.NoContent(w)
-		return
-	} else {
-		//    user := survana.NewUser("victor.petrov@survana.org", "Victor Petrov")
-		//    user.Login()
+    survana.FullRedirect(w, r, config.AuthCodeURL(""))
+}
+
+func (a *Admin) GoogleResponse(w http.ResponseWriter, r *survana.Request) {
+
+    code := r.FormValue("code")
+    //session_state := r.FormValue("session_state")
+
+	config := &oauth.Config{
+		ClientId:     "566666928472-gta9d42i4ac9hf4lkndh6g1tdea3umj0.apps.googleusercontent.com",
+		ClientSecret: "NOeyzLMyc9BsjhbvFJieC0sg",
+		RedirectURL:  "https://localhost:4443/admin/login/google/response",
+		Scope:        "email profile",
+		AuthURL:      "https://accounts.google.com/o/oauth2/auth",
+		TokenURL:     "https://accounts.google.com/o/oauth2/token",
 	}
 
-	// attempt to read the login details
-	form := &struct {
-		Key string
-	}{}
+    transport := &oauth.Transport{Config: config}
+    token, err := transport.Exchange(code)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
 
-	//read and decode the form
-	err = r.ParseForm(form)
+    log.Println("token=", token)
 
-	if err != nil {
-		survana.Error(w, err)
-		return
-	}
+    requestUrl := "https://www.googleapis.com/oauth2/v1/userinfo"
 
-	//if the key is incorrect, return bad request
-	if form.Key != "secret" {
-		survana.BadRequest(w)
-		return
-	}
+    transport.Token = token
+
+    tr, err := transport.Client().Get(requestUrl)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    defer tr.Body.Close()
+
+    user_data := &struct {
+                    Name string
+                    Email string
+                 }{}
+
+    err = r.JSONBody(tr.Body, user_data)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    log.Printf("%#v", user_data)
+
+    //see if a user with this email exists
+    user, err := survana.FindUser(user_data.Email, a.Module.Db)
+    if err != nil {
+        survana.Error(w, err)
+    }
+
+    //if not found, redirect to the registration page
+    if user == nil {
+        survana.Redirect(w, r, "/register")
+        return
+    }
+
+    //get an existing session
+    session, err := r.Session()
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
 
 	//mark the session as authenticated
 	session.Authenticated = true
+
+    //regenerate the session Id
+    session.Id = a.Module.Db.UniqueId()
+
+    //set the current user
+    session.UserId = user.Id
 
 	// update the session
 	err = session.Save(a.Module.Db)
@@ -134,8 +176,12 @@ func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
 		HttpOnly: true,
 	})
 
-	//return 204 No Content to indicate success
-	survana.NoContent(w)
+    //redirect to the index page
+    survana.Redirect(w, r, "/")
+}
+
+func (a *Admin) Register(w http.ResponseWriter, r *survana.Request) {
+    a.RenderTemplate(w, "register", nil)
 }
 
 //Logs out a user.

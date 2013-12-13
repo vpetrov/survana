@@ -15,6 +15,7 @@ const (
 type Session struct {
 	DBID          interface{}       `bson:"_id,omitempty"`
 	Id            string            //the publicly visible session id
+	UserId        string            //the user id this session is associated with
 	Authenticated bool              //whether the user has logged in or not
 	Values        map[string]string //all other values go here
 }
