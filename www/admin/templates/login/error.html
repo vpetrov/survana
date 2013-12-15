@@ -1,0 +1,112 @@
+<html>
+<head>
+    <title>Survana Login</title>
+    <style type="text/css">
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #ddd;
+            color: #eee;
+            font-size: 14px;
+        }
+
+        #content {
+            background-color: #3e3e3e;
+            max-width: 350px;
+            margin: 100px auto;
+            padding: 5px;
+            border: 1px solid #aaa;
+            border-radius: 6px 6px 6px;
+            box-shadow: 1px 1px 6px #666;
+        }
+
+        .header {
+            text-align:center;
+            padding:10px 0px 8px 0px;
+            position:relative;
+            left: -5px;
+        }
+
+
+        #logo {
+            height:40px;
+            vertical-align: top;
+            position: relative;
+        }
+
+        #logo:hover {
+            -webkit-filter: grayscale(1);
+        }
+
+        .brand {
+            font-size:35px;
+            text-shadow:0px 0px 3px #aaa;
+        }
+
+        hr {
+            margin:5px 45px 0px 45px;
+            padding: 0;
+            border: none;
+            border-top: thin solid #aaa;
+        }
+
+        ul {
+            padding: 0;
+            margin: 15px 15px 10px 15px;
+            vertical-align:middle;
+            text-align:center;
+        }
+
+        li {
+            list-style-type: none;
+            display: inline-block;
+            border: 1px solid transparent;
+            border-radius: 2px 2px 2px;
+        }
+
+        li:hover {
+            border: 1px solid #aaa;
+        }
+
+        .error {
+            font-size:16px;
+            padding:15px;
+            text-align:center;
+        }
+
+        .error a {
+            color: #aaa;
+            font-weight: bold;
+            text-decoration: none;
+            border: 1px solid #aaa;
+            padding: 3px 7px 5px 7px;
+            border-radius: 2px 2px 2px;
+        }
+
+        .error a:hover {
+            border: 1px solid #eee;
+            color: #eee;
+            background-color: #666;
+        }
+
+        .error a:active {
+            position:relative;
+            top:1px;
+            left:1px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="content">
+    <div class="header">
+        <img id="logo" src="/admin/assets/img/logo.png">
+        <span class="brand">Survana</span>
+    </div>
+    <hr>
+    <div class="error">
+        {{ .Message }}
+    </div>
+    <div class="error"><a href="/admin/login">Retry</a></div>
+</div>
+</body>
+</html>

@@ -67,10 +67,35 @@ func (a *Admin) Index(w http.ResponseWriter, r *survana.Request) {
 
 // displays the login page
 func (a *Admin) Login(w http.ResponseWriter, r *survana.Request) {
-	a.RenderTemplate(w, "login", nil)
+    session, err := r.Session()
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    //no need to log in if already logged in
+    if session != nil && session.Authenticated {
+        log.Println("already authenticated as", session.UserId)
+        survana.Redirect(w, r, "/")
+        return
+    }
+
+	a.RenderTemplate(w, "login/index", nil)
 }
 
 func (a *Admin) LoginWithGoogle(w http.ResponseWriter, r *survana.Request) {
+
+    session, err := r.Session()
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    if session != nil && session.Authenticated {
+        survana.Redirect(w, r, "/")
+        return
+    }
+
 	config := &oauth.Config{
 		ClientId:     "566666928472-gta9d42i4ac9hf4lkndh6g1tdea3umj0.apps.googleusercontent.com",
 		ClientSecret: "NOeyzLMyc9BsjhbvFJieC0sg",
@@ -86,6 +111,12 @@ func (a *Admin) LoginWithGoogle(w http.ResponseWriter, r *survana.Request) {
 func (a *Admin) GoogleResponse(w http.ResponseWriter, r *survana.Request) {
 
     code := r.FormValue("code")
+
+    if len(code) == 0 {
+        //redirect to the login page if Google returns an error
+        survana.Redirect(w, r, "/login")
+        return
+    }
     //session_state := r.FormValue("session_state")
 
 	config := &oauth.Config{
@@ -118,9 +149,18 @@ func (a *Admin) GoogleResponse(w http.ResponseWriter, r *survana.Request) {
 
     defer tr.Body.Close()
 
+    //Google's response struct (varies based on user's domain)
     user_data := &struct {
-                    Name string
-                    Email string
+                    Name string         `name`
+                    Email string        `email`
+                    VerifiedEmail bool  `verified_email,omitempty`
+                    GivenName string    `given_name,omitempty`
+                    FamilyName string   `family_name,omitempty`
+                    ProfileUrl string   `json:"link,omitempty" bson:"profile_url,omitempty"`
+                    PictureUrl string   `json:"picture,omitempty" bson:"picture_url,omitempty"`
+                    Gender string       `gender,omitempty`
+                    Locale string       `locale,omitempty`
+                    Domain string       `json:"hd,omitempty" bson:"domain,omitempty"`
                  }{}
 
     err = r.JSONBody(tr.Body, user_data)
@@ -137,9 +177,18 @@ func (a *Admin) GoogleResponse(w http.ResponseWriter, r *survana.Request) {
         survana.Error(w, err)
     }
 
-    //if not found, redirect to the registration page
+    //if not found, redirect to the login page
     if user == nil {
-        survana.Redirect(w, r, "/register")
+        if err != nil {
+            survana.Error(w, err)
+            return
+        }
+
+        message := "We couldn't find an account for " + user_data.Email
+        tpl_data := &struct { Message string } { Message: message }
+
+        //display the login page, with a message
+        a.RenderTemplate(w, "login/error", tpl_data)
         return
     }
 

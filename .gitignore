@@ -9,6 +9,7 @@ lib-cov
 *.swp
 
 .idea
+.session
 bin
 pkg
 .DS_Store
