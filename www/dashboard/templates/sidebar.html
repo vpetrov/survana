@@ -1,0 +1,39 @@
+<ul class="nav" data-ng-controller="NavigationCtrl">
+    <!-- item 1 -->
+    <li data-ng-class="{ active: isActive('/') }">
+        <a href="#/">
+            <i class="glyphicon glyphicon-{{ icons.dashboard }}"></i>
+                            <span class="sidebar-menu-item">
+                                <span class="text">Home</span>
+                            </span>
+        </a>
+    </li>
+    <!-- item 2 -->
+    <li data-ng-class="{ active: isActive('/studies') }">
+        <a href="#/studies">
+            <i class="glyphicon glyphicon-{{ icons.studies }}"></i>
+            <span class="text">Studies</span>
+        </a>
+    </li>
+    <!-- item 2 -->
+    <li data-ng-class="{ active: isActive('/forms') }">
+        <a href="#/forms">
+            <i class="glyphicon glyphicon-{{ icons.forms }}"></i>
+            <span class="text">Forms</span>
+        </a>
+    </li>
+    <!-- item 2 -->
+    <li data-ng-class="{ active: isActive('/users') }">
+        <a href="#/users">
+            <i class="glyphicon glyphicon-{{ icons.users }}"></i>
+            <span class="text">Users</span>
+        </a>
+    </li>
+    <!-- item 2 -->
+    <li data-ng-class="{ active: isActive('/logs') }">
+        <a href="#logs">
+            <i class="glyphicon glyphicon-{{ icons.logs }}"></i>
+            <span class="text">Logs</span>
+        </a>
+    </li>
+</ul>

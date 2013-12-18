@@ -1,19 +1,184 @@
 <!DOCTYPE html>
-<html ng-app="admin">
+<html ng-app="dashboardApp">
 <head>
-    <title>Survana {{.Module.Name}}</title>
+    <title>Survana <%.Module.Name%></title>
+    <!-- lib styles -->
     <link rel="stylesheet" type="text/css" href="assets/lib/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/lib/bootstrap/3.0.3/css/bootstrap-theme.min.css">
 
+    <!-- app styles -->
+    <link rel="stylesheet" type="text/css" href="assets/css/spinner.css">
+
+    <!-- lib scripts -->
     <script type="text/javascript" src="assets/lib/jquery/2.0.3/jquery.min.js"></script>
     <script type="text/javascript" src="assets/lib/angularjs/1.2.3/angular.min.js"></script>
     <script type="text/javascript" src="assets/lib/angularjs/1.2.3/angular-route.min.js"></script>
 
+    <!-- app scripts -->
     <script type="text/javascript" src="assets/js/app.js"></script>
     <script type="text/javascript" src="assets/js/controllers.js"></script>
+
+
+    <!-- TODO: Move to assets/css -->
+    <style type="text/css">
+        body {
+            background-color: #ddd;
+        }
+
+        /* navbar */
+        nav.navbar-static-top {
+            background-color: #3e3e3e;
+            margin-bottom: 0;
+        }
+
+        .navbar-brand {
+        }
+
+        /* sidebar */
+        .sidebar {
+            padding: 0;
+        }
+
+        .sidebar > .nav-collapse {
+            padding:0;
+        }
+
+        .sidebar i {
+            display: inline-block !important;
+        }
+
+        .sidebar .sidebar-menu-item {
+            display: inline-block !important;
+        }
+
+        .sidebar li.active {
+            background-color: #eee;
+            border-left:4px solid #984198;
+        }
+
+        .sidebar li a {
+            color: #5e5e5e;
+            border-top: 1px solid #eee;
+            border-bottom:1px solid #aaa;
+        }
+
+        .sidebar li a:hover {
+            color: #3e3e3e;
+        }
+
+        .sidebar li a .text {
+            padding-left:7px;
+        }
+
+        /* content */
+        .main {
+            -webkit-box-shadow:-5px 0px 5px -2px #888;
+            box-shadow:-5px 0px 5px -2px #888;
+            min-height:768px;
+            background-color:#eee;
+        }
+
+        .main-pad {
+            padding-top:15px;
+        }
+
+        footer {
+            background-color: #3e3e3e;
+            color: #eee;
+            font-size: 12px;
+            padding:10px;
+        }
+
+        .toolbar {
+            background-color: #ddd;
+            /* padding and borders added to match height of sidebar item (42px) */
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #aaa;
+            height: 42px;
+            -moz-border-radius: 0;
+            -webkit-border-radius: 0;
+            border-radius:0;
+            margin-bottom: 15px;
+            padding-left:15px;
+            padding-top:2px;
+
+        }
+
+        .toolbar > .breadcrumb li a {
+            color: #5e5e5e;
+        }
+
+        .toolbar > .breadcrumb li a:hover {
+            color: #3e3e3e;
+            text-decoration: none;
+        }
+
+        .toolbar p {
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
-    <div ng-view>
+    <!-- top header -->
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+
+        <!-- brand and collapse button -->
+        <div class="navbar-header">
+
+            <!-- the toggle menu button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapsible">
+                <!-- screen reader text -->
+                <span class="sr-only">Toggle menu</span>
+                <!-- the 3 horizontal lines for the toggle button -->
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#/"><img src="assets/img/logo.png" width="30" style="vertical-align:top"> Survana</a>
+
+            <div id="spinner" class="spinner navbar-text invisible">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav" data-ng-controller="NavigationCtrl">
+                <li class="active"><a href="#/">Dashboard</a></li>
+                <li class="dropdown">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="glyphicon glyphicon-plus"></i> Create <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="glyphicon glyphicon-{{ icons.study }}"></i> Study</a></li>
+                        <li><a href="#/forms/create"><i class="glyphicon glyphicon-{{ icons.form }}"></i> Form</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="glyphicon glyphicon-{{ icons.user }}"></i> User</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- page -->
+    <div class="container" style="width:100%">
+        <div class="row">
+
+            <!-- sidebar menu -->
+            <div class="sidebar col-lg-2 col-md-2 col-sm-3">
+                <div id="collapsible" class="nav-collapse navbar-collapse collapse" data-ng-include="'sidebar'"></div>
+            </div>
+            <div class="col-lg-10 col-md-10">
+                <!-- main content -->
+                <div class="main row" ng-view spinner>Loading ...</div>
+            </div>
+        </div>
     </div>
+
+    <div class="clearfix"></div>
+
+    <footer>(c) 2013 The Neuroinformatics Research Group at Harvard University</footer>
+    <script type="text/javascript" src="assets/lib/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -58,6 +58,5 @@ func (d *Dashboard) FormList(w http.ResponseWriter, r *survana.Request) {
 }
 
 func (d *Dashboard) CreateForm(w http.ResponseWriter, r *survana.Request) {
-    time.Sleep(time.Second * 4)
     d.RenderTemplate(w, "form/create", nil)
 }

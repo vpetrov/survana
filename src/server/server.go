@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"neuroinformatics.harvard.edu/survana"
-	"neuroinformatics.harvard.edu/survana/admin"
+	"neuroinformatics.harvard.edu/survana/dashboard"
 	"os"
 	"os/user"
 	"strconv"
@@ -162,10 +162,11 @@ func Listen(config *Config) (tlsListener net.Listener, err error) {
 //Create and mount all known modules
 func EnableModules(config *Config) (err error) {
 
-	//ADMIN
-	admin_module := admin.NewModule(config.WWW+"/admin", GetDB(config.DbUrl, "admin"))
+	//dashboard
+	dashboard_module := dashboard.NewModule(config.WWW+"/dashboard", GetDB(config.DbUrl, "dashboard"))
 
-	survana.Modules.Mount(admin_module.Module, "/admin")
+	survana.Modules.Mount(dashboard_module.Module, "/dashboard")
+
 
 	return nil
 }

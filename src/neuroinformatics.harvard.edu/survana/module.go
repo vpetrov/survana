@@ -41,6 +41,8 @@ func (m *Module) ParseTemplates() error {
 	log.Println("Parsing templates from", m.Path)
 
 	m.Templates = template.New(m.Name)
+    //set start/end tags (delimiters)
+    _ = m.Templates.Delims("<%", "%>")
 
 	pathlen := len(m.Path)
 	tpldirlen := len(TEMPLATE_DIR)

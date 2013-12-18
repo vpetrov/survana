@@ -99,14 +99,14 @@
 <body>
 <div id="content">
     <div class="header">
-        <img id="logo" src="/admin/assets/img/logo.png">
+        <img id="logo" src="/dashboard/assets/img/logo.png">
         <span class="brand">Survana</span>
     </div>
     <hr>
     <div class="error">
-        {{ .Message }}
+        <% .Message %>
     </div>
-    <div class="error"><a href="/admin/login">Retry</a></div>
+    <div class="error"><a href="/dashboard/login">Retry</a></div>
 </div>
 </body>
 </html>
