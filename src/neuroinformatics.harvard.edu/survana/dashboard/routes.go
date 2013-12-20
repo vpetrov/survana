@@ -4,7 +4,6 @@ import (
         _ "log"
         "net/http"
         "neuroinformatics.harvard.edu/survana"
-        "time"
        )
 
 // registers all route handlers

@@ -20,7 +20,6 @@ dashboard.controller('StudyCtrl', ['$scope', '$http', '$location', '$window',
     }
 ]);
 
-
 dashboard.controller('NavigationCtrl', ['$scope', '$location',
     function NavigationCtrl($scope, $location) {
         //glyphicons
@@ -48,5 +47,87 @@ dashboard.controller('NavigationCtrl', ['$scope', '$location',
             return $location.path().indexOf(pageUrl) === 0;
         }
     }
-
 ]);
+
+dashboard.controller('CreateFormCtrl', ['$scope', '$http',
+    function AceCtrl($scope, $http) {
+        $scope.code = [
+            "{",
+            "\t\"name\":\"MyForm\",",
+            "\t\"title\":\"My First Form\",",
+            "\t\"fields\": [",
+            "\t\t{",
+            "\t\t\t\"s-type\":\"text\",",
+            "\t\t\t\"s-id\":\"subject_id\"",
+            "\t\t}",
+            "\t]",
+            "}"
+        ].join("\n");
+
+        $scope.loading = false;
+
+        $scope.saveCode = function () {
+            var ok = false;
+            try {
+                JSON.parse($scope.code);
+                ok = true
+            } catch (e) {
+                //there's a JSON error in the user's code. ignore for now
+            }
+
+            if (ok) {
+                $scope.loading = true;
+                $http.post('form/create', $scope.code).
+                    //POST succeeded
+                    success(function () {
+                        $scope.loading = false;
+                        console.log('post succeeded', arguments);
+                    }).
+                    //POST failed
+                    error(function () {
+                        $scope.loading = false;
+                        console.log('post failed', arguments)
+                    });
+            }
+        };
+
+        $scope.discardCode = function () {
+            console.log('Discarding code');
+            $scope.code = "";
+        };
+
+        console.log('Ace ctrl invoked!');
+    }
+]);
+
+/* DIRECTIVES */
+
+dashboard.directive('ace', ['$timeout', function ($timeout) {
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        scope: false,
+        link: function (scope, elem, attrs, ngModel) {
+            var node = elem[0],
+                editor = ace.edit(node),
+                session = editor.getSession();
+
+            session.setMode("ace/mode/json");
+
+            // on model change, update the editor's view
+            ngModel.$render = function () {
+                editor.setValue(ngModel.$viewValue);
+            };
+
+            // on edit change, update the model
+            editor.on('change', function () {
+                $timeout(function () {
+                    scope.$apply(function () {
+                        var value = editor.getValue();
+                        ngModel.$setViewValue(value);
+                    });
+                });
+            });
+        }
+    }
+}]);

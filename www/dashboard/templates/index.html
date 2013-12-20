@@ -17,7 +17,7 @@
     <!-- app scripts -->
     <script type="text/javascript" src="assets/js/app.js"></script>
     <script type="text/javascript" src="assets/js/controllers.js"></script>
-
+    <script type="text/javascript" src="assets/js/directives.js"></script>
 
     <!-- TODO: Move to assets/css -->
     <style type="text/css">
@@ -116,6 +116,13 @@
         .toolbar p {
             display: inline-block;
         }
+
+        .editor {
+            position:absolute;
+            width:100%;
+            min-height: 500px;
+            line-height: 1.3;
+        }
     </style>
 </head>
 <body>
@@ -143,6 +150,7 @@
             </div>
         </div>
 
+        <!-- top menu -->
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav" data-ng-controller="NavigationCtrl">
                 <li class="active"><a href="#/">Dashboard</a></li>
@@ -160,18 +168,17 @@
         </div>
     </nav>
 
-
     <!-- page -->
     <div class="container" style="width:100%">
         <div class="row">
 
             <!-- sidebar menu -->
-            <div class="sidebar col-lg-2 col-md-2 col-sm-3">
+            <div class="sidebar col-lg-2 col-md-2 col-sm-2">
                 <div id="collapsible" class="nav-collapse navbar-collapse collapse" data-ng-include="'sidebar'"></div>
             </div>
-            <div class="col-lg-10 col-md-10">
-                <!-- main content -->
-                <div class="main row" ng-view spinner>Loading ...</div>
+            <!-- main content -->
+            <div class="main col-lg-10 col-md-10 col-sm-10">
+                <div class="row" ng-view></div>
             </div>
         </div>
     </div>

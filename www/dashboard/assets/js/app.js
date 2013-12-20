@@ -49,12 +49,20 @@ app.config(['$httpProvider', function ($httpProvider) {
 
         // hides the spinning element
         function hideSpinner() {
-            spinner.addClass('invisible');
+            if (show > 0) {
+                //decrement the number of requests that need spinning
+                show--;
+
+                if (show === 0) {
+                    spinner.addClass('invisible');
+                }
+            }
         }
 
         return {
             //turns on the spinner when a request is about to be made
             "request": function (config) {
+                console.log('request');
                 //increment the number of requests made
                 show++;
                 $timeout(showSpinner, waitBeforeShow, false);
@@ -62,18 +70,23 @@ app.config(['$httpProvider', function ($httpProvider) {
                 return config || $q.when(config);
             },
 
+            "requestError": function (rejection) {
+                console.log('requestError');
+                hideSpinner();
+                return $q.reject(rejection);
+            },
+
             // turns off the spinner when a response has been received
             "response": function (response) {
-                if (show > 0) {
-                    //decrement the number of requests that need spinning
-                    show--;
-
-                    if (show === 0) {
-                        hideSpinner();
-                    }
-                }
-
+                console.log('response');
+                hideSpinner();
                 return response || $q.when(response);
+            },
+
+            "responseError": function (rejection) {
+                console.log('responseError');
+                hideSpinner();
+                return $q.reject(rejection);
             }
         }
     }]);
