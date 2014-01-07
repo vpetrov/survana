@@ -69,48 +69,48 @@ func (db *MongoDB) Version() string {
 }
 
 func (db *MongoDB) HasId(id string, collection string) (bool, error) {
-    if len(collection) == 0 {
-        return false, ErrInvalidCollection
-    }
+	if len(collection) == 0 {
+		return false, ErrInvalidCollection
+	}
 
-    count, err := db.Database.C(collection).Find(bson.M{"id": id}).Count()
+	count, err := db.Database.C(collection).Find(bson.M{"id": id}).Count()
 
-    if err != nil {
-        return false, err
-    }
+	if err != nil {
+		return false, err
+	}
 
-    return (count > 0), err
+	return (count > 0), err
 }
 
 func (db *MongoDB) List(collection string, result interface{}) (err error) {
-    if len(collection) == 0 {
-        return ErrInvalidCollection
-    }
+	if len(collection) == 0 {
+		return ErrInvalidCollection
+	}
 
-    err = db.Database.C(collection).Find(nil).All(result);
-    if err == mgo.ErrNotFound {
-        err = ErrNotFound
-    }
+	err = db.Database.C(collection).Find(nil).All(result)
+	if err == mgo.ErrNotFound {
+		err = ErrNotFound
+	}
 
-    return
+	return
 }
 
 func (db *MongoDB) FilteredList(collection string, props []string, result interface{}) (err error) {
-    if len(collection) == 0 {
-        return ErrInvalidCollection
-    }
+	if len(collection) == 0 {
+		return ErrInvalidCollection
+	}
 
-    filter := bson.M{}
-    for p := range(props) {
-        filter[props[p]] = 1
-    }
+	filter := bson.M{}
+	for p := range props {
+		filter[props[p]] = 1
+	}
 
-    err = db.Database.C(collection).Find(nil).Select(filter).All(result);
-    if err == mgo.ErrNotFound {
-        err = ErrNotFound
-    }
+	err = db.Database.C(collection).Find(nil).Select(filter).All(result)
+	if err == mgo.ErrNotFound {
+		err = ErrNotFound
+	}
 
-    return
+	return
 }
 
 func (db *MongoDB) FindId(id string, result DbObject) (err error) {
@@ -148,47 +148,47 @@ func (db *MongoDB) Save(obj DbObject) (err error) {
 	}
 
 	if dbid != nil {
-        /* UPDATE */
+		/* UPDATE */
 		mgoid, ok = dbid.(bson.ObjectId)
 		if !ok || !mgoid.Valid() {
 			return ErrInvalidId
 		}
 
-        // Remove the _id property while we update the object.
-        // This is necessary because MongoDB complains if the updates contain an _id
-        // even if updated _id is the same as the original.
-        obj.SetDbId(nil)
+		// Remove the _id property while we update the object.
+		// This is necessary because MongoDB complains if the updates contain an _id
+		// even if updated _id is the same as the original.
+		obj.SetDbId(nil)
 
-        // Restore _id when this function exits
-        defer obj.SetDbId(mgoid)
+		// Restore _id when this function exits
+		defer obj.SetDbId(mgoid)
 
-        log.Printf("%s %#v\n", "UPDATING object", obj)
-        // perform the update
-        err = db.Database.C(collection).UpdateId(mgoid, bson.M{"$set": obj})
-        if err != nil {
-            return
-        }
+		log.Printf("%s %#v\n", "UPDATING object", obj)
+		// perform the update
+		err = db.Database.C(collection).UpdateId(mgoid, bson.M{"$set": obj})
+		if err != nil {
+			return
+		}
 	} else {
-        /* INSERT */
+		/* INSERT */
 
-        //generate a new _id
+		//generate a new _id
 		mgoid = bson.NewObjectId()
 
-        //set the new _id
-        obj.SetDbId(mgoid)
+		//set the new _id
+		obj.SetDbId(mgoid)
 
-        log.Printf("%s %#v\n", "INSERTING new object", obj)
+		log.Printf("%s %#v\n", "INSERTING new object", obj)
 
-        //insert the object
-        err = db.Database.C(collection).Insert(obj)
-        if err != nil {
-            //remove the _id if there was an error
-            obj.SetDbId(nil)
-            return
-        }
+		//insert the object
+		err = db.Database.C(collection).Insert(obj)
+		if err != nil {
+			//remove the _id if there was an error
+			obj.SetDbId(nil)
+			return
+		}
 	}
 
-    return
+	return
 }
 
 func (db *MongoDB) Delete(obj DbObject) (err error) {

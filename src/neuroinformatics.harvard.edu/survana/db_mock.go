@@ -7,13 +7,13 @@ import (
 )
 
 type MockDatabase struct {
-	Calls    map[string]int
-    OnList   func(string, interface{})
-    OnFilteredList func(string, []string, interface{})
-    OnHasId func(string) (bool, error)
-	OnFindId func(string, DbObject)
-	OnDelete func(DbObject)
-	OnSave   func(DbObject)
+	Calls          map[string]int
+	OnList         func(string, interface{})
+	OnFilteredList func(string, []string, interface{})
+	OnHasId        func(string) (bool, error)
+	OnFindId       func(string, DbObject)
+	OnDelete       func(DbObject)
+	OnSave         func(DbObject)
 }
 
 func NewMockDatabase() *MockDatabase {
@@ -48,22 +48,22 @@ func (db *MockDatabase) Disconnect() error {
 }
 
 func (db *MockDatabase) List(collection string, result interface{}) error {
-    db.Calls["List"]++
+	db.Calls["List"]++
 
-    if db.OnList != nil {
-        db.OnList(collection, result)
-    }
+	if db.OnList != nil {
+		db.OnList(collection, result)
+	}
 
-    return nil
+	return nil
 }
 
 func (db *MockDatabase) FilteredList(collection string, props []string, result interface{}) error {
-    db.Calls["FilteredList"]++
-    if db.OnFilteredList != nil {
-        db.OnFilteredList(collection, props, result)
-    }
+	db.Calls["FilteredList"]++
+	if db.OnFilteredList != nil {
+		db.OnFilteredList(collection, props, result)
+	}
 
-    return nil
+	return nil
 }
 
 func (db *MockDatabase) FindId(id string, presult DbObject) error {
@@ -93,12 +93,12 @@ func (db *MockDatabase) Save(o DbObject) error {
 }
 
 func (db *MockDatabase) HasId(id string, collection string) (result bool, err error) {
-    db.Calls["HasId"]++
-    if db.OnHasId != nil {
-        result, err = db.OnHasId(id)
-    }
+	db.Calls["HasId"]++
+	if db.OnHasId != nil {
+		result, err = db.OnHasId(id)
+	}
 
-    return
+	return
 }
 
 func (db *MockDatabase) UniqueId() string {

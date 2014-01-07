@@ -49,4 +49,3 @@ func FindUser(email string, db Database) (user *User, err error) {
 
 	return
 }
-

@@ -23,12 +23,12 @@ type Database interface {
 	Connect() error
 	Disconnect() error
 
-    HasId(id string, collection string) (bool, error)
+	HasId(id string, collection string) (bool, error)
 	FindId(id string, presult DbObject) error
 	Delete(o DbObject) error
 	Save(o DbObject) error
-    List(collection string, result interface{}) error
-    FilteredList(collection string, props []string, result interface{}) error
+	List(collection string, result interface{}) error
+	FilteredList(collection string, props []string, result interface{}) error
 
 	UniqueId() string
 	IsValidId(id string) bool

@@ -167,7 +167,6 @@ func EnableModules(config *Config) (err error) {
 
 	survana.Modules.Mount(dashboard_module.Module, "/dashboard")
 
-
 	return nil
 }
 
