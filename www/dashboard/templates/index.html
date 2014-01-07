@@ -5,6 +5,7 @@
     <!-- lib styles -->
     <link rel="stylesheet" type="text/css" href="assets/lib/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/lib/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/lib/fa/4.0.3/css/fa.min.css">
 
     <!-- app styles -->
     <link rel="stylesheet" type="text/css" href="assets/css/spinner.css">
@@ -13,11 +14,13 @@
     <script type="text/javascript" src="assets/lib/jquery/2.0.3/jquery.min.js"></script>
     <script type="text/javascript" src="assets/lib/angularjs/1.2.3/angular.min.js"></script>
     <script type="text/javascript" src="assets/lib/angularjs/1.2.3/angular-route.min.js"></script>
+    <script type="text/javascript" src="assets/lib/survana/1.0.0/survana.js"></script>
+    <!-- default survana theme -->
+    <script type="text/javascript" src="assets/lib/survana/1.0.0/theme/bootstrap/survana-bootstrap.js"></script>
 
     <!-- app scripts -->
     <script type="text/javascript" src="assets/js/app.js"></script>
     <script type="text/javascript" src="assets/js/controllers.js"></script>
-    <script type="text/javascript" src="assets/js/directives.js"></script>
 
     <!-- TODO: Move to assets/css -->
     <style type="text/css">
@@ -31,7 +34,8 @@
             margin-bottom: 0;
         }
 
-        .navbar-brand {
+        .navbar-spinner {
+            padding-top:14px;
         }
 
         /* sidebar */
@@ -75,7 +79,7 @@
             -webkit-box-shadow:-5px 0px 5px -2px #888;
             box-shadow:-5px 0px 5px -2px #888;
             min-height:768px;
-            background-color:#eee;
+            background-color:#fafafa;
         }
 
         .main-pad {
@@ -99,9 +103,7 @@
             -webkit-border-radius: 0;
             border-radius:0;
             margin-bottom: 15px;
-            padding-left:15px;
-            padding-top:2px;
-
+            padding:2px 15px 0px 15px;
         }
 
         .toolbar > .breadcrumb li a {
@@ -123,6 +125,40 @@
             min-height: 500px;
             line-height: 1.3;
         }
+
+        .alert-sm {
+            padding: 5px;
+            font-size:16px;
+        }
+
+        .questionnaire {
+            border-radius:3px;
+            border: 1px solid #aaa;
+            -webkit-box-shadow:1px 1px 1px 1px #aaa;
+            box-shadow:1px 1px 1px 1px #aaa;
+        }
+
+        .questionnaire.size-L {
+            width: 100%;
+            min-width: 1222px;
+            height:1024px;
+        }
+
+        .questionnaire.size-M {
+            width: 1000px;
+            height: 768px;
+        }
+
+        .questionnaire.size-S {
+            width: 777px;
+            height: 960px;
+        }
+
+        .questionnaire.size-XS {
+            width: 320px;
+            height: 480px;
+        }
+
     </style>
 </head>
 <body>
@@ -143,10 +179,13 @@
             </button>
             <a class="navbar-brand" href="#/"><img src="assets/img/logo.png" width="30" style="vertical-align:top"> Survana</a>
 
-            <div id="spinner" class="spinner navbar-text invisible">
-                <div class="bounce1"></div>
-                <div class="bounce2"></div>
-                <div class="bounce3"></div>
+            <!-- small screen spinner -->
+            <div class="navbar-spinner visible-xs invisible">
+                <div class="spinner">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
+                </div>
             </div>
         </div>
 
@@ -165,11 +204,20 @@
                     </ul>
                 </li>
             </ul>
+
+            <!-- large screen spinner -->
+            <div class="navbar-spinner invisible">
+                <div class="spinner">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
+                </div>
+            </div>
         </div>
     </nav>
 
     <!-- page -->
-    <div class="container" style="width:100%">
+    <div class="container" style="width:100%;">
         <div class="row">
 
             <!-- sidebar menu -->

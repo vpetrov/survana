@@ -2,7 +2,7 @@
 .spinner {
     width: 70px;
     text-align: center;
-    display: inline-block;
+    display: inline-block !important;
 }
 
 .spinner > div {

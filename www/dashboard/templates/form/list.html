@@ -1,4 +1,110 @@
 <div class="toolbar">
-    <a href="#/forms/create" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i> New Form</a>
+    <!-- New -->
+    <a href="#/forms/create" class="btn btn-success"><i class="glyphicon glyphicon-plus-sign"></i> New</a>
+
+    <!-- Delete selected -->
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" ng-disabled="!selected.length" data-toggle="dropdown">
+            <i class="glyphicon glyphicon-minus-sign"></i>
+            Delete
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li>
+                <a href="" ng-click="deleteSelected()">
+                    <i class="glyphicon glyphicon-ok"></i>
+                    Delete {{ selected.length }} form{{ (selected.length > 1) ? 's' : '' }}
+                </a>
+            </li>
+            <li><a href=""><i class="glyphicon glyphicon-remove"></i> Cancel</a></li>
+        </ul>
+    </div>
+
+    <!-- Search -->
+    <div class="input-group col-lg-2 col-md-2 col-sm-2 col-xs-4 pull-right" style="display:inline-table">
+        <input type="text" class="form-control" placeholder="Search forms" data-ng-model="search">
+        <span class="input-group-addon">
+            <i class="glyphicon glyphicon-search"></i>
+        </span>
+    </div>
 </div>
 
+<style>
+    .table .small {
+        width:20px;
+    }
+
+    .table .medium {
+        width:70px;
+    }
+
+    .table .text-warning {
+        color: orange;
+    }
+
+    .message {
+        margin:0px 0px 5px 0px;
+    }
+
+    .btn-dismiss {
+        position:relative;
+        top:-2px;
+    }
+
+</style>
+
+
+<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+    <div class="message" ng-class="{'hidden':!message.length}">
+        <span class="alert alert-sm alert-dismissable" ng-class="{'alert-danger':message.length}">
+            {{ message }} &nbsp;
+            <button type="button" class="btn btn-default btn-dismiss btn-xs" ng-click="message=''">
+                <i class="glyphicon glyphicon-ok"></i>
+            </button>
+        </span>
+    </div>
+    <table class="table form-table table-hover">
+        <thead>
+            <tr>
+                <th class="small text-center"></th>
+                <th class="text-left">Name</th>
+                <th class="text-center">Version</th>
+                <th class="text-center">Date Created</th>
+                <th class="medium text-right">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-ng-repeat="form in forms | filter:search" ng-class="{ warning:isSelected(form.id) }">
+                <!-- checkbox -->
+                <td class="checkboxes text-center">
+                    <input type="checkbox" ng-click="toggle(form.id)">
+                </td>
+                <!-- form title -->
+                <td class="text-left">
+                    <a href="#forms/{{form.id}}" class="text-primary">{{ form.name }}</a>
+                </td>
+                <!-- form version -->
+                <td class="text-center">
+                    <span class="label label-default">{{ form.version }}</span>
+                </td>
+                <td class="text-center">
+                    {{ form.created_on | date }}
+                </td>
+                <!-- form actions -->
+                <td class="medium">
+                    <a href="#forms/{{ form.id }}" class="text-success" title="View form"><i class="glyphicon glyphicon-eye-open"></i></a>
+                    <a href="#forms/edit/{{ form.id }}" class="text-warning" title="Edit form"><i class="glyphicon glyphicon-edit"></i></a>
+                    <span class="dropdown">
+                        <a href="" class="text-danger" title="Delete form" data-toggle="dropdown">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="" ng-click="deleteForm(form.id)"><i class="glyphicon glyphicon-ok"></i> Delete '{{ form.name }}'</a></li>
+                            <li><a href=""><i class="glyphicon glyphicon-remove"></i> Cancel</a></li>
+                        </ul>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

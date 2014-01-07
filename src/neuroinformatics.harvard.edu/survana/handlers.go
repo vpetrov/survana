@@ -34,6 +34,10 @@ func Protect(handler RequestHandler) RequestHandler {
 	}
 }
 
+func NotFound(w http.ResponseWriter) {
+    http.Error(w, "Not Found", http.StatusNotFound)
+}
+
 //returns 204 No Content
 func NoContent(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusNoContent)

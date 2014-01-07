@@ -1,0 +1,30 @@
+<!-- Toolbar -->
+<div class="toolbar">
+    <a href="#/forms/edit/{{ form.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+    <span class="text">&nbsp;</span>
+    <div class="btn-group">
+        <button type="button" class="btn btn-info" ng-click="resize('L')" ng-class="{active: size == 'L'}" title="Desktop">
+            <i class="fa fa-desktop"></i>
+        </button>
+        <button type="button" class="btn btn-info" ng-click="resize('M')" ng-class="{active: size == 'M'}" title="Laptop">
+            <i class="fa fa-laptop"></i>
+        </button>
+        <button type="button" class="btn btn-info" ng-click="resize('S')" ng-class="{active: size == 'S'}" title="Tablet">
+            <i class="fa fa-tablet"></i>
+        </button>
+        <button type="button" class="btn btn-info" ng-click="resize('XS')" ng-class="{active: size == 'XS'}" title="Smartphone">
+            <i class="fa fa-mobile-phone"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="white col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="lead">
+        {{ form.title }} <span class="label label-default">{{ form.version }}</span>
+        <small>&nbsp;{{ getFormDate() }}</small>
+    </div>
+
+    <!-- space to render the form's as HTML -->
+    <iframe data-questionnaire="survana" data-ng-model="form" class="questionnaire size-{{ size }}"></iframe>
+</div>

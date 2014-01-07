@@ -68,6 +68,51 @@ func (db *MongoDB) Version() string {
 	return "MongoDB " + sessionInfo.Version
 }
 
+func (db *MongoDB) HasId(id string, collection string) (bool, error) {
+    if len(collection) == 0 {
+        return false, ErrInvalidCollection
+    }
+
+    count, err := db.Database.C(collection).Find(bson.M{"id": id}).Count()
+
+    if err != nil {
+        return false, err
+    }
+
+    return (count > 0), err
+}
+
+func (db *MongoDB) List(collection string, result interface{}) (err error) {
+    if len(collection) == 0 {
+        return ErrInvalidCollection
+    }
+
+    err = db.Database.C(collection).Find(nil).All(result);
+    if err == mgo.ErrNotFound {
+        err = ErrNotFound
+    }
+
+    return
+}
+
+func (db *MongoDB) FilteredList(collection string, props []string, result interface{}) (err error) {
+    if len(collection) == 0 {
+        return ErrInvalidCollection
+    }
+
+    filter := bson.M{}
+    for p := range(props) {
+        filter[props[p]] = 1
+    }
+
+    err = db.Database.C(collection).Find(nil).Select(filter).All(result);
+    if err == mgo.ErrNotFound {
+        err = ErrNotFound
+    }
+
+    return
+}
+
 func (db *MongoDB) FindId(id string, result DbObject) (err error) {
 	collection := result.Collection()
 	if len(collection) == 0 {
@@ -85,11 +130,12 @@ func (db *MongoDB) FindId(id string, result DbObject) (err error) {
 	return
 }
 
-// Stores objects in the database
-// new objects won't have valid IDs. Providing an empty/invalid ID to
-// to mgo.UpsertId will cause an error to be returned. Since MongoDB will
-// do this exact same operation and the IDs are unique, we can safely
-// generate an ID here and use mgo.UpsertId(), instead of Insert/Update.
+// Stores objects in the database. If the objects don't return a DbId, a new
+// _id will be generated and assigned to the object. If a valid DbId exists,
+// an Update operation will be performed, otherwise - an Insert()
+// On success, the DbObject will have a valid DbId. On error, the DbId will
+// be the same it used to be, or nil if there was no DbId (and an error will
+// be returned)
 func (db *MongoDB) Save(obj DbObject) (err error) {
 	dbid := obj.DbId()
 	var mgoid bson.ObjectId
@@ -102,30 +148,47 @@ func (db *MongoDB) Save(obj DbObject) (err error) {
 	}
 
 	if dbid != nil {
+        /* UPDATE */
 		mgoid, ok = dbid.(bson.ObjectId)
 		if !ok || !mgoid.Valid() {
 			return ErrInvalidId
 		}
-		//reuse 'ok' as signal to not update the ID
-		ok = false
+
+        // Remove the _id property while we update the object.
+        // This is necessary because MongoDB complains if the updates contain an _id
+        // even if updated _id is the same as the original.
+        obj.SetDbId(nil)
+
+        // Restore _id when this function exits
+        defer obj.SetDbId(mgoid)
+
+        log.Printf("%s %#v\n", "UPDATING object", obj)
+        // perform the update
+        err = db.Database.C(collection).UpdateId(mgoid, bson.M{"$set": obj})
+        if err != nil {
+            return
+        }
 	} else {
+        /* INSERT */
+
+        //generate a new _id
 		mgoid = bson.NewObjectId()
-		//resuse 'ok' as signal to update the ID on successful save
-		ok = true
+
+        //set the new _id
+        obj.SetDbId(mgoid)
+
+        log.Printf("%s %#v\n", "INSERTING new object", obj)
+
+        //insert the object
+        err = db.Database.C(collection).Insert(obj)
+        if err != nil {
+            //remove the _id if there was an error
+            obj.SetDbId(nil)
+            return
+        }
 	}
 
-	// generating our own ID allows us to use UpsertId here
-	_, err = db.Database.C(collection).UpsertId(mgoid, bson.M{"$set": obj})
-	if err != nil {
-		return
-	}
-
-	//update the dbid if necessary
-	if ok {
-		obj.SetDbId(mgoid)
-	}
-
-	return
+    return
 }
 
 func (db *MongoDB) Delete(obj DbObject) (err error) {

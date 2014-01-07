@@ -1,0 +1,86 @@
+/* MATRIX */
+.matrix .matrix-header {
+    font-weight: bold;
+}
+
+.matrix > .row {
+    padding:8px 0px 8px 0px; /* 8px = half of bootstrap's 15px padding */
+}
+
+@media (min-width:767px) {
+
+    /* question text shouldn't be bold when they're listed in a table */
+    .matrix .matrix-question {
+        font-weight: normal;
+    }
+
+    .matrix .radio,
+    .matrix .checkbox {
+        text-align:center !important;
+        padding-left:0px;
+        margin:0;
+    }
+
+    .matrix .radio input[type="radio"],
+    .matrix .checkbox input[type="checkbox"] {
+        float: none !important;
+        cursor: pointer;
+    }
+
+    .matrix .matrix-header-row {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .matrix .matrix-row {
+        border-top: 1px solid #ddd;
+    }
+
+    .matrix.striped .matrix-row:nth-child(odd) {
+        background-color: #f9f9f9; /* same as table-striped odd */
+    }
+
+    .matrix.hover .matrix-row:hover {
+        background-color: #f5f5f5; /* save as table-hover */
+    }
+
+    .matrix .radio label {
+        display:block;
+        background-color:transparent;
+        padding-left:15px;
+    }
+
+    .matrix .row:first-child div > .row:first-child {
+        height: 50px !important;
+    }
+
+    .matrix .matrix-header {
+        height:100%;
+        padding:0;
+
+    }
+
+    .matrix .matrix-header-text {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 0px 8px 0px 8px; /* 15px/2 */
+    }
+
+    .matrix .equalized {
+        display: none;
+    }
+
+    /* SELECT */
+    .group select.form-control {
+        width:auto;
+        display:inline-block;
+    }
+}
+
+
+@media (max-width:767px) {
+
+    .matrix .equalized-padded {
+        display: none;
+    }
+ }

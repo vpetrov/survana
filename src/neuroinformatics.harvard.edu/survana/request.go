@@ -112,8 +112,8 @@ func (r *Request) Cookie(name string) (value string, ok bool) {
 	return
 }
 
-// Parses the request body as a JSON-encoded form
-func (r *Request) ParseForm(v interface{}) (err error) {
+// Parses the request body as a JSON-encoded string
+func (r *Request) ParseJSON(v interface{}) (err error) {
 	return r.JSONBody(r.Request.Body, v)
 }
 

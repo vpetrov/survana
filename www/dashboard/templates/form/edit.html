@@ -1,6 +1,6 @@
 <div class="toolbar">
-    <button type="button" class="btn btn-success" ng-click="saveCode()" data-loading="loading"><i class="glyphicon glyphicon-floppy-disk"></i> Save</button>
-    <butotn type="button" class="btn btn-default" ng-click="discardCode($event)"><i class="glyphicon glyphicon-remove-circle"></i> Discard</butotn>
+    <button type="button" class="btn btn-success" ng-click="saveCode($event)" data-loading="loading"><i class="glyphicon glyphicon-floppy-disk"></i> Save</button>
+    <button type="button" class="btn btn-default" ng-click="discardCode($event)"><i class="glyphicon glyphicon-remove-circle"></i> Cancel</button>
     <a href="https://github.com/vpetrov/survana-admin/wiki/Developer's-Guide-to-Creating-Questionnaires"
        class="btn btn-info pull-right" target="_blank"><i class="glyphicon glyphicon-info-sign"></i> Help
     </a>
@@ -10,7 +10,7 @@
 
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <p class="lead">
-        <span style="margin-left:5px">Create Form</span>
+        <span style="margin-left:5px">Edit Form</span>
         <span class="alert alert-sm alert-dismissable" ng-class="{'hidden':!message.length, 'alert-danger':error, 'alert-success':!error}">
             <i class="glyphicon" ng-class="{'glyphicon-minus-sign':error, 'glyphicon-ok-sign':!error}"></i> {{ message }}
         </span>

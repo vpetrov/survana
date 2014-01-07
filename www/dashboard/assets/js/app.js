@@ -13,11 +13,19 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
         }).
         when("/forms", {
             templateUrl: 'forms',
-            controller: 'FormCtrl'
+            controller: 'FormListCtrl'
         }).
         when("/forms/create", {
             templateUrl: 'forms/create',
-            controller: 'FormCtrl'
+            controller: 'FormEditCtrl'
+        }).
+        when("/forms/:id", {
+            templateUrl: 'forms/view',
+            controller: 'FormViewCtrl'
+        }).
+        when("/forms/edit/:id", {
+            templateUrl: 'forms/edit',
+            controller: 'FormEditCtrl'
         }).
         when("/studies", {
             templateUrl: 'studies',
@@ -38,12 +46,16 @@ app.config(['$httpProvider', function ($httpProvider) {
 
         var show = 0,
             waitBeforeShow = 1000, // ms
-            spinner = angular.element('#spinner');
+            spinner = angular.element('.navbar-spinner');
+
+        console.log(spinner);
 
         //shows the spinning element, but only if a request is still outstanding
         function showSpinner() {
             if (show > 0) {
+                console.log('showing spinner');
                 spinner.removeClass('invisible');
+                console.log(spinner);
             }
         }
 
