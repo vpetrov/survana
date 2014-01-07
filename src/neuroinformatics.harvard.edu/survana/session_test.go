@@ -29,7 +29,7 @@ func TestNewSession(t *testing.T) {
 
 func TestFindSession(t *testing.T) {
 	db := NewMockDatabase()
-	db.OnFindId = func(v DbObject) {
+	db.OnFindId = func(id string, v DbObject) {
 		s, ok := v.(*Session)
 		if !ok {
 			t.Fatalf("MockDatabase did not return a *Session")
@@ -98,3 +98,4 @@ func TestSave(t *testing.T) {
 		t.Errorf("err = %v", err)
 	}
 }
+

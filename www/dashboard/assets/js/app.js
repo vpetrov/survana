@@ -48,14 +48,10 @@ app.config(['$httpProvider', function ($httpProvider) {
             waitBeforeShow = 1000, // ms
             spinner = angular.element('.navbar-spinner');
 
-        console.log(spinner);
-
         //shows the spinning element, but only if a request is still outstanding
         function showSpinner() {
             if (show > 0) {
-                console.log('showing spinner');
                 spinner.removeClass('invisible');
-                console.log(spinner);
             }
         }
 
@@ -74,7 +70,6 @@ app.config(['$httpProvider', function ($httpProvider) {
         return {
             //turns on the spinner when a request is about to be made
             "request": function (config) {
-                console.log('request');
                 //increment the number of requests made
                 show++;
                 $timeout(showSpinner, waitBeforeShow, false);
@@ -83,20 +78,17 @@ app.config(['$httpProvider', function ($httpProvider) {
             },
 
             "requestError": function (rejection) {
-                console.log('requestError');
                 hideSpinner();
                 return $q.reject(rejection);
             },
 
             // turns off the spinner when a response has been received
             "response": function (response) {
-                console.log('response');
                 hideSpinner();
                 return response || $q.when(response);
             },
 
             "responseError": function (rejection) {
-                console.log('responseError');
                 hideSpinner();
                 return $q.reject(rejection);
             }
@@ -104,6 +96,19 @@ app.config(['$httpProvider', function ($httpProvider) {
     }]);
 }]);
 
+//register an http interceptor that adds 'X-Requested-With': 'XMLHttpRequest' to all XHR requests
+app.config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.interceptors.push(['$q', function ($q) {
+        return {
+            "request": function (config) {
+                console.log('Setting X-Requested-With to', config.url);
+                config.headers['X-Requested-With'] = 'XMLHttpRequest';
+
+                return config || $q.when(config);
+            }
+        }
+    }]);
+}]);
 
 app.run(function($rootScope /*, $location */) {
     console.log('app run');

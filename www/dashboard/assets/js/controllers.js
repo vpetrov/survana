@@ -73,7 +73,6 @@ dashboard.controller('FormListCtrl', ['$scope', '$http',
         };
 
         $scope.isSelected = function (form_id) {
-            console.log($scope.selected, form_id);
             return ($scope.selected.indexOf(form_id) >= 0);
         };
 
@@ -81,7 +80,6 @@ dashboard.controller('FormListCtrl', ['$scope', '$http',
             $scope.message = "";
 
             $http.delete('form', {params:{'id': form_id}}).success(function (response, code, request) {
-                console.log(response,code);
                 if (code === 204) {
                     $scope.removeForm(form_id);
                 } else {
@@ -262,6 +260,7 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
                 cachedTemplate = $templateCache.get(url);
 
             if (cachedTemplate) {
+                console.log('cachedTemplate', cachedTemplate);
                 $scope.template = cachedTemplate;
                 return;
             }
@@ -269,6 +268,7 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
             //fetch the theme template and cache it
             $http.get(url).success(function (response, code, request) {
                 $templateCache.put(url, response);
+                console.log('setting scope.template to the new bootstrap theme template');
                 $scope.template = response;
             }).error(function () {
                     console.log("Error fetching", $location.path())
@@ -279,6 +279,7 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
             //fetch the form JSON and store it in $scope.form
             $http.get('form', {params: $routeParams}).success(function (response, code, request) {
                     if (response.success) {
+                        console.log('setting scope.form to the new form json');
                         $scope.form = response.message;
                     } else {
                         console.log('Error message', response.message);
@@ -294,6 +295,7 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
+            console.log('preview theme has changed. requested new theme:', newTheme);
             Survana.setTheme(newTheme,
                 function () {
                     fetchTemplate(newTheme, Survana.version);
@@ -366,10 +368,8 @@ dashboard.directive('loading', [function () {
         //add a watch to monitor the value of the expression
         scope.$watch(expr, function (val) {
             if (val) {
-                console.log('set loading text');
                 elem.prop('disabled', true);
             } else {
-                console.log('remove loading text');
                 elem.prop('disabled', false);
             }
         });
@@ -383,21 +383,23 @@ dashboard.directive("questionnaire", ['$window', function ($window) {
         scope: false,
         link: function (scope, elem, attrs, ngModel) {
 
-            var tpl;
-
             scope.$watch('template', function(val) {
 
                 //nothing to do?
                 if (!val) {
+                    console.log('directive questionnaire: $watch/template: no template val (', val, ')');
                     return
                 }
 
                 var frame = elem[0],
                     doc = frame.contentDocument || frame.contentWindow.document;
 
+                //document.write() is the fastest way to update the contents.
+                doc.open();
                 doc.write(scope.template);
+                doc.close();
 
-                //update the model
+                //re-render the model
                 ngModel.$render();
             });
 
