@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><% .Title %></title>
+</head>
+<body>
+    <h2><% .Title %></h2>
+    <p><% .Description %></p>
+    <ul>
+        <% $study_id := .Id %>
+        <%range $form := .Forms %>
+            <li>
+                <a href="form?s=<% $study_id %>&f=<% $form.Id %>"><% $form.Id %></a>
+            </li>
+        <%end%>
+    </ul>
+</body>
+</html>

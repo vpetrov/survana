@@ -212,19 +212,55 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *survana.Request) 
 		return
 	}
 
-	html, err := r.StringBody(r.Request.Body)
+	html, err := r.BodyBytes(r.Request.Body)
 	if err != nil {
 		survana.Error(w, err)
 		return
 	}
 
-	if len(html) == 0 {
-		log.Println("no html data")
-		survana.BadRequest(w)
-		return
-	}
+    study, err := survana.FindStudy(study_id, d.Module.Db)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
 
-	log.Println("html:", html)
+    if study == nil {
+        survana.NotFound(w)
+        return
+    }
+
+    //locate the index of the form being published
+    var form_index int = -1
+    for i := range(study.Forms) {
+        if study.Forms[i].Id == form_id {
+            form_index = i
+            break
+        }
+    }
+
+    //make sure the study contains such a form
+    if form_index < 0 {
+        survana.Error(w, survana.ErrNoSuchForm)
+        return
+    }
+
+    log.Println("should publish form index", form_index)
+
+    if (study.Html == nil) {
+        study.Html = make(map[string][]byte, len(study.Forms))
+    }
+
+    //overwrite the HTML
+    study.Html[form_id] = html
+
+    //save the study
+    err = study.Save(d.Module.Db)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    log.Println("done saving published form")
 
 	survana.NoContent(w)
 }

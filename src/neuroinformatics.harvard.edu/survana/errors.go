@@ -10,4 +10,5 @@ var (
 	ErrInvalidId         = errors.New("Invalid id")
 	ErrInvalidCollection = errors.New("Invalid collection")
 	ErrUnauthorized      = errors.New("Unauthorized request")
+    ErrNoSuchForm        = errors.New("Form does not exist")
 )

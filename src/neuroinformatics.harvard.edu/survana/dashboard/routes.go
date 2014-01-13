@@ -1,7 +1,7 @@
 package dashboard
 
 import (
-	_ "log"
+	"log"
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
 )
@@ -57,6 +57,7 @@ func (d *Dashboard) RegisterHandlers() {
 
 // sends the app skeleton to the client
 func (d *Dashboard) Index(w http.ResponseWriter, r *survana.Request) {
+    log.Println("DASHBOARD INDEX")
 	d.RenderTemplate(w, "index", nil)
 }
 

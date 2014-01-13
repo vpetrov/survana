@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Survana</title>
+    <style type="text/css">
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #ddd;
+            color: #eee;
+            font-size: 14px;
+        }
+
+        #content {
+            background-color: #3e3e3e;
+            max-width: 350px;
+            margin: 100px auto;
+            padding: 5px;
+            border: 1px solid #aaa;
+            border-radius: 6px 6px 6px;
+            box-shadow: 1px 1px 6px #666;
+        }
+
+        .header {
+            text-align:center;
+            padding:10px 0px 8px 0px;
+            position:relative;
+            left: -5px;
+        }
+
+
+        #logo {
+            height:40px;
+            vertical-align: top;
+            position: relative;
+        }
+
+        #logo:hover {
+            -webkit-filter: grayscale(1);
+        }
+
+        .brand {
+            font-size:35px;
+            text-shadow:0px 0px 3px #aaa;
+        }
+
+        hr {
+            margin:5px 45px 0px 45px;
+            padding: 0;
+            border: none;
+            border-top: thin solid #aaa;
+        }
+
+        form {
+            padding:10px 0px 0px 0px;
+            text-align: center;
+        }
+
+        form input {
+            border-radius:5px;
+            height:24px;
+            margin-top:10px;
+            text-align:center;
+            font-weight: bold;
+            font-size: 15px;
+            width:100px;
+        }
+
+        form button {
+
+        }
+
+    </style>
+</head>
+<body>
+    <div id="content">
+        <div class="header">
+            <img id="logo" src="assets/img/logo.png">
+            <span class="brand">Survana</span>
+        </div>
+        <hr>
+        <form class="">
+            <label for="study_id">Survey ID:</label>
+            <input id="study_id" type="text" class="form-control">
+            <button type="button" onclick="gotoSurvey()">Go</button>
+        </form>
+    </div>
+    <script type="text/javascript">
+        function gotoSurvey() {
+            window.location.href += '?' + document.getElementById('study_id').value;
+        }
+    </script>
+</body>
+</html>

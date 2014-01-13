@@ -1,45 +1,5 @@
-<!-- Study Preview Template
-    Variables:
-        study: survana.Study with resolved study.forms
-        current_form: index pointing to the currently visible form in the study.
--->
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Preview {{ title }}</title>
-        <meta name="viewport" content="width=device-width">
-        <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/bootstrap-theme.min.css">
-        <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/matrix.css">
-        <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/progress.css">
-        <style type="text/css">
-            question blockquote {
-                color: #3a3a3a;
-                border-left-color: #3a3a3a;
-            }
-        </style>
-    </head>
-    <body style="overflow-y: scroll;">
-        <!-- header -->
-        <div class="navbar navbar-default navbar-static-top">
-            <div class="container">
-                <div class="progress progress-striped s-progress pull-left">
-                    <div class="progress-bar progress-bar-info" style="width: {{ (((current.index - 0) + 1) / study.forms.length)*100}}%"></div>
-                    <div class="progress-text">
-                        <span class="glyphicon glyphicon-check" style="color:white"></span>
-                        <span>{{ (current.index - 0) + 1 }} of {{ study.forms.length }}</span>
-                    </div>
-                </div>
-                <p class="navbar-text hidden-xs hidden-sm pull-left">{{ form.title }}</p>
-                <button ng-class="{'hidden':current.index==(study.forms.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="window.parent.NextPage()">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
-                <button ng-class="{'hidden':current.index<(study.forms.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="window.parent.FinishSurvey()"><span class="glyphicon glyphicon-ok"></span> Finish</button>
-            </div>
-        </div>
-
         <div id="content" class="container" style="margin-top:25px;"></div>
 
         <!-- scripts must in the <body>, otherwise they cause the frame document to delay DOM parsing -->
         <script type="text/javascript" src="assets/lib/jquery/2.0.3/jquery.min.js"></script>
         <script type="text/javascript" src="assets/lib/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    </body>
-</html>

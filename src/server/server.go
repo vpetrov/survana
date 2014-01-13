@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"neuroinformatics.harvard.edu/survana"
 	"neuroinformatics.harvard.edu/survana/dashboard"
+	"neuroinformatics.harvard.edu/survana/study"
 	"os"
 	"os/user"
 	"strconv"
@@ -164,8 +165,13 @@ func EnableModules(config *Config) (err error) {
 
 	//dashboard
 	dashboard_module := dashboard.NewModule(config.WWW+"/dashboard", GetDB(config.DbUrl, "dashboard"))
-
 	survana.Modules.Mount(dashboard_module.Module, "/dashboard")
+
+    //study
+    //TODO: figure out how the dashboard should share published studies with the study module
+    //for now, let them use the same database
+    study_module := study.NewModule(config.WWW + "/study", GetDB(config.DbUrl, "dashboard"))
+    survana.Modules.Mount(study_module.Module, "/study")
 
 	return nil
 }
