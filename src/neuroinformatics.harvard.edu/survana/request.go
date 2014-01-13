@@ -117,6 +117,23 @@ func (r *Request) ParseJSON(v interface{}) (err error) {
 	return r.JSONBody(r.Request.Body, v)
 }
 
+func (r *Request) StringBody(body io.ReadCloser) (result string, err error) {
+	// read the body
+	data, err := ioutil.ReadAll(body)
+	if err != nil {
+		return
+	}
+
+	if len(data) == 0 {
+		err = ErrEmptyRequest
+		return
+	}
+
+	result = string(data)
+
+	return
+}
+
 func (r *Request) JSONBody(body io.ReadCloser, v interface{}) (err error) {
 
 	// read the body

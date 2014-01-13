@@ -1,0 +1,92 @@
+<div class="toolbar">
+    <div class="btn-group">
+        <button type="button" class="btn btn-warning" ng-click="saveStudy()" data-loading="loading"><i class="glyphicon glyphicon-eye-open"></i></button>
+        <button type="button" class="btn btn-warning active"><i class="glyphicon glyphicon-edit"></i></button>
+        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-globe" title="Publish"></i></a>
+    </div>
+
+    <button type="button" class="btn btn-default" ng-click="discardStudy()"><i class="glyphicon glyphicon-remove-circle"></i> Cancel</button>
+
+    <!-- Search -->
+    <div class="input-group col-lg-2 col-md-3 col-sm-3 col-xs-4 pull-right" style="display:inline-table">
+        <input type="text" class="form-control" placeholder="Search forms" data-ng-model="search">
+        <span class="input-group-addon">
+            <i class="glyphicon glyphicon-search"></i>
+        </span>
+    </div>
+</div>
+
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <p class="lead">
+        Edit Study
+        <span class="alert alert-sm alert-dismissable" data-ng-class="{'hidden':!message.length, 'alert-danger':message.length}">
+            <i class="glyphicon glyphicon-minus-sign"></i> {{ message }}
+        </span>
+    </p>
+
+    <form class="form-inline">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" data-ng-model="study.name">
+        </div>
+        <div class="form-group">
+            <label>Title</label>
+            <input type="text" class="form-control" data-ng-model="study.title">
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <input type="text" class="form-control" data-ng-model="study.description">
+        </div>
+    </form>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
+            <ul class="nav nav-pills nav-stacked study-forms">
+                <li class="study-form-placeholder" ng-hide="study.forms.length">
+                    <a href="" class="text-center"><i class="glyphicon glyphicon-info-sign"></i> Choose a form</a>
+                </li>
+                <li ng-repeat="form in study.forms track by $index" class="hover" draggable="true" data-list-index="{{ $index }}" data-ng-model="study.forms">
+                    <a href="">
+                        <span class="label label-primary" style="position:relative; left:-10px;">{{ $index + 1}}</span>{{ form.name }}
+                        <span class="badge badge-success">{{ form.version }}</span>
+                        <!-- stopEvent() is called to prevent location change due to click bubbling -->
+                        <span class="pull-right text-danger hover-hidden remove-form" ng-click="removeForm($index); stopEvent($event);">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </span>
+
+                    </a>
+                </li>
+            </ul>
+            <hr class="visible-xs">
+        </div>
+
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">
+            <div class="row">
+                <div class="form-list col-lg-4 col-md-6 col-sm-12 col-xs-12" ng-repeat="form in forms | filter:search">
+                    <div class="thumbnail hover">
+                        <div class="caption" ng-click="addForm(form.id)">
+                            <div class="lead form-list-title">
+                                <i class="glyphicon glyphicon-list-alt"></i> {{ form.name }}
+                            </div>
+                            <div class="form-list-description">
+                                <p>{{ form.description || form.title}}</p>
+                            </div>
+                        </div>
+
+                        <div class="text-left hover-hidden form-list-buttons">
+                            <a href="" class="btn btn-info btn-xs" role="button" ng-click="addForm(form.id)">
+                                <i class="glyphicon glyphicon-plus"></i>
+                            </a>
+                            <a href="#/forms/{{ form.id }}" class="btn btn-default btn-xs" role="button">
+                                <i class="glyphicon glyphicon-eye-open"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

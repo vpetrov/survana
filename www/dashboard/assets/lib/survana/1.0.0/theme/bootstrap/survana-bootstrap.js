@@ -42,8 +42,8 @@ var BootstrapEngine = function (doc) {
         checkbox_count = 0,
         input_count = 0;
 
-    function _html(elem, field) {
-        elem.innerHTML = field.html || "";
+    function _html(elem, field, value) {
+        elem.innerHTML = value || field.html || "";
     }
 
     function _size(elem, field, s) {
@@ -295,12 +295,15 @@ var BootstrapEngine = function (doc) {
 
         if (field.equalize) {
             //first, if equalize was enabled, pad all labels with non breakable spaces to make all labels
-            //have the same width as. We need to determine the length of the longest label
+            //have the same width. We need to determine the length of the longest label and reset the paddedHtml prop
             var max_label = 0;
             for (i = 0; i < field.rows.length; ++i) {
                 if (field.rows[i].html.length > max_label) {
                     max_label = field.rows[i].html.length;
                 }
+
+                //remove any previous padding settings
+                field.rows[i].paddedHtml = '';
             }
 
             //now, loop over all labels again and pad them until max_label
@@ -353,8 +356,7 @@ var BootstrapEngine = function (doc) {
                     field.rows[i].paddedHtml = (i + 1) + ". " + (field.rows[i].paddedHtml || "");
                 }
 
-                field.rows[i].html = field.rows[i].paddedHtml;
-                _html(padded_row_label, field.rows[i]);
+                _html(padded_row_label, field.rows[i], field.rows[i].paddedHtml);
 
                 row.appendChild(padded_row_label);
             }

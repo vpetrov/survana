@@ -9,11 +9,12 @@ const (
 )
 
 type User struct {
-	Id   string
-	Name string
+	Id     string   `bson:"id,omitempty" json:"id,omitempty"`
+	Name   string   `bson:"name,omitempty" json:"name,omitempty"`
+	Groups []string `bson:"groups,omitempty" json:"groups,omitempty"`
 
 	//DbObject
-	DBID interface{} `bson:"_id,omitempty"`
+	DBID interface{} `bson:"_id,omitempty" json:"-"`
 }
 
 func NewUser(email, name string) *User {

@@ -2,10 +2,19 @@
 <div class="toolbar">
     <div class="btn-group">
         <button type="button" class="btn btn-warning active"><i class="glyphicon glyphicon-eye-open" title="Preview"></i></button>
-        <a href="#/forms/edit/{{ form.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-edit" title="Edit"></i></a>
+        <a href="#/studies/edit/{{ study.id }}" ng-hide="study.published" class="btn btn-warning"><i class="glyphicon glyphicon-edit" title="Edit"></i></a>
+        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-globe" title="Publish"></i></a>
     </div>
 
+    <span ng-if="forms.length">
+        <span class="text">&nbsp;</span>
+        <select class="form-control" data-ng-model="current.index">
+            <option ng-repeat="f in study.forms track by $index" value="{{ $index }}">{{ $index + 1}}. {{ f.title || f.name || f.id }}</option>
+        </select>
+    </span>
+
     <span class="text">&nbsp;</span>
+
     <div class="btn-group">
         <button type="button" class="btn btn-info" ng-click="resize('L')" ng-class="{active: size == 'L'}" title="Desktop">
             <i class="fa fa-desktop"></i>
@@ -25,10 +34,10 @@
 <!-- Content -->
 <div class="white col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <div class="lead">
-        {{ form.title }} <span class="label label-default">{{ form.version }}</span>
-        <small>&nbsp;{{ getFormDate() }}</small>
+        {{ study.title }} <span class="label label-default">{{ study.version }}</span>
+        <small>&nbsp;{{ getStudyDate() }}</small>
     </div>
 
     <!-- space to render the form's as HTML -->
-    <iframe data-questionnaire="survana" data-ng-model="form" class="questionnaire size-{{ size }}"></iframe>
+    <iframe data-questionnaire="survana" data-ng-model="current.form" class="study size-{{ size }}"></iframe>
 </div>

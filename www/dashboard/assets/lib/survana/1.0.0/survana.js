@@ -17,7 +17,7 @@
     /* Generate HTML from a questionnaire description */
     Survana.Questionnaire = function (form) {
 
-        if (form === undefined || form.fields === undefined || !Survana.theme) {
+        if (!form || !form.fields || !Survana.theme) {
             return null
         }
 

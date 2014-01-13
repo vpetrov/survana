@@ -9,6 +9,7 @@
 
     <!-- app styles -->
     <link rel="stylesheet" type="text/css" href="assets/css/spinner.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/dashboard.css">
 
     <!-- lib scripts -->
     <script type="text/javascript" src="assets/lib/jquery/2.0.3/jquery.min.js"></script>
@@ -98,7 +99,7 @@
             /* padding and borders added to match height of sidebar item (42px) */
             border-top: 1px solid #eee;
             border-bottom: 1px solid #aaa;
-            height: 42px;
+            min-height: 42px;
             -moz-border-radius: 0;
             -webkit-border-radius: 0;
             border-radius:0;
@@ -119,6 +120,11 @@
             display: inline-block;
         }
 
+        .toolbar select {
+            max-width: 200px;
+            display:inline
+        }
+
         .editor {
             position:absolute;
             width:100%;
@@ -131,34 +137,9 @@
             font-size:16px;
         }
 
-        .questionnaire {
-            border-radius:3px;
-            border: 1px solid #aaa;
-            -webkit-box-shadow:1px 1px 1px 1px #aaa;
-            box-shadow:1px 1px 1px 1px #aaa;
+        .text-yellow {
+            color: orange;
         }
-
-        .questionnaire.size-L {
-            width: 100%;
-            min-width: 1222px;
-            height:1024px;
-        }
-
-        .questionnaire.size-M {
-            width: 1000px;
-            height: 768px;
-        }
-
-        .questionnaire.size-S {
-            width: 777px;
-            height: 960px;
-        }
-
-        .questionnaire.size-XS {
-            width: 320px;
-            height: 480px;
-        }
-
     </style>
 </head>
 <body>
@@ -195,9 +176,9 @@
                 <li class="active"><a href="#/">Dashboard</a></li>
                 <li class="dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="glyphicon glyphicon-plus"></i> Create <b class="caret"></b></a>
+                        <i class="glyphicon glyphicon-pencil"></i> Create <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="glyphicon glyphicon-{{ icons.study }}"></i> Study</a></li>
+                        <li><a href="#/studies/create"><i class="glyphicon glyphicon-{{ icons.study }}"></i> Study</a></li>
                         <li><a href="#/forms/create"><i class="glyphicon glyphicon-{{ icons.form }}"></i> Form</a></li>
                         <li class="divider"></li>
                         <li><a href="#"><i class="glyphicon glyphicon-{{ icons.user }}"></i> User</a></li>

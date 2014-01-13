@@ -1,0 +1,46 @@
+<div class="toolbar">
+    <div class="btn-group">
+        <a href="#/studies/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-eye-open" title="Preview"></i></a>
+        <a href="#/studies/edit/{{ study.id }}" ng-hide="study.published" class="btn btn-warning"><i class="glyphicon glyphicon-edit" title="Edit"></i></a>
+        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning active"><i class="glyphicon glyphicon-globe" title="Publish"></i></a>
+    </div>
+
+    <button type="button" class="btn btn-success" ng-hide="study.published" ng-disabled="!template || publishing" ng-click="publishStudy()"><i class="glyphicon glyphicon-cloud-upload"></i> Publish</button>
+    <button type="button" class="btn btn-danger" ng-show="study.published" ng-click="unpublishStudy()"><i class="glyphicon glyphicon-cloud-download"></i> Revert to draft</button>
+
+    <div ng-show="publishing || error" ng-class="{'active':publishing}" class="progress progress-striped btn-group" style="width:200px; display:inline-block; margin-bottom:3px; margin-left:5px">
+        <div class="progress-bar" ng-class="{'progress-bar-success':!error, 'progress-bar-danger':error}" role="progressbar" style="width: {{ ((current.index-0) / study.forms.length) * 100 }}%;"></div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="white col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="lead">
+        <p class="lead">
+            {{ study.name }}
+            <span class="alert alert-sm alert-dismissable" data-ng-class="{'hidden':!message.length, 'alert-danger':message.length}">
+                <i class="glyphicon glyphicon-minus-sign"></i> {{ message }}
+            </span>
+        </p>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
+            <ul class="nav nav-pills nav-stacked">
+                <li ng-repeat="form in study.forms track by $index" ng-class="{'active':isCurrent($index)}">
+                    <a href="">
+                        <span class="label label-primary" style="position:relative; left:-10px;">{{ $index + 1}}</span>
+                        {{ form.name }}
+                        <span class="badge badge-success">{{ form.version }}</span>
+                        <span ng-show="publishing && isCurrent($index)" class="pull-right"><i class="fa fa-spinner fa-spin"></i></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">
+            <iframe data-questionnaire="survana" data-ng-model="current.form" data-render="rendered" class="study hidden"></iframe>
+        </div>
+    </div>
+
+</div>

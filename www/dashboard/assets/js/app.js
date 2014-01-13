@@ -29,7 +29,23 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
         }).
         when("/studies", {
             templateUrl: 'studies',
-            controller: 'StudyCtrl'
+            controller: 'StudyListCtrl'
+        }).
+        when("/studies/create", {
+            templateUrl: 'studies/create',
+            controller: 'StudyEditCtrl'
+        }).
+        when("/studies/:id", {
+            templateUrl: 'studies/view',
+            controller: 'StudyViewCtrl'
+        }).
+        when("/studies/edit/:id", {
+            templateUrl: 'studies/edit',
+            controller: 'StudyEditCtrl'
+        }).
+        when("/studies/publish/:id", {
+            templateUrl: 'studies/publish',
+            controller: 'StudyPublishCtrl'
         }).
         otherwise({
             redirectTo: "/"

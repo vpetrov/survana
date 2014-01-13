@@ -6,18 +6,22 @@ import (
 )
 
 const (
-	nID             = 6
+	nID             = 6 //length of a form ID
 	FORM_COLLECTION = "forms"
 )
 
 type Form struct {
-	DBID      interface{} `bson:"_id,omitempty" json:"-"`
-	Id        string      `bson:"id,omitempty" json:"id"`
-	Name      string      `bson:"name,omitempty" json:"name"`
-	Title     string      `bson:"title,omitempty" json:"title"`
-	Version   string      `bson:"version,omitempty" json:"version"`
-	CreatedOn time.Time   `bson:"created_on,omitempty" json:"created_on"`
-	Fields    []Field     `bson:"fields,omitempty" json:"fields"`
+	DBID        interface{} `bson:"_id,omitempty" json:"-"`
+	Id          string      `bson:"id,omitempty" json:"id"`
+	Name        string      `bson:"name,omitempty" json:"name"`
+	Title       string      `bson:"title,omitempty" json:"title"`
+	Description string      `bson:"description,omitempty" json:"description"`
+	Version     string      `bson:"version,omitempty" json:"version"`
+	CreatedOn   time.Time   `bson:"created_on,omitempty" json:"created_on"`
+	Fields      []Field     `bson:"fields,omitempty" json:"fields"`
+
+	//ACL
+	OwnerId string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
 }
 
 func NewForm() *Form {
@@ -27,10 +31,8 @@ func NewForm() *Form {
 }
 
 //returns a list of forms. if no forms are found, the 'forms' slice will be empty
-func ListForms(db Database) (forms []Form, err error) {
+func ListForms(filter []string, db Database) (forms []Form, err error) {
 	forms = make([]Form, 0)
-
-	filter := []string{"id", "name", "version", "created_on"}
 
 	err = db.FilteredList(FORM_COLLECTION, filter, &forms)
 	if err != nil {

@@ -1,5 +1,9 @@
 <div class="toolbar">
-    <button type="button" class="btn btn-success" ng-click="saveCode($event)" data-loading="loading"><i class="glyphicon glyphicon-floppy-disk"></i> Save</button>
+    <div class="btn-group">
+        <button type="button" class="btn btn-warning" ng-click="saveCode($event)" data-loading="loading" title="Preview"><i class="glyphicon glyphicon-eye-open"></i></button>
+        <button type="button" class="btn btn-warning active" ng-click="" data-loading="loading" title="Edit"><i class="glyphicon glyphicon-edit"></i></button>
+    </div>
+
     <button type="button" class="btn btn-default" ng-click="discardCode($event)"><i class="glyphicon glyphicon-remove-circle"></i> Cancel</button>
     <a href="https://github.com/vpetrov/survana-admin/wiki/Developer's-Guide-to-Creating-Questionnaires"
        class="btn btn-info pull-right" target="_blank"><i class="glyphicon glyphicon-info-sign"></i> Help

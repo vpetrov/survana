@@ -8,12 +8,6 @@ dashboard.controller('HomeCtrl', ['$scope', '$http',
     }
 ]);
 
-dashboard.controller('StudyCtrl', ['$scope', '$http', '$location', '$window',
-    function StudyCtrl($scope, $http, $location, $window) {
-        console.log('StudyCtrl was created/invoked.');
-    }
-]);
-
 dashboard.controller('NavigationCtrl', ['$scope', '$location',
     function NavigationCtrl($scope, $location) {
         //glyphicons
@@ -40,6 +34,668 @@ dashboard.controller('NavigationCtrl', ['$scope', '$location',
             // this is so the path "/foo/bar" will match the page url "/foo"
             return $location.path().indexOf(pageUrl) === 0;
         }
+    }
+]);
+
+
+dashboard.controller('StudyListCtrl', ['$scope', '$http',
+    function StudyListCtrl($scope, $http) {
+        $scope.studies = [];
+        $scope.selected = [];
+        $scope.message = '';
+        $scope.search = '';
+
+        $http.get('studies/list').success(function (response, code, request) {
+            if (response.success) {
+                $scope.studies = response.message;
+
+                console.log($scope.studies);
+            } else {
+                console.log('Error message', response.message);
+            }
+        }).error(function () {
+                console.log("Error fetching studies/list");
+            });
+
+        //toggles a selected study on or off
+        $scope.toggle = function (study_id) {
+            var index = $scope.selected.indexOf(study_id);
+            if (index === -1) {
+                $scope.selected.push(study_id);
+            } else {
+                $scope.selected.splice(index,1);
+            }
+        };
+
+        $scope.isSelected = function (study_id) {
+            return ($scope.selected.indexOf(study_id) >= 0);
+        };
+
+        $scope.deleteStudy = function (study_id) {
+            $scope.message = "";
+
+            $http.delete('study', {params:{'id': study_id}}).success(function (response, code, request) {
+                if (code === 204) {
+                    $scope.removeStudy(study_id);
+                } else {
+                    $scope.message = 'Invalid response from server: ' + response;
+                }
+            }).error(function (response) {
+                    $scope.message = response;
+                    console.log('error', response);
+                });
+        };
+
+        $scope.deleteSelected = function () {
+            $scope.message = "";
+
+            if (!$scope.selected.length) {
+                return;
+            }
+
+            if ($scope.selected.length > $scope.max_selected) {
+                return
+            }
+
+            for (var i = 0; i < $scope.selected.length; ++i) {
+                $scope.deleteStudy($scope.selected[i]);
+            }
+        };
+
+        $scope.removeStudy = function (study_id) {
+            for (var i = 0; i < $scope.studies.length; ++i) {
+                if ($scope.studies[i].id === study_id) {
+                    $scope.studies.splice(i, 1);
+                    break;
+                }
+            }
+
+            //remove it from selected
+            var index = $scope.selected.indexOf(study_id);
+
+            if (index >= 0) {
+                $scope.selected.splice(index, 1);
+            }
+        }
+    }
+]);
+
+dashboard.controller('StudyEditCtrl', ['$scope', '$http', '$window', '$location', '$routeParams',
+    function StudyEditCtrl($scope, $http, $window, $location, $routeParams) {
+        $scope.study = {
+            name: "",
+            title: "",
+            description: "",
+            version: "",
+            forms: []
+        };
+
+        $scope.create = ($routeParams.id === undefined);
+        $scope.forms = [];
+        $scope.loading = false;
+        $scope.message = "";
+
+        //get all forms
+        $http.get('forms/list').success(function (response, code, request) {
+            if (response.success) {
+                $scope.forms = response.message;
+
+                //update the list of forms in the study, if the study info has been downloaded already
+                if ($scope.study.forms.length) {
+                    resolveStudyForms();
+                }
+            } else {
+                console.log('Error message', response.message);
+            }
+        }).error(function () {
+                console.log("Error fetching", $location.path())
+            });
+
+        //if we're editing a form, 'id' will be set
+        if (!$scope.create) {
+            //fetch the form JSON and store it in $scope.form
+            $http.get('study', {params: $routeParams}).success(function (response, code, request) {
+                if (response.success) {
+                    $scope.study = response.message;
+
+                    //update the list of forms in the study, if the form datastore is available
+                    if ($scope.forms.length) {
+                        resolveStudyForms();
+                    }
+                } else {
+                    console.log('Error message', response.message);
+                }
+            }).error(function () {
+                    console.log("Error fetching", $location.path())
+                });
+        }
+
+        //by default, the backend will store just pointers to the forms ({'id':form_id}).
+        //this will dereference all pointers using $scope.forms.
+        function resolveStudyForms() {
+            var form, form_proxy, i;
+
+            if (!$scope.study || !$scope.study.forms) {
+                return;
+            }
+
+            //replace form stubs with actual forms, if they're present
+            for (i = 0; i < $scope.study.forms.length; i++) {
+                form_proxy = $scope.study.forms[i];
+
+                //skip invalid entries
+                if (!form_proxy || !form_proxy.id) {
+                    continue;
+                }
+
+                form = findForm(form_proxy.id);
+
+                if (form) {
+                    $scope.study.forms[i] = form;
+                }
+            }
+        }
+
+        function findForm(form_id) {
+            var form;
+
+            for (var i = 0; i < $scope.forms.length; ++i) {
+                form = $scope.forms[i];
+
+                if (form && form.id === form_id) {
+                    return form;
+                }
+            }
+        }
+
+        $scope.addForm = function (form_id) {
+
+            var form = findForm(form_id);
+
+            if (form) {
+                if (!$scope.study.forms) {
+                    $scope.study.forms = [form];
+                } else {
+                    $scope.study.forms.push(form);
+                }
+            }
+        };
+
+        $scope.removeForm = function (index) {
+            try {
+                $scope.study.forms.splice(index,1);
+            } catch (e) {
+                console.log('error', e);
+            }
+        };
+
+        //if the save operation was successful
+        function onSaveSuccess(response, code, request) {
+            $scope.loading = false;
+
+            var id;
+
+            //no content = an 'edit' operation, therefore $scope.study should have a valid id
+            if (code == 204 && ($scope.study.id !== undefined)) {
+                id = $scope.study.id;
+            } else if (response.success && response.message && response.message.id) {
+                id = response.message.id;
+            }
+
+            //either redirect to view the new form, or show the message from server
+            if (id) {
+                $location.path('/studies/' + id);
+            } else {
+                $scope.message = response.message;
+            }
+        }
+
+        //if the save operation failed
+        function onSaveError(response) {
+            $scope.loading = false;
+            $scope.message = "Failed to save study (" + response + ")";
+        }
+
+        $scope.saveStudy = function () {
+            //reset state
+            $scope.message = "";
+
+            if (!$scope.study.name.length) {
+                $scope.message = 'Please enter a name for this study';
+                return
+            }
+
+            if ($scope.create) {
+                console.log('creating study with data', $scope.study);
+                $http.post('studies/create', $scope.study).
+                    success(onSaveSuccess).
+                    error(onSaveError);
+            } else {
+
+                //create a copy of $scope.study, and replace all forms with stubs
+                var study = {
+                        name: $scope.study.name,
+                        title: $scope.study.title,
+                        description: $scope.study.description,
+                        forms: []
+                    },
+                    i;
+
+                //extract form IDs, since we don't actually want to send copies of the forms, just the form IDs
+                for (i in $scope.study.forms) {
+                    //replace each form with a form-proxy object, which just contains the form id
+                    study.forms[i] = { 'id': $scope.study.forms[i].id };
+                }
+
+                $http.put('studies/edit', study, {params: $routeParams}).
+                    success(onSaveSuccess).
+                    error(onSaveError);
+            }
+        };
+
+        $scope.discardStudy = function () {
+            $window.history.back();
+        };
+
+        $scope.stopEvent = stopEvent;
+    }
+]);
+
+dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$routeParams', '$http', '$templateCache',
+    function ($scope, $window, $location, $routeParams, $http, $templateCache) {
+        $scope.study = {};
+        $scope.forms = [];
+        $scope.current = {
+            index: 0,
+            form: {}
+        };
+        $scope.size = 'M';
+        $scope.template = null;
+        $scope.theme = 'bootstrap';
+
+        function fetchTemplate(theme_id, theme_version) {
+            var url = 'theme?id=' + theme_id + '&version=' + theme_version + '&preview=true&study=true',
+                cachedTemplate = $templateCache.get(url);
+
+            if (cachedTemplate) {
+                console.log('cachedTemplate', cachedTemplate);
+                $scope.template = cachedTemplate;
+                return;
+            }
+
+            //fetch the theme template and cache it
+            $http.get(url).success(function (response, code, request) {
+                $templateCache.put(url, response);
+                console.log('setting scope.template to the new bootstrap theme template');
+                $scope.template = response;
+            }).error(function () {
+                    console.log("Error fetching", $location.path())
+                });
+        }
+
+        function fetchStudy() {
+            //fetch the form JSON and store it in $scope.form
+            $http.get('study', {params: $routeParams}).success(function (response, code, request) {
+                if (response.success) {
+                    $scope.study = response.message;
+
+                    //fetch form definitions for all the forms
+                    if ($scope.study.forms.length) {
+                        fetchForms($scope.study.forms);
+                    }
+                } else {
+                    console.log('Error message', response.message);
+                }
+            }).error(function () {
+                    console.log("Error fetching", url)
+                });
+        }
+
+        function fetchForms(form_list) {
+            if (!form_list.length) {
+                return
+            }
+
+            //get forms, including the fields
+            $http.get('forms/list', {params:{fields:true}}).success(function (response, code, request) {
+                if (response.success) {
+                    $scope.forms = response.message;
+
+                    //update the list of forms in the study, if the study info has been downloaded already
+                    if ($scope.study.forms.length) {
+                        resolveStudyForms();
+                    }
+
+                    console.log('page forms', $scope.forms);
+                } else {
+                    console.log('Error message', response.message);
+                }
+            }).error(function () {
+                    console.log("Error fetching", $location.path())
+                });
+        }
+
+        //by default, the backend will store just pointers to the forms ({'id':form_id}).
+        //this will dereference all pointers using $scope.forms.
+        function resolveStudyForms() {
+            var form, form_proxy, i;
+
+            //replace form stubs with actual forms, if they're present
+            for (i = 0; i < $scope.study.forms.length; i++) {
+                form_proxy = $scope.study.forms[i];
+
+                //skip invalid entries
+                if (!form_proxy || !form_proxy.id) {
+                    continue;
+                }
+
+                form = findForm(form_proxy.id);
+
+                if (form) {
+                    $scope.study.forms[i] = form;
+                }
+            }
+
+            //as soon as the study forms are resolved, we can render the current form
+            //if we update current.form, the watch will trigger the update
+            $scope.current.form = $scope.study.forms[$scope.current.index];
+        }
+
+        function findForm(form_id) {
+            var form;
+
+            for (var i = 0; i < $scope.forms.length; ++i) {
+                form = $scope.forms[i];
+
+                if (form && form.id === form_id) {
+                    return form;
+                }
+            }
+        }
+
+        $scope.resize = function (size) {
+            $scope.size = size;
+        };
+
+        $scope.getStudyDate = function () {
+                return (new Date($scope.study.created_on)).toLocaleDateString();
+        };
+
+        //when 'theme' changes, notify Survana
+        $scope.$watch('theme', function (newTheme, oldTheme) {
+            console.log('preview theme has changed. requested new theme:', newTheme);
+            Survana.setTheme(newTheme,
+                function () {
+                    fetchTemplate(newTheme, Survana.version);
+                    fetchStudy();
+                },
+                function () {
+                    console.error('Failed to load Survana Themes!');
+                });
+        });
+
+        //when the current index changes, change the current form
+        $scope.$watch('current.index', function (newIndex, oldIndex) {
+            console.log('current index has changed, updating current form', newIndex);
+            if ($scope.study && $scope.study.forms && $scope.study.forms.length) {
+                $scope.current.form = $scope.study.forms[newIndex];
+            }
+        });
+    }
+]);
+
+dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$routeParams', '$http', '$templateCache',
+    function StudyPublishCtrl($scope, $window, $location, $routeParams, $http, $templateCache) {
+        $scope.study = null;
+        $scope.forms = null;
+        $scope.current = {
+            index: null,
+            form: null
+        };
+        $scope.rendered = null;
+
+        $scope.template = null;
+        $scope.theme = 'bootstrap';
+
+        $scope.message = null;
+
+        $scope.publishing = false;
+        $scope.unpublishing = false;
+        $scope.error = false;
+
+        $scope.publishStudy = function() {
+            console.log('publishing study!');
+            $scope.publishing = true;
+            $scope.current.index = 0;
+            $scope.error = false;
+            $scope.message = null;
+            $scope.current.form = $scope.study.forms[0];
+        };
+
+        $scope.unpublishStudy = function () {
+            var study = copyStudy();
+            study.published = false;
+
+            $scope.message = "";
+
+            console.log('uploading', study);
+
+            $http.put('studies/edit', study, {params: $routeParams}).
+                success(function (response, code, request) {
+                    //we're done.
+                    if (code === 204) {
+                        $scope.study.published = false;
+                    } else {
+                        $scope.message = response.message;
+                    }
+                }).error(function (response) {
+                    $scope.message = response;
+                });
+        };
+
+        $scope.errorPublishing = function (message) {
+            $scope.error = true;
+            $scope.publishing = false;
+            $scope.message = message;
+        };
+
+        $scope.finishPublishing = function () {
+            console.log('DONE PUBLISHING!');
+            $scope.publishing = false;
+            $scope.current.index = null;
+            $scope.current.form = null;
+            $scope.message = null;
+            $scope.error = false;
+        };
+
+        function nextForm() {
+            //if there are forms left
+            if (($scope.current.index + 1) < $scope.study.forms.length) {
+                $scope.current.index++;
+                $scope.current.form = $scope.study.forms[$scope.current.index];
+            } else {
+                //otherwise, we need to mark the study object as 'published' and save it
+                $scope.study.published = true;
+                saveStudy();
+            }
+        }
+
+        $scope.$watch('rendered', function (newVal, oldVal) {
+            if (!$scope.rendered) {
+                console.log('nothing rendered :/')
+                return;
+            }
+
+            console.log('sending http post!');
+            var url = "studies/publish?id=" + $scope.study.id + "&form_id=" + $scope.current.form.id;
+
+            $http.post(url, $scope.rendered).success(function (response, code, request) {
+                //go to the next form
+                if (code === 204) {
+                    nextForm();
+                } else {
+                    $scope.errorPublishing(response.message);
+                }
+            }).error(function (response) {
+                $scope.errorPublishing(response);
+            });
+        });
+
+        $scope.isCurrent = function (index) {
+            return index === $scope.current.index;
+        };
+
+        function fetchTemplate(theme_id, theme_version) {
+            var url = 'theme?id=' + theme_id + '&version=' + theme_version + '&publish=true&study=true',
+                cachedTemplate = $templateCache.get(url);
+
+            if (cachedTemplate) {
+                console.log('cachedTemplate', cachedTemplate);
+                $scope.template = cachedTemplate;
+                return;
+            }
+
+            //fetch the theme template and cache it
+            $http.get(url).success(function (response, code, request) {
+                $templateCache.put(url, response);
+                console.log('setting scope.template to the new bootstrap theme template');
+                $scope.template = response;
+            }).error(function () {
+                    console.log("Error fetching", $location.path())
+                });
+        }
+
+        function copyStudy () {
+            //create a copy of $scope.study, and replace all forms with stubs
+            var study = {
+                    name: $scope.study.name,
+                    title: $scope.study.title,
+                    description: $scope.study.description,
+                    published: $scope.study.published,
+                    version: $scope.study.version,
+                    forms: []
+                },
+                i;
+
+            //extract form IDs, since we don't actually want to send copies of the forms, just the form IDs
+            for (i in $scope.study.forms) {
+                //replace each form with a form-proxy object, which just contains the form id
+                study.forms[i] = { 'id': $scope.study.forms[i].id };
+            }
+
+            return study;
+        }
+
+        function saveStudy () {
+            //reset state
+            $scope.message = "";
+
+            //create a copy of $scope.study, and replace all forms with stubs
+            var study = copyStudy();
+
+            $http.put('studies/edit', study, {params: $routeParams}).
+                success(function (response, code, request) {
+                    //we're done.
+                    if (code === 204) {
+                        $scope.finishPublishing();
+                    } else {
+                        $scope.errorPublishing(response.message);
+                    }
+                }).error(function (response) {
+                    $scope.errorPublishing(response);
+                });
+        }
+
+
+        function fetchStudy() {
+            //fetch the form JSON and store it in $scope.form
+            $http.get('study', {params: $routeParams}).success(function (response, code, request) {
+                if (response.success) {
+                    $scope.study = response.message;
+
+                    //fetch form definitions for all the forms
+                    if ($scope.study.forms.length) {
+                        fetchForms($scope.study.forms);
+                    }
+                } else {
+                    console.log('Error message', response.message);
+                }
+            }).error(function () {
+                    console.log("Error fetching", url)
+                });
+        }
+
+        function fetchForms(form_list) {
+            if (!form_list.length) {
+                return
+            }
+
+            //get forms, including the fields
+            $http.get('forms/list', {params:{fields:true}}).success(function (response, code, request) {
+                if (response.success) {
+                    $scope.forms = response.message;
+
+                    //update the list of forms in the study, if the study info has been downloaded already
+                    if ($scope.study.forms.length) {
+                        resolveStudyForms();
+                    }
+
+                    console.log('page forms', $scope.forms);
+                } else {
+                    console.log('Error message', response.message);
+                }
+            }).error(function () {
+                    console.log("Error fetching", $location.path())
+                });
+        }
+
+        //by default, the backend will store just pointers to the forms ({'id':form_id}).
+        //this will dereference all pointers using $scope.forms.
+        function resolveStudyForms() {
+            var form, form_proxy, i;
+
+            //replace form stubs with actual forms, if they're present
+            for (i = 0; i < $scope.study.forms.length; i++) {
+                form_proxy = $scope.study.forms[i];
+
+                //skip invalid entries
+                if (!form_proxy || !form_proxy.id) {
+                    continue;
+                }
+
+                form = findForm(form_proxy.id);
+
+                if (form) {
+                    $scope.study.forms[i] = form;
+                }
+            }
+        }
+
+        function findForm(form_id) {
+            var form;
+
+            for (var i = 0; i < $scope.forms.length; ++i) {
+                form = $scope.forms[i];
+
+                if (form && form.id === form_id) {
+                    return form;
+                }
+            }
+        }
+
+        //when 'theme' changes, notify Survana
+        $scope.$watch('theme', function (newTheme, oldTheme) {
+            console.log('preview theme has changed. requested new theme:', newTheme);
+            Survana.setTheme(newTheme,
+                function () {
+                    fetchTemplate(newTheme, Survana.version);
+                },
+                function () {
+                    console.error('Failed to load Survana Themes!');
+                });
+        });
+
+        fetchStudy();
     }
 ]);
 
@@ -376,12 +1032,36 @@ dashboard.directive('loading', [function () {
     }
 }]);
 
-dashboard.directive("questionnaire", ['$window', function ($window) {
+dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', function ($window, $compile, $timeout) {
     return {
         restrict: 'A',
         require: '?ngModel',
         scope: false,
         link: function (scope, elem, attrs, ngModel) {
+
+            function updateTemplate() {
+                console.log('updating template with new scope', scope.form);
+                $compile(elem.contents())(scope);
+            }
+
+            //register a NextPage() function that can be called within the questionnaire preview iframe
+            $window.NextPage = function () {
+                $timeout(function () {
+                    if ((scope.current.index + 1) < scope.study.forms.length) {
+                        console.log('incrementing current index')
+                        scope.current.index++;
+                    }
+                });
+            };
+
+            $window.FinishSurvey = function () {
+                $timeout(function () {
+                    scope.current.index = 0;
+                });
+            };
+
+            //when current_form changes, update the template
+            scope.$watch('current.index', updateTemplate);
 
             scope.$watch('template', function(val) {
 
@@ -399,6 +1079,8 @@ dashboard.directive("questionnaire", ['$window', function ($window) {
                 doc.write(scope.template);
                 doc.close();
 
+                updateTemplate();
+
                 //re-render the model
                 ngModel.$render();
             });
@@ -413,19 +1095,142 @@ dashboard.directive("questionnaire", ['$window', function ($window) {
 
                 //make sure a theme, a template and a rendering node are available
                 if (!Survana.theme || !scope.template || !node) {
+                    console.log('no theme, or no template or no node');
                     return;
                 }
 
                 result = Survana.Questionnaire(ngModel.$viewValue);
 
                 if (result) {
+                    console.log('q result');
                     if (node.hasChildNodes()) {
                         node.removeChild(node.firstChild);
                     }
 
                     node.appendChild(result);
+
+                    if (attrs['render']) {
+                        scope[attrs['render']] = "<!DOCTYPE html><html>" + doc.documentElement.innerHTML + "</html>";
+                        console.log('just rendered', scope.current.index);
+                    }
+                } else {
+                    console.log('no view value');
                 }
             }
         }
     }
 }]);
+
+
+dashboard.directive("draggable", ['$window', function ($window) {
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        scope: false,
+        link: function (scope, elem, attrs, ngModel) {
+            var node = elem[0];
+
+            if (ngModel === undefined) {
+                console.error('draggable must have a scope model', elem);
+            }
+
+            function onDragStart(e) {
+                var src = angular.element(e.currentTarget);
+
+
+
+                if (e.originalEvent && (e.originalEvent.dataTransfer !== undefined)) {
+                    e.originalEvent.dataTransfer.effectAllowed = 'move';
+                    e.originalEvent.dataTransfer.setData('text/plain', src.attr('data-list-index'));
+                    e.originalEvent.dataTransfer.setDragImage(e.currentTarget, 0, 0);
+                }
+
+                e.currentTarget.style.opacity = '0.5'; //decrease opacity
+            }
+
+            var dd = 0;
+
+            //add 'dragover' class
+            function onDragEnter(e) {
+                e.currentTarget.classList.add('dragover');
+            }
+
+            function onDragOver(e) {
+
+                if (!e.currentTarget.classList.contains('dragover')) {
+                    e.currentTarget.classList.add('dragover');
+                }
+
+                stopEvent(e);
+
+                if (e.originalEvent.dataTransfer) {
+                    e.originalEvent.dataTransfer.dropEffect = 'move';
+                }
+            }
+
+            //remove 'dragover' class
+            function onDragLeave(e) {
+                e.currentTarget.classList.remove('dragover');
+            }
+
+            function onDragEnd(e) {
+                e.currentTarget.style.opacity = '1.0';
+            }
+
+            function onDragDrop(e) {
+
+                stopEvent(e);
+
+                var src_index = e.originalEvent.dataTransfer.getData('text/plain')|0,
+                    dest_index = elem.attr('data-list-index')|0;
+
+                e.currentTarget.classList.remove('dragover');
+
+                scope.$apply(function () {
+
+                    var delta = 0,
+                        temp = ngModel.$viewValue[src_index];
+
+                    //if source was moved up, the new element has shifted this index by 1
+                    if (src_index < dest_index) {
+                        console.log('src_index > dest_index');
+                        dest_index += 1;
+                    } else {
+                        src_index += 1;
+                    }
+
+                    ngModel.$viewValue.splice(dest_index, 0, temp);
+                    ngModel.$viewValue.splice(src_index, 1);
+                });
+
+
+                return false;
+            }
+
+            //attach events
+            elem.on('dragstart', onDragStart);
+            elem.on('dragenter', onDragEnter);
+            elem.on('dragover', onDragOver);
+            elem.on('dragleave', onDragLeave);
+            elem.on('dragend', onDragEnd);
+            elem.on('drop', onDragDrop);
+
+            elem.parent().addClass('draggable-container');
+        }
+    }
+}]);
+
+
+//TODO: provide this as a service
+function stopEvent($e) {
+    if ($e.stopPropagation) {
+        $e.stopPropagation();
+    }
+
+    if ($e.preventDefault) {
+        $e.preventDefault();
+    }
+
+    $e.cancelBubble = true;
+    $e.returnValue = false;
+}
