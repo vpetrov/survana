@@ -1,0 +1,498 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		570FA8231891CD8800B86330 /* server in Resources */ = {isa = PBXBuildFile; fileRef = 570FA81E1891CD8800B86330 /* server */; };
+		571DEFD2188880D500FE2A0F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 571DEFD1188880D500FE2A0F /* Cocoa.framework */; };
+		571DEFDC188880D500FE2A0F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 571DEFDA188880D500FE2A0F /* InfoPlist.strings */; };
+		571DEFDE188880D500FE2A0F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DEFDD188880D500FE2A0F /* main.m */; };
+		571DEFE2188880D500FE2A0F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 571DEFE0188880D500FE2A0F /* Credits.rtf */; };
+		571DEFE5188880D500FE2A0F /* SAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DEFE4188880D500FE2A0F /* SAppDelegate.m */; };
+		571DEFE8188880D500FE2A0F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 571DEFE6188880D500FE2A0F /* MainMenu.xib */; };
+		571DEFF1188880D600FE2A0F /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 571DEFF0188880D600FE2A0F /* XCTest.framework */; };
+		571DEFF2188880D600FE2A0F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 571DEFD1188880D500FE2A0F /* Cocoa.framework */; };
+		571DEFFA188880D600FE2A0F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 571DEFF8188880D600FE2A0F /* InfoPlist.strings */; };
+		571DEFFC188880D600FE2A0F /* SurvanaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DEFFB188880D600FE2A0F /* SurvanaTests.m */; };
+		571DF00A18888AE600FE2A0F /* survana-logo-bw.png in Resources */ = {isa = PBXBuildFile; fileRef = 571DF00918888AE600FE2A0F /* survana-logo-bw.png */; };
+		571DF00C18888C0000FE2A0F /* survana-logo-bw-inverted.png in Resources */ = {isa = PBXBuildFile; fileRef = 571DF00B18888C0000FE2A0F /* survana-logo-bw-inverted.png */; };
+		571DF00E18888EC300FE2A0F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 571DF00D18888EC300FE2A0F /* Images.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		571DEFF3188880D600FE2A0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 571DEFC6188880D500FE2A0F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 571DEFCD188880D500FE2A0F;
+			remoteInfo = Survana;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		570FA81E1891CD8800B86330 /* server */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = server; sourceTree = "<group>"; };
+		570FA8271891D8E900B86330 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		570FA8291891D90C00B86330 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		571DEFCE188880D500FE2A0F /* Survana.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Survana.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		571DEFD1188880D500FE2A0F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		571DEFD4188880D500FE2A0F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		571DEFD5188880D500FE2A0F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		571DEFD6188880D500FE2A0F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		571DEFD9188880D500FE2A0F /* Survana-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Survana-Info.plist"; sourceTree = "<group>"; };
+		571DEFDB188880D500FE2A0F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		571DEFDD188880D500FE2A0F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		571DEFDF188880D500FE2A0F /* Survana-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Survana-Prefix.pch"; sourceTree = "<group>"; };
+		571DEFE1188880D500FE2A0F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		571DEFE3188880D500FE2A0F /* SAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SAppDelegate.h; sourceTree = "<group>"; };
+		571DEFE4188880D500FE2A0F /* SAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SAppDelegate.m; sourceTree = "<group>"; };
+		571DEFE7188880D500FE2A0F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		571DEFEF188880D600FE2A0F /* SurvanaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SurvanaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		571DEFF0188880D600FE2A0F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		571DEFF7188880D600FE2A0F /* SurvanaTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SurvanaTests-Info.plist"; sourceTree = "<group>"; };
+		571DEFF9188880D600FE2A0F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		571DEFFB188880D600FE2A0F /* SurvanaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SurvanaTests.m; sourceTree = "<group>"; };
+		571DF00918888AE600FE2A0F /* survana-logo-bw.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "survana-logo-bw.png"; sourceTree = "<group>"; };
+		571DF00B18888C0000FE2A0F /* survana-logo-bw-inverted.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "survana-logo-bw-inverted.png"; sourceTree = "<group>"; };
+		571DF00D18888EC300FE2A0F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		571DEFCB188880D500FE2A0F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				571DEFD2188880D500FE2A0F /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		571DEFEC188880D600FE2A0F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				571DEFF2188880D600FE2A0F /* Cocoa.framework in Frameworks */,
+				571DEFF1188880D600FE2A0F /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		571DEFC5188880D500FE2A0F = {
+			isa = PBXGroup;
+			children = (
+				571DEFD7188880D500FE2A0F /* Survana */,
+				571DEFF5188880D600FE2A0F /* SurvanaTests */,
+				571DEFD0188880D500FE2A0F /* Frameworks */,
+				571DEFCF188880D500FE2A0F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		571DEFCF188880D500FE2A0F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				571DEFCE188880D500FE2A0F /* Survana.app */,
+				571DEFEF188880D600FE2A0F /* SurvanaTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		571DEFD0188880D500FE2A0F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				570FA8291891D90C00B86330 /* SystemConfiguration.framework */,
+				570FA8271891D8E900B86330 /* CFNetwork.framework */,
+				571DEFD1188880D500FE2A0F /* Cocoa.framework */,
+				571DEFF0188880D600FE2A0F /* XCTest.framework */,
+				571DEFD3188880D500FE2A0F /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		571DEFD3188880D500FE2A0F /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				571DEFD4188880D500FE2A0F /* AppKit.framework */,
+				571DEFD5188880D500FE2A0F /* CoreData.framework */,
+				571DEFD6188880D500FE2A0F /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		571DEFD7188880D500FE2A0F /* Survana */ = {
+			isa = PBXGroup;
+			children = (
+				571DEFE3188880D500FE2A0F /* SAppDelegate.h */,
+				571DEFE4188880D500FE2A0F /* SAppDelegate.m */,
+				571DEFE6188880D500FE2A0F /* MainMenu.xib */,
+				571DF00D18888EC300FE2A0F /* Images.xcassets */,
+				571DEFD8188880D500FE2A0F /* Supporting Files */,
+			);
+			path = Survana;
+			sourceTree = "<group>";
+		};
+		571DEFD8188880D500FE2A0F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				570FA81E1891CD8800B86330 /* server */,
+				571DF00B18888C0000FE2A0F /* survana-logo-bw-inverted.png */,
+				571DF00918888AE600FE2A0F /* survana-logo-bw.png */,
+				571DEFD9188880D500FE2A0F /* Survana-Info.plist */,
+				571DEFDA188880D500FE2A0F /* InfoPlist.strings */,
+				571DEFDD188880D500FE2A0F /* main.m */,
+				571DEFDF188880D500FE2A0F /* Survana-Prefix.pch */,
+				571DEFE0188880D500FE2A0F /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		571DEFF5188880D600FE2A0F /* SurvanaTests */ = {
+			isa = PBXGroup;
+			children = (
+				571DEFFB188880D600FE2A0F /* SurvanaTests.m */,
+				571DEFF6188880D600FE2A0F /* Supporting Files */,
+			);
+			path = SurvanaTests;
+			sourceTree = "<group>";
+		};
+		571DEFF6188880D600FE2A0F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				571DEFF7188880D600FE2A0F /* SurvanaTests-Info.plist */,
+				571DEFF8188880D600FE2A0F /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		571DEFCD188880D500FE2A0F /* Survana */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 571DEFFF188880D600FE2A0F /* Build configuration list for PBXNativeTarget "Survana" */;
+			buildPhases = (
+				571DEFCA188880D500FE2A0F /* Sources */,
+				571DEFCB188880D500FE2A0F /* Frameworks */,
+				571DEFCC188880D500FE2A0F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Survana;
+			productName = Survana;
+			productReference = 571DEFCE188880D500FE2A0F /* Survana.app */;
+			productType = "com.apple.product-type.application";
+		};
+		571DEFEE188880D600FE2A0F /* SurvanaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 571DF002188880D600FE2A0F /* Build configuration list for PBXNativeTarget "SurvanaTests" */;
+			buildPhases = (
+				571DEFEB188880D600FE2A0F /* Sources */,
+				571DEFEC188880D600FE2A0F /* Frameworks */,
+				571DEFED188880D600FE2A0F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				571DEFF4188880D600FE2A0F /* PBXTargetDependency */,
+			);
+			name = SurvanaTests;
+			productName = SurvanaTests;
+			productReference = 571DEFEF188880D600FE2A0F /* SurvanaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		571DEFC6188880D500FE2A0F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = S;
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "The Neuroinformatics Research Group at Harvard University";
+				TargetAttributes = {
+					571DEFEE188880D600FE2A0F = {
+						TestTargetID = 571DEFCD188880D500FE2A0F;
+					};
+				};
+			};
+			buildConfigurationList = 571DEFC9188880D500FE2A0F /* Build configuration list for PBXProject "Survana" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 571DEFC5188880D500FE2A0F;
+			productRefGroup = 571DEFCF188880D500FE2A0F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				571DEFCD188880D500FE2A0F /* Survana */,
+				571DEFEE188880D600FE2A0F /* SurvanaTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		571DEFCC188880D500FE2A0F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				571DEFDC188880D500FE2A0F /* InfoPlist.strings in Resources */,
+				571DEFE2188880D500FE2A0F /* Credits.rtf in Resources */,
+				571DF00C18888C0000FE2A0F /* survana-logo-bw-inverted.png in Resources */,
+				571DF00E18888EC300FE2A0F /* Images.xcassets in Resources */,
+				571DF00A18888AE600FE2A0F /* survana-logo-bw.png in Resources */,
+				570FA8231891CD8800B86330 /* server in Resources */,
+				571DEFE8188880D500FE2A0F /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		571DEFED188880D600FE2A0F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				571DEFFA188880D600FE2A0F /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		571DEFCA188880D500FE2A0F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				571DEFE5188880D500FE2A0F /* SAppDelegate.m in Sources */,
+				571DEFDE188880D500FE2A0F /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		571DEFEB188880D600FE2A0F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				571DEFFC188880D600FE2A0F /* SurvanaTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		571DEFF4188880D600FE2A0F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 571DEFCD188880D500FE2A0F /* Survana */;
+			targetProxy = 571DEFF3188880D600FE2A0F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		571DEFDA188880D500FE2A0F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				571DEFDB188880D500FE2A0F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		571DEFE0188880D500FE2A0F /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				571DEFE1188880D500FE2A0F /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		571DEFE6188880D500FE2A0F /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				571DEFE7188880D500FE2A0F /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		571DEFF8188880D600FE2A0F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				571DEFF9188880D600FE2A0F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		571DEFFD188880D600FE2A0F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		571DEFFE188880D600FE2A0F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		571DF000188880D600FE2A0F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Survana/Survana-Prefix.pch";
+				INFOPLIST_FILE = "Survana/Survana-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		571DF001188880D600FE2A0F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Survana/Survana-Prefix.pch";
+				INFOPLIST_FILE = "Survana/Survana-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		571DF003188880D600FE2A0F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Survana.app/Contents/MacOS/Survana";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Survana/Survana-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "SurvanaTests/SurvanaTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		571DF004188880D600FE2A0F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Survana.app/Contents/MacOS/Survana";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Survana/Survana-Prefix.pch";
+				INFOPLIST_FILE = "SurvanaTests/SurvanaTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		571DEFC9188880D500FE2A0F /* Build configuration list for PBXProject "Survana" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				571DEFFD188880D600FE2A0F /* Debug */,
+				571DEFFE188880D600FE2A0F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		571DEFFF188880D600FE2A0F /* Build configuration list for PBXNativeTarget "Survana" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				571DF000188880D600FE2A0F /* Debug */,
+				571DF001188880D600FE2A0F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		571DF002188880D600FE2A0F /* Build configuration list for PBXNativeTarget "SurvanaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				571DF003188880D600FE2A0F /* Debug */,
+				571DF004188880D600FE2A0F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 571DEFC6188880D500FE2A0F /* Project object */;
+}
