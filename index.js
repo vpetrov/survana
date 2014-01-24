@@ -223,8 +223,12 @@ function readKeys(items)
 
         var keypath=items[i].key;
 
+	//already loaded?
+	if (ursa.isKey(keypath))
+		continue;
+
         if (!fs.existsSync(keypath))
-            throw Error("'"+i+"': no key could be found at location '"+keypath+"'");
+            throw Error("'"+i+"': no key could be found at location '",keypath,"'");
 
         //read the key and store it instead of the 'key' property
         items[i].key=ursa.coercePublicKey(fs.readFileSync(keypath));
@@ -234,8 +238,25 @@ function readKeys(items)
     return items;
 }
 
-exports.run=function(config)
-{
+exports.run=function(config) {
+	//HTTP
+	var http_server = httpServer(config);
+	if (http_server) {
+		module.app.log.info('HTTP Server listening on '+module.config.host+':'+module.config.port);
+		http_server.listen(module.config.port,module.config.host);
+	}
+	
+	//HTTPS
+	if (config.https) {
+		var https_server = httpsServer(config);
+		if (https_server) {
+			https_server.listen(module.config.https.port,module.config.https.host);
+			module.app.log.info('HTTPS Server listening on ' + module.config.https.host + ':' + module.config.https.port);
+		}
+	}
+}
+
+function httpServer(config) {
     var app=module.app=express.createServer();
     module.config=config;
 
@@ -281,9 +302,80 @@ exports.run=function(config)
     }
 
 	//load last module
-    if (last)
+    if (last) {
         addModule(app,last,config.modules[last]);
+    }
 
-	module.app.log.info('HTTP Server listening on '+module.config.host+':'+module.config.port);
-	module.app.listen(module.config.port,module.config.host);
+    return app;
+}
+
+function httpsServer(config) {
+
+	if (!fs.existsSync(config.https.key)) {
+		log.error("HTTPS Key does not exist: " + config.https.key);
+		return null;
+	}
+
+	if (!fs.existsSync(config.https.cert)) {
+		log.error("HTTPS certificate does not exist: " + config.https.cert);
+		log.info("Use this command to generate a self-signed certificate: \n\n" +
+			"openssl req -x509 -new -key " + (config.https.key || "private/local.private") +
+			" > " + (config.https.cert || "private/localhost.cert") + "\n");
+		return null;
+	}
+
+    var app=express.createServer({
+		key: fs.readFileSync(config.https.key),
+		cert: fs.readFileSync(config.https.cert)
+    });
+
+    module.config=config;
+
+    var key=getServerKey(config.encryption);
+
+    log.info('Waking up');
+
+    app.configure(function(){
+        app.set('views', __dirname + '/views');
+        app.use(express.methodOverride());
+        app.use(express.bodyParser());
+        app.use(app.router);
+        app.use(globalErrorHandler);
+
+        app.log=log;
+    });
+
+	//expose utility methods
+    app.mergeConfig=mergeConfig;
+    app.addModule=addModule;
+    app.routing=routing;
+    app.readKeys=readKeys;
+    app.db=DB;
+    app.publicKey=ursa.coercePublicKey(key.toPublicPem());
+    app.privateKey=ursa.coercePrivateKey(key);
+    app.keyID=app.publicKey.toPublicSshFingerprint('hex');
+
+    //root module must be added last, to prevent regex paths
+    //from conflicting
+    var last=null;
+
+    //load modules
+    for (var m in config.modules)
+    {
+        var mconf=config.modules[m];				//module config
+
+        mconf.publicURL = config.publicURL;
+
+        if (mconf.prefix==='/')						//check mount point
+            last=m;									//if /, leave for last
+        else
+            addModule(app,m,mconf);					//add module
+    }
+
+	//load last module
+    if (last) {
+        addModule(app,last,config.modules[last]);
+    }
+
+    return app;
 }
