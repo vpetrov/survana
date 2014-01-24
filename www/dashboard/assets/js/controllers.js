@@ -565,6 +565,7 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
                 });
         }
 
+        
         function copyStudy () {
             //create a copy of $scope.study, and replace all forms with stubs
             var study = {
