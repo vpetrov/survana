@@ -37,32 +37,14 @@
 
 - (IBAction)startServer :(id)sender {
     NSBundle *bundle = [NSBundle mainBundle];
-//    NSString *serverDir = [bundle pathForResource:@"server" ofType:@""];
+    NSString *serverDir = [bundle pathForResource:@"server" ofType:@""];
     NSString *serverBin = [bundle pathForResource:@"server/server" ofType:@""];
-    NSString *serverConfig = [bundle pathForResource:@"server/survana" ofType:@".json"];
-    //NSLog(@"Launch path: %@", serverDir);
-    NSLog(@"Launch bin: %@", serverBin);
-/*
     NSTask *server = [[NSTask alloc] init];
     [server setCurrentDirectoryPath:serverDir];
     [server setLaunchPath:serverBin];
     
     NSLog(@"Launching %@", serverBin);
-    if (YES == [[NSWorkspace sharedWorkspace] launchAppWithBundleIdentifier:<#(NSString *)#> options:<#(NSWorkspaceLaunchOptions)#> additionalEventParamDescriptor:<#(NSAppleEventDescriptor *)#> launchIdentifier:<#(NSNumber *__autoreleasing *)#>]) {
-        NSLog(@"YES");
-    } else {
-        NSLog(@"NO");
-    }
- */
-    
-    NSURL *serverURL = [NSURL fileURLWithPath:serverBin];
-    NSError *error;
-    
-    NSArray *args = [NSArray arrayWithObjects:@"-config", serverConfig, nil];
-    NSDictionary *argdict = [NSDictionary dictionaryWithObject:args forKey:NSWorkspaceLaunchConfigurationArguments];
-    [[NSWorkspace sharedWorkspace] launchApplicationAtURL:serverURL options:0 configuration:argdict error:&error];
-    NSLog(@"Launched and resulting error is %@", error);
-    //NSLog(@"Launched! %d", [server processIdentifier]);
+    [server launch];
 }
 
 - (IBAction)stopServer :(id)sender {

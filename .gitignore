@@ -11,9 +11,11 @@ lib-cov
 .idea
 .session
 bin
+build
 pkg
 .DS_Store
 src/labix.org
 src/code.google.com
 src/server/server
-src/platform/osx/Survana/Survana/server
+*.xcworkspace/
+xcuserdata/
