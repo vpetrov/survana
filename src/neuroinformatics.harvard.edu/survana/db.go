@@ -39,7 +39,6 @@ type Database interface {
 //supported databases
 const (
 	MONGODB = "mongodb"
-    SQLITE3 = "sqlite3"
 )
 
 //factory method to instantiate database drivers based on the ID
@@ -47,8 +46,6 @@ func NewDatabase(u *url.URL, name string) Database {
 	switch u.Scheme {
         case MONGODB:
             return NewMongoDB(u, name)
-        case SQLITE3:
-            return NewSQLite3(u, name)
 	}
 
 	return nil
