@@ -16,4 +16,4 @@ pkg
 src/labix.org
 src/code.google.com
 src/server/server
-src/osx/Survana/Survana/server
+src/platform/osx/Survana/Survana/server
