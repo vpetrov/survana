@@ -17,14 +17,14 @@ const (
 )
 
 type Config struct {
-	IP         string
-	Port       string
-	PortNumber int
-	Username   string
-	WWW        string
-	SSLCert    string
-	SSLKey     string
-	DbUrl      string
+	IP         string	`json:"ip"`
+	Port       string	`json:"-"`
+	PortNumber int		`json:"port"`
+	Username   string	`json:"username"`
+	WWW        string	`json:"www"`
+	SSLCert    string	`json:"sslcert"`
+	SSLKey     string	`json:"sslkey"`
+	DbUrl      string	`json:"db"`
 }
 
 // Creates a new configuration object and sets empty values to default
@@ -48,7 +48,9 @@ func NewConfig(src io.Reader) (config *Config, err error) {
 	}
 
 	if len(config.Port) == 0 {
-		config.PortNumber = DEFAULT_PORT
+		if config.PortNumber == 0 {
+			config.PortNumber = DEFAULT_PORT
+		}
 		config.Port = strconv.Itoa(DEFAULT_PORT)
 	} else {
 		config.PortNumber, err = strconv.Atoi(config.Port)

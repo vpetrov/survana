@@ -10,6 +10,7 @@ import (
 type MongoDB struct {
 	Url      *url.URL
 	Database *mgo.Database
+	name	 string
 }
 
 var (
@@ -17,9 +18,14 @@ var (
 	sessionInfo mgo.BuildInfo
 )
 
-func NewMongoDB(u *url.URL) *MongoDB {
+func NewMongoDB(u *url.URL, name string) *MongoDB {
+	if len(name) != 0 {
+		u.Path = "/" + name
+	}
+
 	return &MongoDB{
 		Url: u,
+		name: name,
 	}
 }
 
@@ -53,7 +59,7 @@ func (db *MongoDB) Disconnect() error {
 }
 
 func (db *MongoDB) Name() string {
-	return db.Url.Path[1:]
+	return db.name
 }
 
 func (db *MongoDB) URL() *url.URL {

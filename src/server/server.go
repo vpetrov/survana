@@ -186,9 +186,7 @@ func GetDB(u string, dbname string) survana.Database {
 		panic("Invalid database name")
 	}
 
-	dburl.Path = "/" + dbname
-
-	DB = survana.NewDatabase(dburl)
+	DB = survana.NewDatabase(dburl, dbname)
 	if err != nil {
 		panic(err)
 	}

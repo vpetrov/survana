@@ -21,6 +21,7 @@ func Protect(handler RequestHandler) RequestHandler {
 
 		if err != nil {
 			Error(w, err)
+			return
 		}
 
 		//if the session hasn't been authorized, redirect
