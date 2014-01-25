@@ -1,7 +1,12 @@
 BIN_DIR:=bin
 WWW_DIR:=www
 SSL_DIR:=${BIN_DIR}/ssl
+
+TARGET:=${BIN_DIR}/server
 SERVER_CONF:=${BIN_DIR}/survana.json
+
+MAKEFILE_PATH:= $(abspath $(lastword $(MAKEFILE_LIST)))
+CURRENT_DIR:= $(dir $(MAKEFILE_PATH))
 
 COVER:=$(strip $(shell go tool | grep cover))
 ifdef COVER
@@ -20,15 +25,20 @@ OSX_PROJECT:=${OSX_PROJECT_ROOT}/${OSX_PROJECT_NAME}.xcodeproj
 
 XCODE:=xcodebuild
 
-all:
-	@go get code.google.com/p/goauth2/oauth
-	@go get labix.org/v2/mgo
-	@go install server
+all: ${TARGET}
+
+${TARGET}:
+	GOPATH=${CURRENT_DIR} go get code.google.com/p/goauth2/oauth
+	GOPATH=${CURRENT_DIR} go get labix.org/v2/mgo
+	GOPATH=${CURRENT_DIR} go install server
 
 test:
 	go test ${COVER} neuroinformatics.harvard.edu/survana
+
+clean:
+	@rm -f ${TARGET}
 	
-osx: ${OSX_TARGET}
+osx: ${TARGET} ${OSX_TARGET}
 
 ${OSX_TARGET}: ${OSX_BUILD_ARCHIVE} ${OSX_PROJECT}
 	cp -r ${BIN_DIR}/server ${SERVER_CONF} ${WWW_DIR} ${SSL_DIR} ${OSX_ARCHIVE_SERVER_DIR}
