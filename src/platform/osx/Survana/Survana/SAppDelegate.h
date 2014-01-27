@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "SSettings.h"
 
 @interface SAppDelegate : NSObject <NSApplicationDelegate> {
     IBOutlet NSMenu *statusMenu;
@@ -14,11 +15,13 @@
     NSStatusItem    *statusItem;
     NSImage         *statusImage;
     NSImage         *highlightedStatusImage;
+    SSettings       *settingsWindow;
 }
 
 - (IBAction)openDashboard:(id)sender;
-- (IBAction)startServer:(id)sender;
+- (IBAction)start:(id)sender;
 - (IBAction)about:(id)sender;
+- (IBAction)settings:(id)sender;
 
 //displays a warning window
 - (BOOL)warning:(NSString*)message andTitle:(NSString*)title;

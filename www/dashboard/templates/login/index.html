@@ -72,6 +72,20 @@
                 margin-left:4px;
             }
 
+            form {
+                text-align:center;
+                max-width:200px;
+                margin:15px auto 5px auto;
+            }
+
+            form input {
+                margin-bottom:5px;
+                height:25px;
+                border-radius:5px;
+                padding-left:5px;
+                width:100%;
+            }
+
         </style>
     </head>
     <body>
@@ -81,9 +95,16 @@
                 <span class="brand">Survana</span>
             </div>
             <hr>
+            <!--
             <ul>
                 <li><a href="login/google"><img id="google" src="assets/img/brands/google.png"></a></li>
             </ul>
+            -->
+            <form action="?" method="post">
+                <input type="text" id="username" name="username" placeholder="Username"><br>
+                <input type="password" id="password" name="password" placeholder="Password"><br>
+                <button type="submit">Login</butotn>
+            </form>
         </div>
     </body>
 </html>

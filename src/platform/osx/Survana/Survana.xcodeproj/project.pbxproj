@@ -21,6 +21,10 @@
 		571DF00A18888AE600FE2A0F /* survana-logo-bw.png in Resources */ = {isa = PBXBuildFile; fileRef = 571DF00918888AE600FE2A0F /* survana-logo-bw.png */; };
 		571DF00C18888C0000FE2A0F /* survana-logo-bw-inverted.png in Resources */ = {isa = PBXBuildFile; fileRef = 571DF00B18888C0000FE2A0F /* survana-logo-bw-inverted.png */; };
 		571DF00E18888EC300FE2A0F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 571DF00D18888EC300FE2A0F /* Images.xcassets */; };
+		57A0DCDE189488C5000087B0 /* mongodb in Resources */ = {isa = PBXBuildFile; fileRef = 57A0DCDD189488C5000087B0 /* mongodb */; };
+		57A0DCE01894893F000087B0 /* db in Resources */ = {isa = PBXBuildFile; fileRef = 57A0DCDF1894893F000087B0 /* db */; };
+		57A0DCE218948C18000087B0 /* SSettings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57A0DCE118948C18000087B0 /* SSettings.xib */; };
+		57A0DCEC18949A20000087B0 /* SSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A0DCEA18949A20000087B0 /* SSettings.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +62,11 @@
 		571DF00918888AE600FE2A0F /* survana-logo-bw.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "survana-logo-bw.png"; sourceTree = "<group>"; };
 		571DF00B18888C0000FE2A0F /* survana-logo-bw-inverted.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "survana-logo-bw-inverted.png"; sourceTree = "<group>"; };
 		571DF00D18888EC300FE2A0F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		57A0DCDD189488C5000087B0 /* mongodb */ = {isa = PBXFileReference; lastKnownFileType = folder; path = mongodb; sourceTree = "<group>"; };
+		57A0DCDF1894893F000087B0 /* db */ = {isa = PBXFileReference; lastKnownFileType = folder; path = db; sourceTree = "<group>"; };
+		57A0DCE118948C18000087B0 /* SSettings.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SSettings.xib; sourceTree = "<group>"; };
+		57A0DCE918949A20000087B0 /* SSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SSettings.h; path = ../SSettings.h; sourceTree = "<group>"; };
+		57A0DCEA18949A20000087B0 /* SSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SSettings.m; path = ../SSettings.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,11 +134,14 @@
 		571DEFD7188880D500FE2A0F /* Survana */ = {
 			isa = PBXGroup;
 			children = (
+				57A0DCE918949A20000087B0 /* SSettings.h */,
+				57A0DCEA18949A20000087B0 /* SSettings.m */,
 				571DEFE3188880D500FE2A0F /* SAppDelegate.h */,
 				571DEFE4188880D500FE2A0F /* SAppDelegate.m */,
 				571DEFE6188880D500FE2A0F /* MainMenu.xib */,
 				571DF00D18888EC300FE2A0F /* Images.xcassets */,
 				571DEFD8188880D500FE2A0F /* Supporting Files */,
+				57A0DCE118948C18000087B0 /* SSettings.xib */,
 			);
 			path = Survana;
 			sourceTree = "<group>";
@@ -137,6 +149,8 @@
 		571DEFD8188880D500FE2A0F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				57A0DCDF1894893F000087B0 /* db */,
+				57A0DCDD189488C5000087B0 /* mongodb */,
 				570FA81E1891CD8800B86330 /* server */,
 				571DF00B18888C0000FE2A0F /* survana-logo-bw-inverted.png */,
 				571DF00918888AE600FE2A0F /* survana-logo-bw.png */,
@@ -244,11 +258,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57A0DCE218948C18000087B0 /* SSettings.xib in Resources */,
+				57A0DCE01894893F000087B0 /* db in Resources */,
 				571DEFDC188880D500FE2A0F /* InfoPlist.strings in Resources */,
 				571DEFE2188880D500FE2A0F /* Credits.rtf in Resources */,
 				571DF00C18888C0000FE2A0F /* survana-logo-bw-inverted.png in Resources */,
 				571DF00E18888EC300FE2A0F /* Images.xcassets in Resources */,
 				571DF00A18888AE600FE2A0F /* survana-logo-bw.png in Resources */,
+				57A0DCDE189488C5000087B0 /* mongodb in Resources */,
 				570FA8231891CD8800B86330 /* server in Resources */,
 				571DEFE8188880D500FE2A0F /* MainMenu.xib in Resources */,
 			);
@@ -270,6 +287,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				571DEFE5188880D500FE2A0F /* SAppDelegate.m in Sources */,
+				57A0DCEC18949A20000087B0 /* SSettings.m in Sources */,
 				571DEFDE188880D500FE2A0F /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,6 +422,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Survana/Survana-Prefix.pch";
 				INFOPLIST_FILE = "Survana/Survana-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -417,6 +436,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Survana/Survana-Prefix.pch";
 				INFOPLIST_FILE = "Survana/Survana-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

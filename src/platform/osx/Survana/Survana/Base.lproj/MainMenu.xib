@@ -27,19 +27,20 @@
                             <menuItem title="Start" id="bqh-dR-ae0">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="startServer:" target="494" id="4UU-IS-l2a"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Stop" id="fVt-Ff-Mm5">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="stopServer:" target="494" id="wDa-xf-odU"/>
+                                    <action selector="start:" target="494" id="wFI-S6-vJ5"/>
                                 </connections>
                             </menuItem>
                         </items>
                     </menu>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="Ilv-lb-LLC"/>
+                <menuItem title="Preferences" id="Tgy-fk-c4O">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="settings:" target="494" id="ZBk-tS-O3D"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="TK6-OM-vcE"/>
                 <menuItem title="About" id="Q2f-4Y-3aH">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
