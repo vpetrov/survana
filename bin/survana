@@ -248,7 +248,14 @@ if (program.download) {
 
     if (program.key) {
         secretKeys = readSecretKeys(program.key);
-        payload = createSignature(secretKeys);
+        payload = {
+            key: {
+                    server: secretKeys.server,
+                    serverURL: secretKeys.serverURL,
+                    study: secretKeys.study
+                 },
+            signature: createSignature(secretKeys)
+        };
         if (program.signature) {
             saveSignature(program.signature, payload);
         }
