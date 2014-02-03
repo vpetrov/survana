@@ -10,8 +10,9 @@
 
 @interface SSettings : NSWindowController {
     NSOpenPanel* dialog;
-    NSString* filename;
+    NSString* configurationFile;
     NSMutableDictionary* configuration;
+    NSMutableDictionary* dashboardConfiguration;
 }
 
 //Dashboard Tab
@@ -38,7 +39,7 @@
 
 -(void)setFilePath:(NSString*)path;
 -(void)loadConfiguration:(NSString*)file;
--(void)updateStringField:(NSTextField*)field for:(NSString*)name;
+-(void)updateStringField:(NSTextField*)field with:(NSString*)value;
 
 -(IBAction)saveSettings:(id)sender;
 -(IBAction)browseForSSLCertificate:(id)sender;

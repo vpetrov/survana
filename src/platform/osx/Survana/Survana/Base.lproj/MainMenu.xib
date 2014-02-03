@@ -11,7 +11,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application"/>
-        <menu id="Omr-pN-Plj">
+        <menu autoenablesItems="NO" id="Omr-pN-Plj">
             <items>
                 <menuItem title="Dashboard" id="C6z-Bl-Ixb">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -22,12 +22,18 @@
                 <menuItem isSeparatorItem="YES" id="DXb-hA-Pub"/>
                 <menuItem title="Server" id="seO-dI-cj5">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Server" id="QpR-bC-vMZ">
+                    <menu key="submenu" title="Server" autoenablesItems="NO" id="QpR-bC-vMZ">
                         <items>
                             <menuItem title="Start" id="bqh-dR-ae0">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="start:" target="494" id="wFI-S6-vJ5"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Stop" id="LJe-Sf-OCs">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="stop:" target="494" id="nxi-Go-epZ"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -50,14 +56,17 @@
                 <menuItem title="Quit" id="NhG-iP-Eue">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="terminate:" target="-1" id="RSf-ec-6ff"/>
+                        <action selector="quit:" target="494" id="Vlk-cK-NKG"/>
                     </connections>
                 </menuItem>
             </items>
         </menu>
         <customObject id="494" customClass="SAppDelegate">
             <connections>
+                <outlet property="dashboardMenu" destination="C6z-Bl-Ixb" id="DgG-ch-FfI"/>
+                <outlet property="startMenu" destination="bqh-dR-ae0" id="eJG-y1-oqi"/>
                 <outlet property="statusMenu" destination="Omr-pN-Plj" id="enE-Sw-v3i"/>
+                <outlet property="stopMenu" destination="LJe-Sf-OCs" id="hEs-IU-3Cr"/>
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>

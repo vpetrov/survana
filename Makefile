@@ -49,8 +49,8 @@ clean:
 osx: ${TARGET} ${OSX_TARGET}
 
 ${OSX_TARGET}: ${OSX_BUILD_ARCHIVE} ${OSX_PROJECT} ${OSX_MONGODB_INSTALL}
-	cp -r ${BIN_DIR}/server ${WWW_DIR} ${SSL_DIR} ${OSX_ARCHIVE_SERVER_DIR}
-	cp ${OSX_SERVER_CONF} ${OSX_ARCHIVE_SERVER_DIR}/survana.json
+#	cp -r ${BIN_DIR}/server ${WWW_DIR} ${SSL_DIR} ${OSX_ARCHIVE_SERVER_DIR}
+#cp ${OSX_SERVER_CONF} ${OSX_ARCHIVE_SERVER_DIR}/survana.json
 #cp -r ${OSX_MONGODB_DIR} ${OSX_ARCHIVE_MONGODB_DIR}
 	${XCODE} -project ${OSX_PROJECT} -exportArchive -exportFormat APP -archivePath ${OSX_BUILD_ARCHIVE} -exportPath ${OSX_TARGET}
 	

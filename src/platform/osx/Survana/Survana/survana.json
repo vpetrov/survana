@@ -1,0 +1,17 @@
+{
+    "www": "www",
+    "ip":"0.0.0.0",
+    "port":4443,
+    "db":"mongodb://localhost:27017",
+    "sslcert":"ssl/cert.pem",
+    "sslkey":"ssl/key.pem",
+    "modules":{
+        "dashboard":{
+            "authentication": {
+                "type": "built-in",
+                "username":"admin",
+                "password":"password"
+            }
+        }
+    }
+}

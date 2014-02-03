@@ -11,17 +11,26 @@
 
 @interface SAppDelegate : NSObject <NSApplicationDelegate> {
     IBOutlet NSMenu *statusMenu;
+    IBOutlet NSMenuItem *dashboardMenu;
+    IBOutlet NSMenuItem *startMenu;
+    IBOutlet NSMenuItem *stopMenu;
     
+    NSString        *servicesPath;
     NSStatusItem    *statusItem;
     NSImage         *statusImage;
     NSImage         *highlightedStatusImage;
     SSettings       *settingsWindow;
+    
+    NSNumber        *pidServer;
+    NSNumber        *pidMongoDB;
 }
 
 - (IBAction)openDashboard:(id)sender;
 - (IBAction)start:(id)sender;
+- (IBAction)stop:(id)sender;
 - (IBAction)about:(id)sender;
 - (IBAction)settings:(id)sender;
+- (IBAction)quit:(id)sender;
 
 //displays a warning window
 - (BOOL)warning:(NSString*)message andTitle:(NSString*)title;

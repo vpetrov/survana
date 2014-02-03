@@ -45,6 +45,8 @@
 {
     [super windowDidLoad];
     
+    [[txtPort formatter] setFormat:@"#####"];
+    
     dialog = [NSOpenPanel openPanel];
     [dialog setAllowsMultipleSelection:NO];
     
@@ -52,7 +54,7 @@
     [cbDatabase selectItemAtIndex:0];
     
     //load settings
-    [self loadConfiguration:filename];
+    [self loadConfiguration:configurationFile];
     
     [[self window] orderFront:nil];
 }
@@ -74,39 +76,40 @@
         return;
     }
     
+    dashboardConfiguration = configuration[@"modules"][@"dashboard"];
+    NSLog(@"Dashboard configuration: %@", dashboardConfiguration);
+    
     /* Update UI fields */
     
     //Dashboard tab
-    [cbAuthentication selectItemAtIndex:0]; //only built-in is supported ATM
-    [self updateStringField:txtDashUsername for:@"admin"];
-    [self updateStringField:txtDashPassword for:@"password"];
+    [cbAuthentication selectItemWithObjectValue:dashboardConfiguration[@"authentication"][@"type"]];
+    [self updateStringField:txtDashUsername with:dashboardConfiguration[@"authentication"][@"username"]];
+    [self updateStringField:txtDashPassword with:dashboardConfiguration[@"authentication"][@"password"]];
     
     //Web Server tab
-    [self updateStringField:txtIP for:@"ip"];
-    if (configuration[@"port"] != nil) {
-        //[txtPort setStringValue:configuration[@"port"]];
-    }
+    [self updateStringField:txtIP with:configuration[@"ip"]];
+    [self updateStringField:txtPort with:[NSString stringWithFormat:@"%@",configuration[@"port"]]];
 
-    [self updateStringField:txtWWW for:@"www"];
-    [self updateStringField:txtSSLCertificate for:@"sslcert"];
-    [self updateStringField:txtSSLKey for:@"sslkey"];
+    [self updateStringField:txtWWW with:configuration[@"www"]];
+    [self updateStringField:txtSSLCertificate with:configuration[@"sslcert"]];
+    [self updateStringField:txtSSLKey with:configuration[@"sslkey"]];
     
     //Database tab
-    [cbAuthentication selectItemAtIndex:0]; //only MongoDB is supported ATM
-    
     NSURL *url = [NSURL URLWithString:configuration[@"db"]];
-
-    if (url.path != nil) {
-        [txtDBHost setStringValue:url.path];
+    
+    NSLog(@"Config db url=%@", configuration[@"db"]);
+    NSLog(@"Database URL: %@", url);
+    
+    [cbAuthentication selectItemWithObjectValue:url.scheme]; //only MongoDB is supported ATM
+     
+    if (url.port > 0) {
+        [self updateStringField:txtDBHost with:[NSString stringWithFormat:@"%@:%@",url.host,url.port]];
+    } else {
+        [self updateStringField:txtDBHost with:url.host];
     }
 
-    if (url.user != nil) {
-        [txtDBUsername setStringValue:url.user];
-    }
-
-    if (url.password != nil) {
-        [txtDBPassword setStringValue:url.password];
-    }
+    [self updateStringField:txtDBUsername with:url.user];
+    [self updateStringField:txtDBPassword with:url.password];
    
     NSLog(@"Loaded JSON: %@", configuration);
 }
@@ -140,12 +143,10 @@
 }
 
 - (void)setFilePath:(NSString *)path {
-    filename = path;
+    configurationFile = path;
 }
 
-- (void)updateStringField:(NSTextField*)field for:(NSString*)name {
-    NSString *value = configuration[name];
-    
+- (void)updateStringField:(NSTextField*)field with:(NSString*)value {
     if (value == nil) {
         return;
     }
@@ -155,10 +156,16 @@
 
 -(IBAction)saveSettings:(id)sender {
     NSLog(@"Saving settings");
-    //Dashboard tab
-    configuration[@"authentication"] = [[cbAuthentication stringValue] lowercaseString];
-    configuration[@"admin"] = [txtDashUsername stringValue];
-    configuration[@"password"] = [txtDashPassword stringValue];
+    
+    /* Dashboard tab */
+    
+    //authentication
+    dashboardConfiguration[@"authentication"] = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *dashboardAuthentication = dashboardConfiguration[@"authentication"];
+    
+    dashboardAuthentication[@"type"] = [[cbAuthentication stringValue] lowercaseString];
+    dashboardAuthentication[@"username"] = [txtDashUsername stringValue];
+    dashboardAuthentication[@"password"] = [txtDashPassword stringValue];
     
     //Web Server tab
     configuration[@"ip"] = [txtIP stringValue];
@@ -176,13 +183,14 @@
         [dburl appendString:dbUsername];
         [dburl appendString:@":"];
         [dburl appendString:dbPassword];
+        [dburl appendString:@"@"];
     }
 
     [dburl appendString:[txtDBHost stringValue]];
     configuration[@"db"] = dburl;
     
     //save configuration
-    [self saveConfiguration:filename];
+    [self saveConfiguration:configurationFile];
 }
 
 -(IBAction)browseForSSLCertificate:(id)sender {
