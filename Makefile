@@ -18,18 +18,10 @@ endif
 OSX_PROJECT_NAME:=Survana
 OSX_TARGET:=bin/${OSX_PROJECT_NAME}.app
 OSX_BUILD_ARCHIVE:=build/${OSX_PROJECT_NAME}.xcarchive
-OSX_ARCHIVE_SERVER_DIR:=${OSX_BUILD_ARCHIVE}/Products/Applications/${OSX_PROJECT_NAME}.app/Contents/Resources/server
-OSX_ARCHIVE_MONGODB_DIR:=${OSX_BUILD_ARCHIVE}/Products/Applications/${OSX_PROJECT_NAME}.app/Contents/Resources/mongodb
 
 OSX_ROOT:=src/platform/osx
 OSX_PROJECT_ROOT:=${OSX_ROOT}/${OSX_PROJECT_NAME}
 OSX_PROJECT:=${OSX_PROJECT_ROOT}/${OSX_PROJECT_NAME}.xcodeproj
-
-OSX_MONGODB_URL:="http://fastdl.mongodb.org/osx/mongodb-osx-x86_64-2.4.9.tgz"
-OSX_MONGODB_INSTALL:=${BUILD_DIR}/mongodb-osx-x86_64-2.4.9.tgz
-OSX_MONGODB_DIR:=$(patsubst %.tgz,%,${OSX_MONGODB_INSTALL})
-
-OSX_SERVER_CONF=${BIN_DIR}/survana.osx.json
 
 XCODE:=xcodebuild
 
@@ -48,18 +40,11 @@ clean:
 	
 osx: ${TARGET} ${OSX_TARGET}
 
-${OSX_TARGET}: ${OSX_BUILD_ARCHIVE} ${OSX_PROJECT} ${OSX_MONGODB_INSTALL}
-#	cp -r ${BIN_DIR}/server ${WWW_DIR} ${SSL_DIR} ${OSX_ARCHIVE_SERVER_DIR}
-#cp ${OSX_SERVER_CONF} ${OSX_ARCHIVE_SERVER_DIR}/survana.json
-#cp -r ${OSX_MONGODB_DIR} ${OSX_ARCHIVE_MONGODB_DIR}
+${OSX_TARGET}: ${OSX_BUILD_ARCHIVE} ${OSX_PROJECT}
 	${XCODE} -project ${OSX_PROJECT} -exportArchive -exportFormat APP -archivePath ${OSX_BUILD_ARCHIVE} -exportPath ${OSX_TARGET}
 	
 ${OSX_BUILD_ARCHIVE}: ${OSX_PROJECT}
 	${XCODE} -project ${OSX_PROJECT} -scheme ${OSX_PROJECT_NAME} archive -archivePath ${OSX_BUILD_ARCHIVE}
-
-${OSX_MONGODB_INSTALL}:
-	wget -q ${OSX_MONGODB_URL} -O ${OSX_MONGODB_INSTALL}
-	tar -zxf ${OSX_MONGODB_INSTALL} -C ${BUILD_DIR}
 
 osx-clean:
 	rm -rf ${OSX_TARGET} ${OSX_BUILD_ARCHIVE}
