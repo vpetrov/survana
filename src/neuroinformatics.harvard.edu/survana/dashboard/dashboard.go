@@ -12,10 +12,12 @@ const (
 type Dashboard struct {
 	*survana.Module
 	mux *survana.RESTMux
+    Config *Config //dashboard.Config
 }
 
+
 // creates a new Admin module
-func NewModule(path string, db survana.Database) *Dashboard {
+func NewModule(path string, db survana.Database, config *Config) *Dashboard {
 
 	mux := survana.NewRESTMux()
 
@@ -28,6 +30,7 @@ func NewModule(path string, db survana.Database) *Dashboard {
 			Log:    db.NewLogger("logs", NAME),
 		},
 		mux: mux,
+        Config: config,
 	}
 
 	m.ParseTemplates()

@@ -18,10 +18,21 @@ func (d *Dashboard) RegisterHandlers() {
 	app.Get("/sidebar", survana.Protect(d.Sidebar))
 
 	//LOGIN
-	app.Get("/login", d.Login)
-	app.Get("/login/google", d.LoginWithGoogle)
+	app.Get("/login", d.BuiltinAuthPage)
+    //TODO:app.Post("/login", d.Login)
+    app.Post("/login", d.BuiltinAuth)
+
+    //Registration is optional
+    if (d.Config.AllowRegistration) {
+        app.Get("/register", d.BuiltinRegistrationPage)
+        app.Post("/register", d.BuiltinRegister)
+    }
+
+	/*app.Get("/login/google", d.LoginWithGoogle)
 	app.Get("/login/google/response", d.GoogleResponse)
 	app.Get("/register", d.Register)
+    */
+
 
 	//LOGOUT
 	app.Get("/logout", d.Logout)

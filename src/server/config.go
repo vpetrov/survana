@@ -5,6 +5,8 @@ import (
 	"io"
 	"io/ioutil"
 	"strconv"
+	"neuroinformatics.harvard.edu/survana/dashboard"
+	"neuroinformatics.harvard.edu/survana/study"
 )
 
 const (
@@ -17,14 +19,20 @@ const (
 )
 
 type Config struct {
-	IP         string	`json:"ip"`
-	Port       string	`json:"-"`
+	IP         string	`json:"ip"`		//web
+	Port       string	`json:"-"`		//web
 	PortNumber int		`json:"port"`
-	Username   string	`json:"username"`
-	WWW        string	`json:"www"`
-	SSLCert    string	`json:"sslcert"`
-	SSLKey     string	`json:"sslkey"`
-	DbUrl      string	`json:"db"`
+	Username   string	`json:"username"`	//general
+	WWW        string	`json:"www"`		//web
+	SSLCert    string	`json:"sslcert"`	//web
+	SSLKey     string	`json:"sslkey"`		//web
+	DbUrl      string	`json:"db"`			//database
+    Modules    *ModuleConfig `json:"modules"`//modules
+}
+
+type ModuleConfig struct {
+    Dashboard   *dashboard.Config   `json:"dashboard,omitempty"`
+    Study       *study.Config       `json:"study,omitempty"`
 }
 
 // Creates a new configuration object and sets empty values to default

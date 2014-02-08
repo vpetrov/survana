@@ -1,109 +1,86 @@
+<!DOCTYPE html>
 <html>
     <head>
         <title>Survana Login</title>
-        <style type="text/css">
+        <link rel="stylesheet" type="text/css" href="assets/lib/bootstrap/3.0.3/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="assets/lib/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+        <style>
+
             body {
-                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 background-color: #ddd;
                 color: #eee;
                 font-size: 14px;
             }
 
-            #content {
+            form {
+                max-width:450px;
+                padding:1px 30px 30px 30px;
+                margin:100px auto;
                 background-color: #3e3e3e;
-                max-width: 350px;
-                margin: 100px auto;
-                padding: 5px;
                 border: 1px solid #aaa;
                 border-radius: 6px 6px 6px;
                 box-shadow: 1px 1px 6px #666;
             }
 
-            .header {
-                text-align:center;
-                padding:10px 0px 8px 0px;
-                position:relative;
-                left: -5px;
+            form .form-control:focus {
+                z-index: 2;
             }
 
-
-            #logo {
-                height:40px;
-                vertical-align: top;
+            form .form-control {
                 position: relative;
+                font-size: 16px;
+                height: auto;
+                padding: 10px;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+
+            form h2 {
+                margin-bottom:0px;
+                font-size:35px;
+                text-shadow:0px 0px 3px #aaa;
+            }
+
+            form h2 img {
+                height:35px;
+                vertical-align: top;
+                margin-right:5px;
             }
 
             #logo:hover {
                 -webkit-filter: grayscale(1);
             }
 
-            .brand {
-                font-size:35px;
-                text-shadow:0px 0px 3px #aaa;
+            form hr {
+                margin-top:5px;
             }
 
-            hr {
-                margin:5px 45px 0px 45px;
-                padding: 0;
-                border: none;
-                border-top: thin solid #aaa;
+            input[type="email"] {
+                margin-bottom: -1px;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
             }
 
-            ul {
-                padding: 0;
-                margin: 15px 15px 10px 15px;
-                vertical-align:middle;
-                text-align:center;
+            input[type=password] {
+                margin-bottom: 10px;
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
             }
 
-            li {
-                list-style-type: none;
-                display: inline-block;
-                border: 1px solid transparent;
-                border-radius: 2px 2px 2px;
+            button[type=submit] {
+                margin-top:15px;
             }
-
-            li:hover {
-                border: 1px solid #aaa;
-            }
-
-            #google {
-                border:0;
-                margin-left:4px;
-            }
-
-            form {
-                text-align:center;
-                max-width:200px;
-                margin:15px auto 5px auto;
-            }
-
-            form input {
-                margin-bottom:5px;
-                height:25px;
-                border-radius:5px;
-                padding-left:5px;
-                width:100%;
-            }
-
         </style>
     </head>
     <body>
-        <div id="content">
-            <div class="header">
-                <img id="logo" src="assets/img/logo.png">
-                <span class="brand">Survana</span>
-            </div>
-            <hr>
-            <!--
-            <ul>
-                <li><a href="login/google"><img id="google" src="assets/img/brands/google.png"></a></li>
-            </ul>
-            -->
-            <form action="?" method="post">
-                <input type="text" id="username" name="username" placeholder="Username"><br>
-                <input type="password" id="password" name="password" placeholder="Password"><br>
-                <button type="submit">Login</butotn>
+        <div class="container">
+            <form role="form">
+                <h2><img id="logo" src="assets/img/logo.png">Survana</h2>
+                <hr>
+                <input type="email" class="form-control" placeholder="E-mail" required autofocus>
+                <input type="password" class="form-control" placeholder="Password" required autofocus>
+                <button class="btn btn-lg btn-default btn-block" type="submit">Sign in</button>
             </form>
         </div>
     </body>

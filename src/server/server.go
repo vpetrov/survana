@@ -163,8 +163,11 @@ func Listen(config *Config) (tlsListener net.Listener, err error) {
 //Create and mount all known modules
 func EnableModules(config *Config) (err error) {
 
+
+    log.Println("%#v", config);
+
 	//dashboard
-	dashboard_module := dashboard.NewModule(config.WWW+"/dashboard", GetDB(config.DbUrl, "dashboard"))
+	dashboard_module := dashboard.NewModule(config.WWW+"/dashboard", GetDB(config.DbUrl, "dashboard"), config.Modules.Dashboard)
 	survana.Modules.Mount(dashboard_module.Module, "/dashboard")
 
     //study
