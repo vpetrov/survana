@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"neuroinformatics.harvard.edu/survana"
+    "neuroinformatics.harvard.edu/survana/auth"
 )
 
 const (
@@ -12,6 +13,7 @@ const (
 type Dashboard struct {
 	*survana.Module
 	mux *survana.RESTMux
+    Auth auth.Strategy
     Config *Config //dashboard.Config
 }
 
@@ -32,6 +34,10 @@ func NewModule(path string, db survana.Database, config *Config) *Dashboard {
 		mux: mux,
         Config: config,
 	}
+
+    if config.Authentication != nil {
+        m.Auth = auth.New(config.Authentication)
+    }
 
 	m.ParseTemplates()
 

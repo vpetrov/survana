@@ -12,6 +12,26 @@ type JSONResponse struct {
 	Message interface{} `json:"message,omitempty"`
 }
 
+func NotLoggedIn(handler RequestHandler) RequestHandler {
+	return func(w http.ResponseWriter, r *Request) {
+		//get the session
+		session, err := r.Session()
+		if err != nil {
+			Error(w, err)
+			return
+		}
+
+		//if the session has already been authorized, redirect
+		if session.Authenticated {
+			Redirect(w, r, "/")
+			return
+		}
+
+		//must not be authenticated at this point
+		handler(w, r)
+    }
+}
+
 //A handler that filters all requests that have not been authenticated
 //returns 401 Unauthorized if the user's session hasn't been marked as authenticated
 func Protect(handler RequestHandler) RequestHandler {

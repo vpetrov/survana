@@ -12,6 +12,7 @@ type User struct {
 	Id     string   `bson:"id,omitempty" json:"id,omitempty"`
 	Name   string   `bson:"name,omitempty" json:"name,omitempty"`
 	Groups []string `bson:"groups,omitempty" json:"groups,omitempty"`
+    AuthType string `bson:"auth_type,omitempty" json:"auth_type,omitempty"`
 
 	//DbObject
 	DBID interface{} `bson:"_id,omitempty" json:"-"`

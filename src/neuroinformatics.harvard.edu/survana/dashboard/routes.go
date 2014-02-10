@@ -1,7 +1,6 @@
 package dashboard
 
 import (
-	"log"
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
 )
@@ -17,15 +16,16 @@ func (d *Dashboard) RegisterHandlers() {
 	app.Get("/home", survana.Protect(d.Home))
 	app.Get("/sidebar", survana.Protect(d.Sidebar))
 
-	//LOGIN
-	app.Get("/login", d.BuiltinAuthPage)
-    //TODO:app.Post("/login", d.Login)
-    app.Post("/login", d.BuiltinAuth)
+    //LOGIN
+    if d.Auth != nil {
+        app.Get("/login", survana.NotLoggedIn(d.Auth.LoginPage))
+        app.Post("/login", survana.NotLoggedIn(d.Auth.Login))
 
-    //Registration is optional
-    if (d.Config.AllowRegistration) {
-        app.Get("/register", d.BuiltinRegistrationPage)
-        app.Post("/register", d.BuiltinRegister)
+        //Registration is optional
+        if d.Config.AllowRegistration {
+            app.Get("/register", survana.NotLoggedIn(d.Auth.RegistrationPage))
+            app.Post("/register", survana.NotLoggedIn(d.Auth.Register))
+        }
     }
 
 	/*app.Get("/login/google", d.LoginWithGoogle)
@@ -33,9 +33,8 @@ func (d *Dashboard) RegisterHandlers() {
 	app.Get("/register", d.Register)
     */
 
-
 	//LOGOUT
-	app.Get("/logout", d.Logout)
+	app.Get("/logout", d.Auth.Logout)
 
 	//Form
 	app.Get("/forms", survana.Protect(d.FormListPage))
@@ -68,8 +67,21 @@ func (d *Dashboard) RegisterHandlers() {
 
 // sends the app skeleton to the client
 func (d *Dashboard) Index(w http.ResponseWriter, r *survana.Request) {
-    log.Println("DASHBOARD INDEX")
-	d.RenderTemplate(w, "index", nil)
+    user, err := r.User()
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    data := &struct {
+                Module *survana.Module
+                User *survana.User
+            }{
+                Module: d.Module,
+                User:user,
+            }
+
+	d.RenderTemplate(w, "index", data)
 }
 
 // displays the home page

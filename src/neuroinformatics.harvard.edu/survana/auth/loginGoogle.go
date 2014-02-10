@@ -1,5 +1,5 @@
-package dashboard
-
+package auth
+/*
 import (
 	"code.google.com/p/goauth2/oauth"
 	"log"
@@ -156,3 +156,4 @@ func (d *Dashboard) GoogleResponse(w http.ResponseWriter, r *survana.Request) {
 func (d *Dashboard) Register(w http.ResponseWriter, r *survana.Request) {
 	d.RenderTemplate(w, "register", nil)
 }
+*/

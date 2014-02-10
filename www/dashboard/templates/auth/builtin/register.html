@@ -98,33 +98,61 @@
     <form role="form">
         <h2><img id="logo" src="assets/img/logo.png">Survana</h2>
         <hr>
+        <div id="message-container" class="alert alert-warning hidden">
+            <i class="glyphicon glyphicon-exclamation-sign"></i> &nbsp;<span id="message"></span>
+        </div>
+
         <input id="username" name="username" type="text" class="form-control" placeholder="Username" required autofocus>
+
         <div class="group">
             <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
             <input id="repeat_password" type="password" class="form-control" placeholder="Re-enter password" required>
         </div>
+        <div class="group">
+            <input id="name" name="name" type="text" class="form-control" placeholder="Your name" required>
+            <input id="email" name="email" type="text" class="form-control" placeholder="E-mail" required>
+        </div>
+
         <button id="signin" class="btn btn-lg btn-info btn-block" type="button" onclick="sign_up()">Sign up</button>
     </form>
 
     <!-- login handler -->
     <script type="text/javascript">
+
+        function showMessage(msg) {
+            var msg_el = document.getElementById('message'),
+                msg_ct = document.getElementById('message-container');
+
+            msg_el.innerHTML = msg;
+            msg_ct.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            var msg_ct = document.getElementById('message-container');
+
+            msg_ct.classList.add('hidden');
+        }
+
         function sign_up() {
             var post = new XMLHttpRequest(),
                     username = document.getElementById('username').value,
                     password = document.getElementById('password').value,
-                    repeat_password = document.getElementById('repeat_password').value;
+                    repeat_password = document.getElementById('repeat_password').value,
+                    name = document.getElementById('name').value,
+                    email = document.getElementById('email').value;
 
-            if (!username || !password || !repeat_password) {
+            if (!username || !password || !repeat_password || !name || !email) {
+                showMessage("Please complete all fields.");
                 return;
             }
 
             if (password !== repeat_password) {
+                showMessage("The passwords do not match.");
                 return;
             }
 
             //success
             post.onloadend = function () {
-                console.log('loadend', post.responseText);
                 var response;
 
                 try {
@@ -133,11 +161,15 @@
                     console.log(e);
                 }
 
-                if (response && response.success && response.message) {
-                    console.log("Success. Redirecting to: ", response.message);
-                    window.location.href = response.message;
+                if (response) {
+                    if (response.success && response.message) {
+                        console.log("Success. Redirecting to: ", response.message);
+                        window.location.href = response.message;
+                    } else if (response.message) {
+                        showMessage(response.message);
+                    }
                 } else {
-                    console.error("Registration failed", response);
+                    showMessage(post.responseText);
                 }
             };
 
@@ -150,7 +182,9 @@
             post.open("POST", window.location.href);
             post.send(JSON.stringify({
                 username: username,
-                password: password
+                password: password,
+                name: name,
+                email: email
             }));
         }
 

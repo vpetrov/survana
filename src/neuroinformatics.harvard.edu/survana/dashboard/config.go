@@ -1,12 +1,10 @@
 package dashboard
 
-type AuthConfig struct {
-    Type string `json:"type,omitempty"`
-    Username string `json:"username,omitempty"`
-    Password string `json:"password,omitempty"`
-}
+import (
+        "neuroinformatics.harvard.edu/survana/auth"
+       )
 
 type Config struct {
-    Authentication *AuthConfig   `json:"authentication,omitempty"`
-    AllowRegistration bool `json:"allow_registration,omitempty"`
+    Authentication *auth.Config `json:"authentication,omitempty"`
+    AllowRegistration bool      `json:"allow_registration,omitempty"`
 }
