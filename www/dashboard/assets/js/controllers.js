@@ -447,6 +447,7 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
 dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$routeParams', '$http', '$templateCache',
     function StudyPublishCtrl($scope, $window, $location, $routeParams, $http, $templateCache) {
         $scope.study = null;
+        $scope.study_url = null;
         $scope.forms = null;
         $scope.current = {
             index: null,
@@ -545,6 +546,28 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
             return index === $scope.current.index;
         };
 
+        $scope.selectLink = function (e) {
+            var link = angular.element('a.study-link');
+            console.log('selecting', link[0 ]);
+            $scope.selectNode(link[0]);
+        };
+
+        $scope.selectNode = function (node) {
+            var range, selection;
+
+            if (window.getSelection && document.createRange) {
+                selection = window.getSelection();
+                range = document.createRange();
+                range.selectNodeContents(node);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else if (document.selection && document.body.createTextRange) {
+                range = document.body.createTextRange();
+                range.moveToElementText(node);
+                range.select();
+            }
+        }
+
         function fetchTemplate(theme_id, theme_version) {
             var url = 'theme?id=' + theme_id + '&version=' + theme_version + '&publish=true&study=true',
                 cachedTemplate = $templateCache.get(url);
@@ -565,7 +588,7 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
                 });
         }
 
-        
+
         function copyStudy () {
             //create a copy of $scope.study, and replace all forms with stubs
             var study = {
@@ -618,6 +641,9 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
                     if ($scope.study.forms.length) {
                         fetchForms($scope.study.forms);
                     }
+
+                    //update study_url
+                    $scope.study_url = $window.location.protocol + "//" + $window.location.host + "/study?" + $scope.study.id;
                 } else {
                     console.log('Error message', response.message);
                 }

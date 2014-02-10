@@ -53,7 +53,7 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *survana.Request) {
 		survana.Error(w, err)
 	}
 
-	//save the form
+	//save the study
 	err = study.Save(d.Module.Db)
 	if err != nil {
 		survana.Error(w, err)
