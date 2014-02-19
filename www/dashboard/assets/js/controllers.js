@@ -643,7 +643,7 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
                     }
 
                     //update study_url
-                    $scope.study_url = $window.location.protocol + "//" + $window.location.host + "/study?" + $scope.study.id;
+                    $scope.study_url = $window.location.protocol + "//" + $window.location.host + "/study/?" + $scope.study.id;
                 } else {
                     console.log('Error message', response.message);
                 }
@@ -1067,9 +1067,18 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
         link: function (scope, elem, attrs, ngModel) {
 
             function updateTemplate() {
-                console.log('updating template with new scope', scope.form);
+                console.log('updating template with new scope', scope);
                 $compile(elem.contents())(scope);
             }
+
+            //quick hack to pass this value form the scope to the iframe
+            $window.study_id = function () {
+                if (scope.study) {
+                    return scope.study.id;
+                }
+
+                return null;
+            };
 
             //register a NextPage() function that can be called within the questionnaire preview iframe
             $window.NextPage = function () {

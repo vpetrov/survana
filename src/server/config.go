@@ -12,6 +12,7 @@ import (
 const (
 	DEFAULT_IP       = ""
 	DEFAULT_PORT     = 4443
+    DEFAULT_KEY      = "survana.key"
 	DEFAULT_SSL_CERT = "ssl/cert.pem"
 	DEFAULT_SSL_KEY  = "ssl/key.pem"
 	DEFAULT_WWW      = "/www/survana"
@@ -24,6 +25,7 @@ type Config struct {
 	PortNumber int		`json:"port"`
 	Username   string	`json:"username"`	//general
 	WWW        string	`json:"www"`		//web
+    Key        string   `json:"key"`        //survana private key
 	SSLCert    string	`json:"sslcert"`	//web
 	SSLKey     string	`json:"sslkey"`		//web
 	DbUrl      string	`json:"db"`			//database
@@ -70,6 +72,10 @@ func NewConfig(src io.Reader) (config *Config, err error) {
 	if len(config.WWW) == 0 {
 		config.WWW = DEFAULT_WWW
 	}
+
+    if len(config.Key) == 0 {
+        config.Key = DEFAULT_KEY
+    }
 
 	if len(config.SSLCert) == 0 {
 		config.SSLCert = DEFAULT_SSL_CERT

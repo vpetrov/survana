@@ -32,8 +32,8 @@
                 </div>
                 <p class="navbar-text hidden-xs hidden-sm pull-left">{{ form.title }}</p>
                 <span >
-                <button ng-class="{'hidden':current.index==(study.forms.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="survana.NextPage()">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
-                <button ng-class="{'hidden':current.index<(study.forms.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="survana.FinishSurvey()">Finish <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+                <button ng-class="{'hidden':current.index==(study.forms.length-1)}" class="btn btn-danger navbar-btn pull-right" study_id="{{ study.id }}" onclick="survana.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+                <button ng-class="{'hidden':current.index<(study.forms.length-1)}" class="btn btn-success navbar-btn pull-right" study_id="{{ study.id }}" onclick="survana.FinishSurvey(this)">Finish <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
             </div>
         </div>
 
@@ -42,5 +42,6 @@
         <!-- scripts must in the <body>, otherwise they cause the frame document to delay DOM parsing -->
         <script type="text/javascript" src="assets/lib/jquery/2.0.3/jquery.min.js"></script>
         <script type="text/javascript" src="assets/lib/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="assets/lib/survana/1.0.0/survana-study.js"></script>
     </body>
 </html>

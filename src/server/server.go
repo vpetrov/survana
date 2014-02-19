@@ -64,8 +64,15 @@ func main() {
 		}
 	}
 
+    private_key, err := GetPrivateKey(config.Key)
+    if err != nil {
+        panic(err)
+    }
+
+    log.Println("Survana ID:", private_key.Id)
+
 	//Mount all modules
-	err = EnableModules(config)
+	err = EnableModules(private_key, config)
 	if err != nil {
 		panic(err)
 	}
@@ -160,9 +167,9 @@ func Listen(config *Config) (tlsListener net.Listener, err error) {
 	return
 }
 
-//Create and mount all known modules
-func EnableModules(config *Config) (err error) {
 
+//Create and mount all known modules
+func EnableModules(private_key *survana.PrivateKey, config *Config) (err error) {
 
     log.Println("%#v", config);
 
@@ -204,3 +211,4 @@ func GetDB(u string, dbname string) survana.Database {
 
 	return DB
 }
+

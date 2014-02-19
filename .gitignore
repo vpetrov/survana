@@ -20,3 +20,5 @@ src/code.google.com
 src/server/server
 *.xcworkspace/
 xcuserdata/
+*.test
+*.prof

@@ -2,17 +2,25 @@
 <html>
 <head>
     <title><% .Title %></title>
+    <script type="text/javascript">
+        <% $study_id := .Id %>
+
+        localStorage['<%js $study_id %>-current'] = 0;
+
+        //generate the workflow
+        localStorage['<%js $study_id %>-workflow'] = JSON.stringify([
+            <%range $form := .Forms %>
+                "form?s=<%js $study_id %>&f=<%js $form.Id %>",
+            <%end%>
+        ]);
+
+        <% $next_form := index .Forms 0 %>
+        var l = window.location;
+
+        window.location.href = 'form?s=<%js $study_id %>&f=<%js $next_form.Id %>';
+    </script>
+
 </head>
 <body>
-    <h2><% .Title %></h2>
-    <p><% .Description %></p>
-    <ul>
-        <% $study_id := .Id %>
-        <%range $form := .Forms %>
-            <li>
-                <a href="form?s=<% $study_id %>&f=<% $form.Id %>"><% $form.Id %></a>
-            </li>
-        <%end%>
-    </ul>
 </body>
 </html>
