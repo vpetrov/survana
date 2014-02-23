@@ -24,7 +24,7 @@ func (d *Dashboard) FormList(w http.ResponseWriter, r *survana.Request) {
 		filter = append(filter, "fields")
 	}
 
-	forms, err := survana.ListForms(filter, d.Module.Db)
+	forms, err := survana.ListForms(filter, d.Db)
 
 	if err != nil {
 		survana.Error(w, err)
@@ -60,13 +60,13 @@ func (d *Dashboard) CreateForm(w http.ResponseWriter, r *survana.Request) {
 	form.OwnerId = session.UserId
 
 	//generate a unique id
-	err = form.GenerateId(d.Module.Db)
+	err = form.GenerateId(d.Db)
 	if err != nil {
 		survana.Error(w, err)
 	}
 
 	//save the form
-	err = form.Save(d.Module.Db)
+	err = form.Save(d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -94,7 +94,7 @@ func (d *Dashboard) GetForm(w http.ResponseWriter, r *survana.Request) {
 		return
 	}
 
-	form, err := survana.FindForm(form_id, d.Module.Db)
+	form, err := survana.FindForm(form_id, d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -130,7 +130,7 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *survana.Request) {
 	}
 
 	//make sure the form exists
-	form, err := survana.FindForm(form_id, d.Module.Db)
+	form, err := survana.FindForm(form_id, d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -164,7 +164,7 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *survana.Request) {
 	user_form.OwnerId = form.OwnerId
 
 	//update the form
-	err = user_form.Save(d.Module.Db)
+	err = user_form.Save(d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -189,8 +189,9 @@ func (d *Dashboard) DeleteForm(w http.ResponseWriter, r *survana.Request) {
 		return
 	}
 
+
 	//make sure the form exists
-	form, err := survana.FindForm(form_id, d.Module.Db)
+	form, err := survana.FindForm(form_id, d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -202,7 +203,7 @@ func (d *Dashboard) DeleteForm(w http.ResponseWriter, r *survana.Request) {
 		return
 	}
 
-	err = form.Delete(d.Module.Db)
+	err = form.Delete(d.Db)
 
 	if err != nil {
 		survana.Error(w, err)

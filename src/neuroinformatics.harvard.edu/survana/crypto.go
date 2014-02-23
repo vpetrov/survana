@@ -46,7 +46,7 @@ func GeneratePrivateKey() (private_key *PrivateKey, err error) {
 
     private_key.Id, err = GenerateKeyId()
     if err != nil {
-        return
+        return nil, err
     }
 
     return
@@ -76,6 +76,7 @@ func GenerateKeyId() (id string, err error) {
     return
 }
 
+//JSON.stringify
 func (key *PrivateKey) MarshalJSON() (data []byte, err error) {
     skey := &serializableKey{
         Id: key.Id,
@@ -89,6 +90,7 @@ func (key *PrivateKey) MarshalJSON() (data []byte, err error) {
     return
 }
 
+//JSON.parse
 func (key *PrivateKey) UnmarshalJSON(data []byte) (err error) {
     skey := &serializableKey{}
     err = json.Unmarshal(data, skey)

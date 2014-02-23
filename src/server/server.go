@@ -174,7 +174,10 @@ func EnableModules(private_key *survana.PrivateKey, config *Config) (err error) 
     log.Println("%#v", config);
 
 	//dashboard
-	dashboard_module := dashboard.NewModule(config.WWW+"/dashboard", GetDB(config.DbUrl, "dashboard"), config.Modules.Dashboard)
+	dashboard_module := dashboard.NewModule(config.WWW+"/dashboard",
+                                            GetDB(config.DbUrl, "dashboard"),
+                                            config.Modules.Dashboard,
+                                            private_key)
 	survana.Modules.Mount(dashboard_module.Module, "/dashboard")
 
     //study

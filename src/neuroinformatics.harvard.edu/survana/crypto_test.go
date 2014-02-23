@@ -2,25 +2,8 @@ package survana
 
 import (
 	"testing"
-    "crypto/elliptic"
-    "crypto/ecdsa"
-    "crypto/rand"
     _ "log"
 )
-
-type fake_rand struct {
-}
-
-func (r *fake_rand) Read(p []byte) (n int, err error) {
-    np := len(p)
-    i := 0
-
-    for i = 0; i < np; i++ {
-        p[i] = byte(i);
-    }
-
-    return i, nil
-}
 
 func TestNewPrivateKey(t *testing.T) {
     key := NewPrivateKey()
@@ -42,6 +25,10 @@ func TestGeneratePrivateKey(t *testing.T) {
 
     if err != nil {
         t.Errorf("err = %v", err)
+    }
+
+    if key == nil {
+        t.Errorf("key is nil, expected non-nil")
     }
 
     if len(key.Id) == 0 {
@@ -92,11 +79,96 @@ func TestGenerateKeyId(t *testing.T) {
 }
 
 func BenchmarkGenerateKeyId(b *testing.B) {
-    //fake_rng := &fake_rand{}
-    curve := elliptic.P521()
+    for i := 0; i < b.N; i++ {
+        _, _ = GenerateKeyId()
+    }
+}
+
+func TestMarshalJSON(t *testing.T) {
+    key, err := GeneratePrivateKey()
+
+    if err != nil {
+        t.Errorf("err = %v", err)
+    }
+
+    if key == nil {
+        t.Errorf("key is nil, expected non-nil")
+    }
+
+    data, err := key.MarshalJSON()
+
+    if err != nil {
+        t.Errorf("err = %v", err)
+    }
+
+    if len(data) == 0 {
+        t.Errorf("len(data) == %v, expected %v", len(data), 0)
+    }
+}
+
+func BenchmarkMarshalJSON(b *testing.B) {
+    key, err := GeneratePrivateKey()
+
+    if err != nil {
+        b.Errorf("err = %v", err)
+    }
 
     b.ResetTimer()
     for i := 0; i < b.N; i++ {
-        _, _ = ecdsa.GenerateKey(curve, rand.Reader)
+        _, _ = key.MarshalJSON()
+    }
+}
+
+func TestUnmarshalJSON(t *testing.T) {
+    key, err := GeneratePrivateKey()
+    if err != nil {
+        t.Errorf("err = %v", err)
+    }
+
+    keydata, err := key.MarshalJSON()
+    if err != nil {
+        t.Errorf("err = %v", err)
+    }
+
+    key2 := NewPrivateKey()
+    err = key2.UnmarshalJSON(keydata)
+
+    if key2.Id != key.Id {
+        t.Errorf("key2.Id = %v, expected %v", key2.Id, key.Id)
+    }
+
+    if key2.Type != key.Type {
+        t.Errorf("key2.Type = %v, expected %v", key2.Type, key.Type)
+    }
+
+    if key2.D.Cmp(key.D) != 0 {
+        t.Errorf("key2.PrivateKey.D = %v, expected %v", key2.D, key.D)
+    }
+
+    if key2.X.Cmp(key.X) != 0 {
+        t.Errorf("key2.PrivateKey.X = %v, expected %v", key2.X, key.X)
+    }
+
+    if key2.Y.Cmp(key.Y) != 0 {
+        t.Errorf("key2.PrivateKey.Y = %v, expected %v", key2.Y, key.Y)
+    }
+}
+
+func BenchmarkUnmarshalJSON(b *testing.B) {
+    key, err := GeneratePrivateKey()
+    if err != nil {
+        b.Errorf("err = %v", err)
+    }
+
+    keydata, err := key.MarshalJSON()
+    if err != nil {
+        b.Errorf("err = %v", err)
+    }
+
+    key2 := NewPrivateKey()
+
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        _ = key2.UnmarshalJSON(keydata)
     }
 }

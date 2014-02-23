@@ -14,6 +14,8 @@ ifdef COVER
     COVER:=-cover
 endif
 
+COVERFILE := survana.coverage
+
 #OSX
 OSX_PROJECT_NAME:=Survana
 OSX_TARGET:=bin/${OSX_PROJECT_NAME}.app
@@ -48,3 +50,10 @@ ${OSX_BUILD_ARCHIVE}: ${OSX_PROJECT}
 
 osx-clean:
 	rm -rf ${OSX_TARGET} ${OSX_BUILD_ARCHIVE}
+
+cover: ${TARGET}
+	GOPATH=${CURRENT_DIR} go test -coverprofile=${COVERFILE} -covermode=count neuroinformatics.harvard.edu/survana
+	GOPATH=${CURRENT_DIR} go tool cover -html=${COVERFILE}
+
+bench: ${TARGET}
+	GOPATH=${CURRENT_DIR} go test -bench . neuroinformatics.harvard.edu/survana

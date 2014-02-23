@@ -12,14 +12,14 @@ const (
 //The Admin component
 type Dashboard struct {
 	*survana.Module
-	mux *survana.RESTMux
-    Auth auth.Strategy
     Config *Config //dashboard.Config
+
+    Auth auth.Strategy
 }
 
 
 // creates a new Admin module
-func NewModule(path string, db survana.Database, config *Config) *Dashboard {
+func NewModule(path string, db survana.Database, config *Config, key *survana.PrivateKey) *Dashboard {
 
 	mux := survana.NewRESTMux()
 
@@ -29,9 +29,9 @@ func NewModule(path string, db survana.Database, config *Config) *Dashboard {
 			Path:   path,
 			Db:     db,
 			Router: mux,
+            Mux:    mux,
 			Log:    db.NewLogger("logs", NAME),
 		},
-		mux: mux,
         Config: config,
 	}
 

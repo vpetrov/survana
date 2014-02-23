@@ -33,6 +33,8 @@ type Module struct {
 
 	Router    Router
 	Templates *template.Template
+
+	Mux *RESTMux
 }
 
 //parses all template files from the 'templates' folder of the module

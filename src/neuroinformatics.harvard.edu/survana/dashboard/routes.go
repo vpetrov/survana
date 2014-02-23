@@ -7,7 +7,7 @@ import (
 
 // registers all route handlers
 func (d *Dashboard) RegisterHandlers() {
-	app := d.mux
+	app := d.Mux
 
 	//must end with slash
 	app.Static("/assets/")
