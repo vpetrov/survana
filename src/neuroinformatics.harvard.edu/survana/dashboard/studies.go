@@ -249,3 +249,71 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *survana.Request) 
 
 	survana.NoContent(w)
 }
+
+func (d *Dashboard) StudySubjectsPage(w http.ResponseWriter, r *survana.Request) {
+	d.RenderTemplate(w, "study/subjects", nil)
+}
+
+func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *survana.Request) {
+	var err error
+
+	//get the form id
+	query := r.URL.Query()
+	study_id := query.Get("id")
+
+	log.Println("study to delete:", study_id)
+
+	//TODO: Validate alnum
+	if len(study_id) == 0 {
+		survana.BadRequest(w)
+		return
+	}
+
+	//make sure the form exists
+	study, err := survana.FindStudy(study_id, d.Db)
+	if err != nil {
+		survana.Error(w, err)
+		return
+	}
+
+	//not found?
+	if study == nil {
+		survana.NotFound(w)
+		return
+	}
+
+    //parse json data
+    ids := make([]string, 0)
+    err = r.JSONBody(r.Body, &ids)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    nids := len(ids)
+    if nids == 0 {
+        survana.BadRequest(w)
+        return
+    }
+
+    var id string
+
+    //save and enable all IDs
+    for i := 0; i < nids; i++ {
+        id = ids[i]
+        _, exists := study.Subjects[id]
+
+        if !exists {
+            study.Subjects[id] = true
+        }
+    }
+
+    //store the updated Survey
+    err = study.Save(d.Db)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    survana.JSONResult(w, true, study.Subjects)
+}

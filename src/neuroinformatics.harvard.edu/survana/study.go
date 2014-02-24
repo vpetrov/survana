@@ -19,6 +19,7 @@ type Study struct {
 	Forms       []Form    `bson:"forms,omitempty" json:"forms"`
     Html        [][]byte  `bson:"html,omitempty" json:"-"`
 	Published   bool      `bson:"published" json:"published"`
+    Subjects    map[string]bool `bson:"subjects" json:"subjects"`
 
 	//DbObject
 	DBID interface{} `bson:"_id,omitempty" json:"-"`

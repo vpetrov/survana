@@ -708,6 +708,140 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
     }
 ]);
 
+dashboard.controller('StudySubjectsCtrl', ['$scope', '$http', '$window', '$location', '$routeParams',
+    function StudyEditCtrl($scope, $http, $window, $location, $routeParams) {
+
+        //create a file upload field
+        var fileUploader = document.createElement('input');
+
+        fileUploader.setAttribute('type', 'file');
+        fileUploader.classList.add('hidden');
+        fileUploader.addEventListener('change', onFileUpload);
+
+        document.body.appendChild(fileUploader);
+
+        $scope.study = {
+            id: $routeParams.id,
+            name: "",
+            title: "",
+            description: "",
+            version: "",
+            forms: [],
+            published: false,
+            participants: {}
+        };
+
+        $scope.loading = false;
+        $scope.message = "";
+
+        $scope.stopEvent = stopEvent;
+
+        function fetchStudy() {
+            //fetch the form JSON and store it in $scope.form
+            $http.get('study', {params: $routeParams}).success(function (response, code, request) {
+                if (response.success) {
+                    $scope.study = response.message;
+                } else {
+                    console.log('Error message', response.message);
+                }
+            }).error(function () {
+                    console.log("Error fetching", url)
+                });
+        }
+
+        $scope.uploadFileDialog = function () {
+            fileUploader.click();
+        };
+
+        function showError(msg) {
+            console.error('Upload error:', msg);
+            $scope.$apply(function () {
+                $scope.message = msg;
+                $scope.loading = false;
+            });
+        }
+
+        function onFileUpload() {
+            if (fileUploader.files.length == 0) {
+                return
+            }
+
+            $scope.$apply(function () {
+                $scope.loading = true;
+            });
+
+            //choose first file
+            var file = fileUploader.files[0],
+                freader = new FileReader();
+
+            //when the file has been read, extract all the IDs as object keys
+            freader.onloadend = function (e) {
+                if (!e.total || !freader.result) {
+                    showError("The file you selected is either empty, or could not be read.");
+                    return;
+                }
+
+                //create an array of IDs
+                var ids = freader.result.split("\n"),
+                    result = [],
+                    id,
+                    i;
+
+                if (!ids.length) {
+                    showError("No participant IDs could be found in the selected file.");
+                    return;
+                }
+
+                //trim and filter invalid IDs
+                for (i = 0; i < ids.length; ++i) {
+                    id = ids[i].trim();
+                    if (!id.length) {
+                        continue;
+                    }
+
+                    result.push(id);
+                }
+
+                //send the IDs to the server
+                uploadIDs(result);
+            };
+
+            freader.onerror = freader.onabort = function (e) {
+                showError(freader.error);
+            };
+
+            freader.readAsText(file);
+        }
+
+        function uploadIDs(ids) {
+
+            function onUploadSuccess(response) {
+                console.log(arguments);
+                $scope.loading = false;
+
+                if (response.success) {
+                    $scope.message = "";
+                    //update current study subjects with the copy on the server
+                    $scope.study.subjects = response.message;
+                } else {
+                    $scope.message = response.message;
+                }
+            }
+
+            function onUploadError() {
+                console.log(arguments);
+                $scope.message = "Upload failed.";
+            }
+
+            $http.put('studies/subjects', ids, {params: $routeParams}).
+                success(onUploadSuccess).
+                error(onUploadError);
+        }
+
+        fetchStudy();
+    }
+]);
+
 dashboard.controller('FormListCtrl', ['$scope', '$http',
     function FormListCtrl($scope, $http) {
         $scope.forms = [];

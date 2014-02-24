@@ -62,7 +62,8 @@ func (d *Dashboard) RegisterHandlers() {
 	app.Delete("/study", survana.Protect(d.DeleteStudy))
 	app.Get("/studies/publish", survana.Protect(d.PublishStudyPage))
 	app.Post("/studies/publish", survana.Protect(d.PublishStudyForm))
-
+    app.Get("/studies/subjects", survana.Protect(d.StudySubjectsPage))
+    app.Put("/studies/subjects", survana.Protect(d.AddStudySubjects))
 }
 
 // sends the app skeleton to the client

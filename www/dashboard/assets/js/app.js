@@ -47,6 +47,10 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
             templateUrl: 'studies/publish',
             controller: 'StudyPublishCtrl'
         }).
+        when("/studies/subjects/:id", {
+            templateUrl: 'studies/subjects',
+            controller: 'StudySubjectsCtrl'
+        }).
         otherwise({
             redirectTo: "/"
         });

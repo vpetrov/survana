@@ -1,0 +1,71 @@
+<div class="toolbar">
+    <div class="btn-group">
+        <a href="#/studies/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-eye-open" title="Preview"></i></a>
+        <a href="#/studies/edit/{{ study.id }}" ng-hide="study.published" class="btn btn-warning"><i class="glyphicon glyphicon-edit" title="Edit"></i></a>
+        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-globe" title="Publish"></i></a>
+    </div>
+
+    <button type="button" class="btn btn-success" ng-click="uploadFileDialog()"><i ng-class="{'fa fa-upload':!loading, 'fa fa-spinner fa-spin':loading}"></i></button>
+
+    <!-- Delete selected -->
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" ng-disabled="!selected.length" data-toggle="dropdown">
+            <i class="glyphicon glyphicon-trash"></i>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li>
+                <a href="" ng-click="deleteSelected()">
+                    <i class="glyphicon glyphicon-ok"></i>
+                    Delete {{ selected.length }} stud{{ (selected.length > 1) ? 'ies' : 'y' }}
+                </a>
+            </li>
+            <li><a href=""><i class="glyphicon glyphicon-remove"></i> Cancel</a></li>
+        </ul>
+    </div>
+
+    <!-- Search -->
+    <div class="input-group col-lg-2 col-md-3 col-sm-3 col-xs-4 pull-right" style="display:inline-table">
+        <input type="text" class="form-control" placeholder="Search participants" data-ng-model="search">
+        <span class="input-group-addon">
+            <i class="glyphicon glyphicon-search"></i>
+        </span>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="white col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <!-- make this div use the entire available width -->
+    <div class="lead">
+        <p class="lead">
+            {{ study.name }} Participants
+            <span class="alert alert-sm alert-dismissable" data-ng-class="{'hidden':!message.length, 'alert-danger':message.length}">
+                <i class="glyphicon glyphicon-minus-sign"></i> {{ message }}
+            </span>
+        </p>
+    </div>
+
+    <!-- the participants table doesn't need the full width -->
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+            <table class="table table-hover">
+                <tbody>
+                <tr data-ng-repeat="(subject_id, enabled) in study.subjects | filter:search" ng-class="{ warning:isSelected(subject_id) }" class="hover">
+                    <!-- checkbox -->
+                    <td class="small checkboxes text-center">
+                        <input type="checkbox" ng-click="toggle(subject_id)">
+                    </td>
+                    <!-- id -->
+                    <td class="text-left">
+                        <span ng-class="{'text-danger':!enabled, 'text-success':enabled}">{{ subject_id }}</span>
+                    </td>
+                    <td class="medium text-center">
+                        <i class="fa fa-circle" ng-class="{'text-danger':!enabled, 'text-success':enabled}"></i>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

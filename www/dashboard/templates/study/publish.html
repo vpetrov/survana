@@ -7,6 +7,7 @@
 
     <button type="button" class="btn btn-success" ng-hide="study.published" ng-disabled="!template || publishing" ng-click="publishStudy()"><i class="glyphicon glyphicon-cloud-upload"></i> Publish</button>
     <button type="button" class="btn btn-danger" ng-show="study.published" ng-click="unpublishStudy()"><i class="glyphicon glyphicon-cloud-download"></i> Revert to draft</button>
+    <a href="#/studies/subjects/{{ study.id }}" class="btn btn-default"><i class="glyphicon glyphicon-user"></i> Participants</a>
 
     <div ng-show="publishing || error" ng-class="{'active':publishing}" class="progress progress-striped btn-group" style="width:200px; display:inline-block; margin-bottom:3px; margin-left:5px">
         <div class="progress-bar" ng-class="{'progress-bar-success':!error, 'progress-bar-danger':error}" role="progressbar" style="width: {{ ((current.index-0) / study.forms.length) * 100 }}%;"></div>
