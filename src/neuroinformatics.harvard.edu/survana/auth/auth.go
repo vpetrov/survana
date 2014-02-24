@@ -12,6 +12,7 @@ import (
 
 const (
         BUILTIN = "built-in"
+        SUBJECT_ID = "subject_id"
         OAUTH2  = "oauth2"
         LDAP    = "ldap"
         NIS     = "nis"
@@ -21,6 +22,7 @@ func New(config *Config) Strategy {
 
     switch config.Type {
         case BUILTIN: return NewBuiltinStrategy(config)
+        case SUBJECT_ID: return NewSubjectIdStrategy(config)
         default: log.Printf("WARNING: Authentication type '%v' is not yet supported.", config.Type)
     }
 

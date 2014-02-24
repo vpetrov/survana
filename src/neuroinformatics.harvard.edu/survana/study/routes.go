@@ -15,11 +15,107 @@ func (s *Study) RegisterHandlers() {
 	app.Static("/assets/")
 
 	app.Get("/", s.Index)
+    app.Get("/go", s.Start)
+    app.Post("/", s.Login)
     app.Get("/form", s.Form)
 }
 
 // sends the app skeleton to the client
 func (s *Study) Index(w http.ResponseWriter, r *survana.Request) {
+    var err error
+
+    //render the home page if no study was mentioned
+    if (len(r.URL.RawQuery) == 0) {
+        s.RenderTemplate(w, "index", nil)
+        return
+    }
+
+    //set the study id
+    study_id := r.URL.RawQuery
+
+    log.Println("study id", study_id)
+
+    //otherwise, fetch the study
+    study, err := survana.FindStudy(study_id, s.Db)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    if study == nil {
+        survana.NotFound(w)
+        return
+    }
+
+    //if this study is using Subject IDs, render the login screen
+    if len(study.Subjects) > 0 {
+        s.RenderTemplate(w, "study/login", study)
+        return
+    }
+
+    s.RenderTemplate(w, "study/index", study)
+}
+
+// sends the app skeleton to the client
+func (s *Study) Login(w http.ResponseWriter, r *survana.Request) {
+    var err error
+
+    //render the home page if no study was mentioned
+    if (len(r.URL.RawQuery) == 0) {
+        survana.BadRequest(w)
+        return
+    }
+
+    //set the study id
+    study_id := r.URL.RawQuery
+
+    log.Println("study id", study_id)
+
+    //otherwise, fetch the study
+    study, err := survana.FindStudy(study_id, s.Db)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    if study == nil {
+        survana.NotFound(w)
+        return
+    }
+
+    //read form data
+    form := make(map[string]string)
+
+    err = r.ParseJSON(&form)
+    if err != nil {
+        survana.Error(w, err)
+        return
+    }
+
+    //read the subject id
+    subject_id, ok := form["subject_id"]
+    if !ok || len(subject_id) == 0 {
+        survana.JSONResult(w, false, "Please complete all the fields.")
+        return
+    }
+
+    //check that the subject id exists in the study.Subjects and it's enabled
+    enabled, ok := study.Subjects[subject_id]
+    if !ok {
+        survana.JSONResult(w, false, "We were unable to find this ID.")
+        return
+    }
+
+    if !enabled {
+        survana.JSONResult(w, false, "This ID has already been used.")
+        return
+    }
+
+    survana.JSONResult(w, true, s.MountPoint + "/go?" + study_id)
+}
+
+// sends the app skeleton to the client
+func (s *Study) Start(w http.ResponseWriter, r *survana.Request) {
     var err error
 
     //render the home page if no study was mentioned
