@@ -17,8 +17,8 @@ type Study struct {
 	Version     string    `bson:"version,omitempty" json:"version"`
 	CreatedOn   time.Time `bson:"created_on,omitempty" json:"created_on"`
 	Forms       []Form    `bson:"forms,omitempty" json:"forms"`
+    Html        [][]byte  `bson:"html,omitempty" json:"-"`
 	Published   bool      `bson:"published" json:"published"`
-    Html        map[string][]byte  `bson:"html,omitempty" json:"-"`
 
 	//DbObject
 	DBID interface{} `bson:"_id,omitempty" json:"-"`
@@ -29,7 +29,7 @@ type Study struct {
 
 func NewStudy() *Study {
 	return &Study{
-        Html: make(map[string][]byte, 0),
+        Html: make([][]byte, 0),
     }
 }
 

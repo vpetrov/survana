@@ -80,7 +80,6 @@ var BootstrapEngine = function (doc) {
 
         if (field.align) {
             elem.setAttribute('class', c + ' text-' + field.align);
-            console.log('  new class:', elem.getAttribute('class'));
         }
     }
 
@@ -311,13 +310,11 @@ var BootstrapEngine = function (doc) {
             for (i = 0; i < field.rows.length; ++i) {
                 field_length = field.rows[i].html.length;
                 if (field_length < max_label) {
-                    console.log('old html:', field.rows[i].html, max_label, field_length);
                     //create a string of repeating 'nbsp;'
                     npad = max_label - field_length;
                     //npad -= ~~(npad/3); //subtract 30%
                     padding = Array(npad).join("&nbsp; ") || "";
                     field.rows[i].paddedHtml = field.rows[i].html + padding;
-                    console.log('new html:', field.rows[i].paddedHtml);
                 } else {
                     field.rows[i].paddedHtml = field.rows[i].html;
                 }
@@ -678,8 +675,6 @@ var BootstrapEngine = function (doc) {
                 }
             }
         }
-
-        console.log(field.id,'sizes',result);
 
         return result;
     }

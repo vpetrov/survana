@@ -2,6 +2,7 @@ package study
 
 import (
 	"log"
+    "strconv"
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
 )
@@ -33,7 +34,7 @@ func (s *Study) Index(w http.ResponseWriter, r *survana.Request) {
     log.Println("study id", study_id)
 
     //otherwise, fetch the study
-    study, err := survana.FindStudy(study_id, s.Module.Db)
+    study, err := survana.FindStudy(study_id, s.Db)
     if err != nil {
         survana.Error(w, err)
         return
@@ -53,14 +54,15 @@ func (s *Study) Form(w http.ResponseWriter, r *survana.Request) {
     query := r.URL.Query()
 
     study_id := query.Get("s")
-    form_id := query.Get("f")
+    index := query.Get("f")
 
-    if len(study_id) == 0 || len(form_id) == 0 {
+    form_index, err := strconv.Atoi(index)
+    if err != nil || len(study_id) == 0 || form_index < 0 {
         survana.BadRequest(w)
         return
     }
 
-    study, err := survana.FindStudy(study_id, s.Module.Db)
+    study, err := survana.FindStudy(study_id, s.Db)
     if err != nil {
         survana.Error(w, err)
         return
@@ -72,19 +74,13 @@ func (s *Study) Form(w http.ResponseWriter, r *survana.Request) {
     }
 
     //make sure the study has been published
-    if !study.Published {
+    if !study.Published || form_index >= len(study.Html) {
         survana.NotFound(w)
         return
     }
 
     //fetch the HTML code
-    html, ok := study.Html[form_id]
-
-    //if no such form has been published, it hasn't been found
-    if !ok {
-        survana.NotFound(w)
-        return
-    }
+    html := study.Html[form_index]
 
     if len(html) == 0 {
         survana.NotFound(w)

@@ -48,8 +48,6 @@ dashboard.controller('StudyListCtrl', ['$scope', '$http',
         $http.get('studies/list').success(function (response, code, request) {
             if (response.success) {
                 $scope.studies = response.message;
-
-                console.log($scope.studies);
             } else {
                 console.log('Error message', response.message);
             }
@@ -266,7 +264,6 @@ dashboard.controller('StudyEditCtrl', ['$scope', '$http', '$window', '$location'
             }
 
             if ($scope.create) {
-                console.log('creating study with data', $scope.study);
                 $http.post('studies/create', $scope.study).
                     success(onSaveSuccess).
                     error(onSaveError);
@@ -318,7 +315,6 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
                 cachedTemplate = $templateCache.get(url);
 
             if (cachedTemplate) {
-                console.log('cachedTemplate', cachedTemplate);
                 $scope.template = cachedTemplate;
                 return;
             }
@@ -326,7 +322,6 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
             //fetch the theme template and cache it
             $http.get(url).success(function (response, code, request) {
                 $templateCache.put(url, response);
-                console.log('setting scope.template to the new bootstrap theme template');
                 $scope.template = response;
             }).error(function () {
                     console.log("Error fetching", $location.path())
@@ -365,8 +360,6 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
                     if ($scope.study.forms.length) {
                         resolveStudyForms();
                     }
-
-                    console.log('page forms', $scope.forms);
                 } else {
                     console.log('Error message', response.message);
                 }
@@ -423,7 +416,6 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
-            console.log('preview theme has changed. requested new theme:', newTheme);
             Survana.setTheme(newTheme,
                 function () {
                     fetchTemplate(newTheme, Survana.version);
@@ -436,7 +428,6 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
 
         //when the current index changes, change the current form
         $scope.$watch('current.index', function (newIndex, oldIndex) {
-            console.log('current index has changed, updating current form', newIndex);
             if ($scope.study && $scope.study.forms && $scope.study.forms.length) {
                 $scope.current.form = $scope.study.forms[newIndex];
             }
@@ -450,8 +441,9 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
         $scope.study_url = null;
         $scope.forms = null;
         $scope.current = {
-            index: null,
-            form: null
+            index: -1,
+            form: null,
+            rendered: -1
         };
         $scope.rendered = null;
 
@@ -465,7 +457,6 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
         $scope.error = false;
 
         $scope.publishStudy = function() {
-            console.log('publishing study!');
             $scope.publishing = true;
             $scope.current.index = 0;
             $scope.error = false;
@@ -478,8 +469,6 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
             study.published = false;
 
             $scope.message = "";
-
-            console.log('uploading', study);
 
             $http.put('studies/edit', study, {params: $routeParams}).
                 success(function (response, code, request) {
@@ -501,7 +490,6 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
         };
 
         $scope.finishPublishing = function () {
-            console.log('DONE PUBLISHING!');
             $scope.publishing = false;
             $scope.current.index = null;
             $scope.current.form = null;
@@ -521,14 +509,14 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
             }
         }
 
-        $scope.$watch('rendered', function (newVal, oldVal) {
+        //watch the numerical value of 'current.rendered'. The actual HTML data is going to be stored in $scope.rendered
+        $scope.$watch('current.rendered', function (newVal, oldVal) {
             if (!$scope.rendered) {
-                console.log('nothing rendered :/')
+                console.warn('No data was rendered.');
                 return;
             }
 
-            console.log('sending http post!');
-            var url = "studies/publish?id=" + $scope.study.id + "&form_id=" + $scope.current.form.id;
+            var url = "studies/publish?id=" + $scope.study.id + "&f=" + $scope.current.rendered;
 
             $http.post(url, $scope.rendered).success(function (response, code, request) {
                 //go to the next form
@@ -548,7 +536,6 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
 
         $scope.selectLink = function (e) {
             var link = angular.element('a.study-link');
-            console.log('selecting', link[0 ]);
             $scope.selectNode(link[0]);
         };
 
@@ -573,7 +560,6 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
                 cachedTemplate = $templateCache.get(url);
 
             if (cachedTemplate) {
-                console.log('cachedTemplate', cachedTemplate);
                 $scope.template = cachedTemplate;
                 return;
             }
@@ -581,7 +567,6 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
             //fetch the theme template and cache it
             $http.get(url).success(function (response, code, request) {
                 $templateCache.put(url, response);
-                console.log('setting scope.template to the new bootstrap theme template');
                 $scope.template = response;
             }).error(function () {
                     console.log("Error fetching", $location.path())
@@ -666,8 +651,6 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
                     if ($scope.study.forms.length) {
                         resolveStudyForms();
                     }
-
-                    console.log('page forms', $scope.forms);
                 } else {
                     console.log('Error message', response.message);
                 }
@@ -712,7 +695,6 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
-            console.log('preview theme has changed. requested new theme:', newTheme);
             Survana.setTheme(newTheme,
                 function () {
                     fetchTemplate(newTheme, Survana.version);
@@ -737,8 +719,6 @@ dashboard.controller('FormListCtrl', ['$scope', '$http',
         $http.get('forms/list').success(function (response, code, request) {
             if (response.success) {
                 $scope.forms = response.message;
-
-                console.log($scope.forms);
             } else {
                 console.log('Error message', response.message);
             }
@@ -875,7 +855,6 @@ dashboard.controller('FormEditCtrl', ['$scope', '$http', '$window', '$location',
 
         //on Save click
         $scope.saveCode = function () {
-                console.log("save click!");
                 //reset state
                 $scope.message = "";
                 $scope.error = false;
@@ -883,7 +862,6 @@ dashboard.controller('FormEditCtrl', ['$scope', '$http', '$window', '$location',
 
                 //the server url is the same, except for the leading slash
                 if ($scope.create) {
-                    console.log('creating form with data', $scope.form);
                     $http.post('forms/create', $scope.form).
                         success(onSaveSuccess).
                         error(onSaveError);
@@ -898,8 +876,6 @@ dashboard.controller('FormEditCtrl', ['$scope', '$http', '$window', '$location',
         $scope.discardCode = function ($event) {
 
             var button = $($event.target);
-
-            console.log(button.popover);
 
             if ($scope.loading) {
                 button.popover({
@@ -943,7 +919,6 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
                 cachedTemplate = $templateCache.get(url);
 
             if (cachedTemplate) {
-                console.log('cachedTemplate', cachedTemplate);
                 $scope.template = cachedTemplate;
                 return;
             }
@@ -951,7 +926,6 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
             //fetch the theme template and cache it
             $http.get(url).success(function (response, code, request) {
                 $templateCache.put(url, response);
-                console.log('setting scope.template to the new bootstrap theme template');
                 $scope.template = response;
             }).error(function () {
                     console.log("Error fetching", $location.path())
@@ -962,7 +936,6 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
             //fetch the form JSON and store it in $scope.form
             $http.get('form', {params: $routeParams}).success(function (response, code, request) {
                     if (response.success) {
-                        console.log('setting scope.form to the new form json');
                         $scope.form = response.message;
                     } else {
                         console.log('Error message', response.message);
@@ -978,7 +951,6 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
-            console.log('preview theme has changed. requested new theme:', newTheme);
             Survana.setTheme(newTheme,
                 function () {
                     fetchTemplate(newTheme, Survana.version);
@@ -1067,7 +1039,6 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
         link: function (scope, elem, attrs, ngModel) {
 
             function updateTemplate() {
-                console.log('updating template with new scope', scope);
                 $compile(elem.contents())(scope);
             }
 
@@ -1084,7 +1055,6 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
             $window.NextPage = function () {
                 $timeout(function () {
                     if ((scope.current.index + 1) < scope.study.forms.length) {
-                        console.log('incrementing current index')
                         scope.current.index++;
                     }
                 });
@@ -1103,7 +1073,6 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
 
                 //nothing to do?
                 if (!val) {
-                    console.log('directive questionnaire: $watch/template: no template val (', val, ')');
                     return
                 }
 
@@ -1131,26 +1100,29 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
 
                 //make sure a theme, a template and a rendering node are available
                 if (!Survana.theme || !scope.template || !node) {
-                    console.log('no theme, or no template or no node');
                     return;
                 }
 
                 result = Survana.Questionnaire(ngModel.$viewValue);
 
                 if (result) {
-                    console.log('q result');
                     if (node.hasChildNodes()) {
                         node.removeChild(node.firstChild);
                     }
 
                     node.appendChild(result);
 
+                    //if we're supposed to save rendered data
                     if (attrs['render']) {
-                        scope[attrs['render']] = "<!DOCTYPE html><html>" + doc.documentElement.innerHTML + "</html>";
-                        console.log('just rendered', scope.current.index);
+                        //skip a digest cycle to let the updateTemplate() digest to finish,
+                        //otherwise, innerHTML is still the old html, before any watches are updated by the new changes
+                        $timeout(function () {
+                            //store the HTML data into the variable pointed to by data-render
+                            scope[attrs['render']] = "<!DOCTYPE html><html>" + doc.documentElement.innerHTML + "</html>";
+                            //update the currently rendered form index
+                            scope.current.rendered++;
+                        });
                     }
-                } else {
-                    console.log('no view value');
                 }
             }
         }
@@ -1229,7 +1201,6 @@ dashboard.directive("draggable", ['$window', function ($window) {
 
                     //if source was moved up, the new element has shifted this index by 1
                     if (src_index < dest_index) {
-                        console.log('src_index > dest_index');
                         dest_index += 1;
                     } else {
                         src_index += 1;

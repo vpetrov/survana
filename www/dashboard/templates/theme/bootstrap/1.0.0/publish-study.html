@@ -32,8 +32,8 @@
                 </div>
                 <p class="navbar-text hidden-xs hidden-sm pull-left">{{ form.title }}</p>
                 <span >
-                <button ng-class="{'hidden':current.index==(study.forms.length-1)}" class="btn btn-danger navbar-btn pull-right" study_id="{{ study.id }}" onclick="survana.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
-                <button ng-class="{'hidden':current.index<(study.forms.length-1)}" class="btn btn-success navbar-btn pull-right" study_id="{{ study.id }}" onclick="survana.FinishSurvey(this)">Finish <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+                <button ng-class="{'hidden':current.index==(study.forms.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="survana.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+                <button ng-class="{'hidden':current.index<(study.forms.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="survana.FinishSurvey(this)">Finish <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
             </div>
         </div>
 

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
 	"time"
+    "strconv"
 )
 
 func (d *Dashboard) StudyListPage(w http.ResponseWriter, r *survana.Request) {
@@ -12,7 +13,7 @@ func (d *Dashboard) StudyListPage(w http.ResponseWriter, r *survana.Request) {
 }
 
 func (d *Dashboard) StudyList(w http.ResponseWriter, r *survana.Request) {
-	studies, err := survana.ListStudies(d.Module.Db)
+	studies, err := survana.ListStudies(d.Db)
 
 	if err != nil {
 		survana.Error(w, err)
@@ -48,13 +49,13 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *survana.Request) {
 	study.OwnerId = session.UserId
 
 	//generate a unique id
-	err = study.GenerateId(d.Module.Db)
+	err = study.GenerateId(d.Db)
 	if err != nil {
 		survana.Error(w, err)
 	}
 
 	//save the study
-	err = study.Save(d.Module.Db)
+	err = study.Save(d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -78,7 +79,7 @@ func (d *Dashboard) GetStudy(w http.ResponseWriter, r *survana.Request) {
 		return
 	}
 
-	study, err := survana.FindStudy(study_id, d.Module.Db)
+	study, err := survana.FindStudy(study_id, d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -112,7 +113,7 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *survana.Request) {
 	}
 
 	//make sure the form exists
-	study, err := survana.FindStudy(study_id, d.Module.Db)
+	study, err := survana.FindStudy(study_id, d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -143,7 +144,7 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *survana.Request) {
 	user_study.OwnerId = study.OwnerId
 
 	//update the form
-	err = user_study.Save(d.Module.Db)
+	err = user_study.Save(d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -169,7 +170,7 @@ func (d *Dashboard) DeleteStudy(w http.ResponseWriter, r *survana.Request) {
 	}
 
 	//make sure the form exists
-	study, err := survana.FindStudy(study_id, d.Module.Db)
+	study, err := survana.FindStudy(study_id, d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -181,7 +182,7 @@ func (d *Dashboard) DeleteStudy(w http.ResponseWriter, r *survana.Request) {
 		return
 	}
 
-	err = study.Delete(d.Module.Db)
+	err = study.Delete(d.Db)
 
 	if err != nil {
 		survana.Error(w, err)
@@ -204,57 +205,41 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *survana.Request) 
 
 	query := r.URL.Query()
 	study_id := query.Get("id")
-	form_id := query.Get("form_id")
+    form_index, err := strconv.Atoi(query.Get("f"))
 
-	if (len(study_id) == 0) || (len(form_id) == 0) {
-		log.Println("no study id or no form id")
+	if (len(study_id) == 0) || err != nil || form_index < 0 {
 		survana.BadRequest(w)
 		return
 	}
 
-	html, err := r.BodyBytes(r.Request.Body)
+	html, err := r.BodyBytes(r.Body)
 	if err != nil {
 		survana.Error(w, err)
 		return
 	}
 
-    study, err := survana.FindStudy(study_id, d.Module.Db)
+    study, err := survana.FindStudy(study_id, d.Db)
     if err != nil {
         survana.Error(w, err)
         return
     }
 
-    if study == nil {
+    if study == nil || form_index >= len(study.Forms) {
         survana.NotFound(w)
-        return
-    }
-
-    //locate the index of the form being published
-    var form_index int = -1
-    for i := range(study.Forms) {
-        if study.Forms[i].Id == form_id {
-            form_index = i
-            break
-        }
-    }
-
-    //make sure the study contains such a form
-    if form_index < 0 {
-        survana.Error(w, survana.ErrNoSuchForm)
         return
     }
 
     log.Println("should publish form index", form_index)
 
     if (study.Html == nil) {
-        study.Html = make(map[string][]byte, len(study.Forms))
+        study.Html = make([][]byte, len(study.Forms))
     }
 
     //overwrite the HTML
-    study.Html[form_id] = html
+    study.Html[form_index] = html
 
     //save the study
-    err = study.Save(d.Module.Db)
+    err = study.Save(d.Db)
     if err != nil {
         survana.Error(w, err)
         return

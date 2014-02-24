@@ -180,6 +180,7 @@ func EnableModules(private_key *survana.PrivateKey, config *Config) (err error) 
                                             private_key)
 	survana.Modules.Mount(dashboard_module.Module, "/dashboard")
 
+
     //study
     //TODO: figure out how the dashboard should share published studies with the study module
     //for now, let them use the same database

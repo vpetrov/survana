@@ -2,25 +2,69 @@
 <html>
 <head>
     <title><% .Title %></title>
-    <script type="text/javascript">
-        <% $study_id := .Id %>
-
-        localStorage['<%js $study_id %>-current'] = 0;
-
-        //generate the workflow
-        localStorage['<%js $study_id %>-workflow'] = JSON.stringify([
-            <%range $form := .Forms %>
-                "form?s=<%js $study_id %>&f=<%js $form.Id %>",
-            <%end%>
-        ]);
-
-        <% $next_form := index .Forms 0 %>
-        var l = window.location;
-
-        window.location.href = 'form?s=<%js $study_id %>&f=<%js $next_form.Id %>';
-    </script>
-
+    <style type="text/css">
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <div id="message" class="hidden"></div>
+    <script type="text/javascript">
+
+        var study_id = '<%js .Id %>',
+            workflow = [
+                <%range $i, $form := .Forms %>
+                "form?s=" + study_id + "&f=<%js $i %>",
+                <%end%>
+            ];
+
+        startStudy(study_id, workflow);
+
+        function startStudy(study_id, workflow) {
+            var current_form,
+                current_workflow;
+
+            //first run or new window/tab
+            if (!sessionStorage['study_id']) {
+                //set the current study_id
+                sessionStorage['study_id'] = study_id;
+
+                //check for an existing session in a previous tab
+                current_form = localStorage[study_id + '-current'];
+                current_workflow = localStorage[study_id + '-workflow']
+
+                //if we've found a valid session, reuse it
+                if (current_form !== undefined && current_workflow !== undefined) {
+                    current_form |= 0; //cast to int
+                    //nothing to do for the workflow
+                } else {
+                    //start a new session
+                    current_form = 0;
+                    localStorage[study_id + '-current'] = current_form;
+                    localStorage[study_id + '-workflow'] = JSON.stringify(workflow);
+                    localStorage[study_id + '-start'] = (new Date()).valueOf();
+                }
+
+            } else {
+                //resume study (if study_id is present, assume all other fields are present too)
+                current_form = (localStorage[study_id + '-current']|0) || 0;
+            }
+
+            //redirect to the form url
+            if (current_form < workflow.length) {
+                window.location.href = workflow[current_form];
+            } else {
+                showMessage('Thank you for completing this survey.');
+            }
+        }
+
+        function showMessage(msg) {
+            var msg_el = document.getElementById('message');
+
+            msg_el.innerHTML = msg;
+            msg_el.classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>
