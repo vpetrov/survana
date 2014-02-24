@@ -3,6 +3,7 @@ package dashboard
 import (
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
+    "neuroinformatics.harvard.edu/survana/auth"
 )
 
 // registers all route handlers
@@ -12,20 +13,12 @@ func (d *Dashboard) RegisterHandlers() {
 	//must end with slash
 	app.Static("/assets/")
 
-	app.Get("/", survana.Protect(d.Index))
-	app.Get("/home", survana.Protect(d.Home))
-	app.Get("/sidebar", survana.Protect(d.Sidebar))
+	app.Get("/", auth.Protect(d.Index))
+	app.Get("/home", auth.Protect(d.Home))
+	app.Get("/sidebar", auth.Protect(d.Sidebar))
 
     //LOGIN
     if d.Auth != nil {
-        app.Get("/login", survana.NotLoggedIn(d.Auth.LoginPage))
-        app.Post("/login", survana.NotLoggedIn(d.Auth.Login))
-
-        //Registration is optional
-        if d.Config.AllowRegistration {
-            app.Get("/register", survana.NotLoggedIn(d.Auth.RegistrationPage))
-            app.Post("/register", survana.NotLoggedIn(d.Auth.Register))
-        }
     }
 
 	/*app.Get("/login/google", d.LoginWithGoogle)
@@ -37,33 +30,33 @@ func (d *Dashboard) RegisterHandlers() {
 	app.Get("/logout", d.Auth.Logout)
 
 	//Form
-	app.Get("/forms", survana.Protect(d.FormListPage))
-	app.Get("/forms/list", survana.Protect(d.FormList))
-	app.Get("/forms/create", survana.Protect(d.CreateFormPage))
-	app.Post("/forms/create", survana.Protect(d.CreateForm))
-	app.Get("/forms/view", survana.Protect(d.ViewFormPage))
-	app.Get("/form", survana.Protect(d.GetForm))
-	app.Get("/forms/edit", survana.Protect(d.EditFormPage))
-	app.Put("/forms/edit", survana.Protect(d.EditForm))
-	app.Delete("/form", survana.Protect(d.DeleteForm))
+	app.Get("/forms", auth.Protect(d.FormListPage))
+	app.Get("/forms/list", auth.Protect(d.FormList))
+	app.Get("/forms/create", auth.Protect(d.CreateFormPage))
+	app.Post("/forms/create", auth.Protect(d.CreateForm))
+	app.Get("/forms/view", auth.Protect(d.ViewFormPage))
+	app.Get("/form", auth.Protect(d.GetForm))
+	app.Get("/forms/edit", auth.Protect(d.EditFormPage))
+	app.Put("/forms/edit", auth.Protect(d.EditForm))
+	app.Delete("/form", auth.Protect(d.DeleteForm))
 
 	//Themes
 	app.Get("/theme", d.Theme)
 
 	//Study
-	app.Get("/studies", survana.Protect(d.StudyListPage))
-	app.Get("/studies/list", survana.Protect(d.StudyList))
-	app.Get("/studies/create", survana.Protect(d.CreateStudyPage))
-	app.Post("/studies/create", survana.Protect(d.CreateStudy))
-	app.Get("/studies/view", survana.Protect(d.ViewStudyPage))
-	app.Get("/study", survana.Protect(d.GetStudy))
-	app.Get("/studies/edit", survana.Protect(d.EditStudyPage))
-	app.Put("/studies/edit", survana.Protect(d.EditStudy))
-	app.Delete("/study", survana.Protect(d.DeleteStudy))
-	app.Get("/studies/publish", survana.Protect(d.PublishStudyPage))
-	app.Post("/studies/publish", survana.Protect(d.PublishStudyForm))
-    app.Get("/studies/subjects", survana.Protect(d.StudySubjectsPage))
-    app.Put("/studies/subjects", survana.Protect(d.AddStudySubjects))
+	app.Get("/studies", auth.Protect(d.StudyListPage))
+	app.Get("/studies/list", auth.Protect(d.StudyList))
+	app.Get("/studies/create", auth.Protect(d.CreateStudyPage))
+	app.Post("/studies/create", auth.Protect(d.CreateStudy))
+	app.Get("/studies/view", auth.Protect(d.ViewStudyPage))
+	app.Get("/study", auth.Protect(d.GetStudy))
+	app.Get("/studies/edit", auth.Protect(d.EditStudyPage))
+	app.Put("/studies/edit", auth.Protect(d.EditStudy))
+	app.Delete("/study", auth.Protect(d.DeleteStudy))
+	app.Get("/studies/publish", auth.Protect(d.PublishStudyPage))
+	app.Post("/studies/publish", auth.Protect(d.PublishStudyForm))
+    app.Get("/studies/subjects", auth.Protect(d.StudySubjectsPage))
+    app.Put("/studies/subjects", auth.Protect(d.AddStudySubjects))
 }
 
 // sends the app skeleton to the client

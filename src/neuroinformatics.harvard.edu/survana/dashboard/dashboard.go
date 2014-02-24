@@ -37,6 +37,7 @@ func NewModule(path string, db survana.Database, config *Config, key *survana.Pr
 
     if config.Authentication != nil {
         m.Auth = auth.New(config.Authentication)
+        m.Auth.Attach(m.Module)
     }
 
 	m.ParseTemplates()

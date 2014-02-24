@@ -24,10 +24,26 @@ type builtinUser struct {
 }
 
 type BuiltinStrategy struct {
+    Config *Config
 }
 
 func NewBuiltinStrategy(config *Config) BuiltinStrategy {
-    return BuiltinStrategy{}
+    return BuiltinStrategy{
+        Config: config,
+    }
+}
+
+func (b BuiltinStrategy) Attach(module *survana.Module) {
+    app := module.Mux
+
+    app.Get("/login", survana.NotLoggedIn(b.LoginPage))
+    app.Post("/login", survana.NotLoggedIn(b.Login))
+
+    //Registration is optional
+    if b.Config.AllowRegistration {
+        app.Get("/register", survana.NotLoggedIn(b.RegistrationPage))
+        app.Post("/register", survana.NotLoggedIn(b.Register))
+    }
 }
 
 func (b BuiltinStrategy) LoginPage(w http.ResponseWriter, r *survana.Request) {

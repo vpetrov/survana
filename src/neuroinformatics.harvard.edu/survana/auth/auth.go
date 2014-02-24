@@ -18,6 +18,10 @@ const (
         NIS     = "nis"
       )
 
+const (
+        LOGIN_PATH = "/login"
+      )
+
 func New(config *Config) Strategy {
 
     switch config.Type {
@@ -28,7 +32,6 @@ func New(config *Config) Strategy {
 
     return nil
 }
-
 
 //Logs out a user.
 //returns 204 No Content on success
@@ -94,3 +97,27 @@ func hash(password, password_salt string) []byte {
 
     return hash.Sum([]byte(salted_password))
 }
+
+//A handler that filters all requests that have not been authenticated
+//returns 401 Unauthorized if the user's session hasn't been marked as authenticated
+func Protect(handler survana.RequestHandler) survana.RequestHandler {
+	return func(w http.ResponseWriter, r *survana.Request) {
+		//get the session
+		session, err := r.Session()
+
+		if err != nil {
+			survana.Error(w, err)
+			return
+		}
+
+		//if the session hasn't been authorized, redirect
+		if !session.Authenticated {
+			survana.Redirect(w, r, LOGIN_PATH)
+			return
+		}
+
+		//must be authenticated at this point
+		handler(w, r)
+	}
+}
+

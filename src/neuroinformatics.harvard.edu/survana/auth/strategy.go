@@ -6,6 +6,8 @@ import (
        )
 
 type Strategy interface {
+    Attach(module *survana.Module)
+
     LoginPage(w http.ResponseWriter, r *survana.Request)
     RegistrationPage(w http.ResponseWriter, r *survana.Request)
 

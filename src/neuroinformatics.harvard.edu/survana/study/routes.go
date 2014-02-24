@@ -5,19 +5,18 @@ import (
     "strconv"
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
+    "neuroinformatics.harvard.edu/survana/auth"
 )
 
 // registers all route handlers
 func (s *Study) RegisterHandlers() {
-	app := s.mux
+	app := s.Mux
 
 	//must end with slash
 	app.Static("/assets/")
 
-	app.Get("/", s.Index)
-    app.Get("/go", s.Start)
-    app.Post("/", s.Login)
-    app.Get("/form", s.Form)
+	app.Get("/", auth.Protect(s.Index))
+    app.Get("/form", auth.Protect(s.Form))
 }
 
 // sends the app skeleton to the client
@@ -114,35 +113,6 @@ func (s *Study) Login(w http.ResponseWriter, r *survana.Request) {
     survana.JSONResult(w, true, s.MountPoint + "/go?" + study_id)
 }
 
-// sends the app skeleton to the client
-func (s *Study) Start(w http.ResponseWriter, r *survana.Request) {
-    var err error
-
-    //render the home page if no study was mentioned
-    if (len(r.URL.RawQuery) == 0) {
-        s.RenderTemplate(w, "index", nil)
-        return
-    }
-
-    //set the study id
-    study_id := r.URL.RawQuery
-
-    log.Println("study id", study_id)
-
-    //otherwise, fetch the study
-    study, err := survana.FindStudy(study_id, s.Db)
-    if err != nil {
-        survana.Error(w, err)
-        return
-    }
-
-    if study == nil {
-        survana.NotFound(w)
-        return
-    }
-
-    s.RenderTemplate(w, "study/index", study)
-}
 
 func (s *Study) Form(w http.ResponseWriter, r *survana.Request) {
     var err error

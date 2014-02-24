@@ -32,29 +32,6 @@ func NotLoggedIn(handler RequestHandler) RequestHandler {
     }
 }
 
-//A handler that filters all requests that have not been authenticated
-//returns 401 Unauthorized if the user's session hasn't been marked as authenticated
-func Protect(handler RequestHandler) RequestHandler {
-	return func(w http.ResponseWriter, r *Request) {
-		//get the session
-		session, err := r.Session()
-
-		if err != nil {
-			Error(w, err)
-			return
-		}
-
-		//if the session hasn't been authorized, redirect
-		if !session.Authenticated {
-			Redirect(w, r, "/login")
-			return
-		}
-
-		//must be authenticated at this point
-		handler(w, r)
-	}
-}
-
 func NotFound(w http.ResponseWriter) {
 	http.Error(w, "Not Found", http.StatusNotFound)
 }
