@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"runtime"
+    "runtime/debug"
 )
 
 type JSONResponse struct {
@@ -43,6 +44,7 @@ func NoContent(w http.ResponseWriter) {
 
 //returns 500 Internal Server Error, and prints the error to the server log
 func Error(w http.ResponseWriter, err error) {
+    debug.PrintStack()
 	_, file, line, _ := runtime.Caller(1)
 	log.Printf("ERROR:%s:%d: %s\n", file, line, err)
 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)

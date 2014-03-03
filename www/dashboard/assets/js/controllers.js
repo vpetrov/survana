@@ -799,7 +799,7 @@ dashboard.controller('StudySubjectsCtrl', ['$scope', '$http', '$window', '$locat
                         continue;
                     }
 
-                    result.push(id);
+                    result.push(id.toUpperCase());
                 }
 
                 //send the IDs to the server

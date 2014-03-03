@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><% .Title %></title>
+    <title><% .Study_id %></title>
     <link rel="stylesheet" type="text/css" href="assets/lib/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/lib/bootstrap/3.0.3/css/bootstrap-theme.min.css">
     <style>
@@ -91,27 +91,46 @@
             color: #AD95B2;
             text-decoration: none;
         }
+
+        p {
+            text-align: center;
+            color: #bbb;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <form role="form">
-        <h2><% .Title %></h2>
+        <h3>Welcome!</h3>
         <hr>
-        <div id="message-container" class="alert alert-warning hidden">
-            <i class="glyphicon glyphicon-exclamation-sign"></i> &nbsp;<span id="message"></span>
+        <div id="message-container" class="alert alert-warning <%if len .Msg | eq 0  %>  hidden <%end%>">
+            <i class="glyphicon glyphicon-exclamation-sign"></i> &nbsp;<span id="message">
+            <% .Msg %>
+            </span>
         </div>
 
+        <% if len .Msg | eq 0 %>
         <div class="group">
-            <input id="subject_id" name="subject_id" type="text" class="form-control" placeholder="Your ID" required>
-            <input id="repeat_subject_id" type="text" class="form-control" placeholder="Re-enter your ID" required>
+            <input id="subject_id" name="subject_id" type="text" class="form-control" placeholder="Participant ID" required>
+            <input id="repeat_subject_id" type="text" class="form-control" placeholder="Re-enter Participant ID" required>
         </div>
 
-        <button id="signin" class="btn btn-lg btn-info btn-block" type="button" onclick="sign_up()">Submit</button>
+        <button id="signin" class="btn btn-lg btn-default btn-block" type="button" onclick="sign_in()">Submit</button>
+        <p>
+            This study requires that you enter a Participant ID. If you do not know your ID, please contact the
+            study administrator.
+        </p>
+        <% else %>
+        <div style="text-align:center">
+            <a class="btn btn-default" href="?<% .Study_id %>">Back</a>
+        </div>
+        <% end %>
     </form>
 
     <!-- login handler -->
     <script type="text/javascript">
+
+        console.log('hello!', window.location.search);
 
         function showMessage(msg) {
             var msg_el = document.getElementById('message'),
@@ -127,9 +146,8 @@
             msg_ct.classList.add('hidden');
         }
 
-        function sign_up() {
-            var post = new XMLHttpRequest(),
-                subject_id = document.getElementById('subject_id').value,
+        function sign_in() {
+            var subject_id = document.getElementById('subject_id').value,
                 repeat_subject_id = document.getElementById('repeat_subject_id').value;
 
             if (!subject_id || !repeat_subject_id) {
@@ -142,38 +160,7 @@
                 return;
             }
 
-            //success
-            post.onloadend = function () {
-                var response;
-
-                try {
-                    response = JSON.parse(post.responseText);
-                } catch (e) {
-                    console.log(e);
-                }
-
-                if (response) {
-                    if (response.success && response.message) {
-                        console.log("Success. Redirecting to: ", response.message);
-                        window.location.href = response.message;
-                    } else if (response.message) {
-                        showMessage(response.message);
-                    }
-                } else {
-                    showMessage(post.responseText);
-                }
-            };
-
-            //error
-            post.onerror = function () {
-                console.error('loaderror', arguments);
-            };
-
-            //send request
-            post.open("POST", window.location.href);
-            post.send(JSON.stringify({
-                subject_id: subject_id
-            }));
+            window.location.href += "/" + subject_id;
         }
 
     </script>

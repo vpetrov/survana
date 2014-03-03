@@ -17,10 +17,6 @@ func (d *Dashboard) RegisterHandlers() {
 	app.Get("/home", auth.Protect(d.Home))
 	app.Get("/sidebar", auth.Protect(d.Sidebar))
 
-    //LOGIN
-    if d.Auth != nil {
-    }
-
 	/*app.Get("/login/google", d.LoginWithGoogle)
 	app.Get("/login/google/response", d.GoogleResponse)
 	app.Get("/register", d.Register)

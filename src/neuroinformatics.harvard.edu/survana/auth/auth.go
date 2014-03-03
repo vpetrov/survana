@@ -112,7 +112,14 @@ func Protect(handler survana.RequestHandler) survana.RequestHandler {
 
 		//if the session hasn't been authorized, redirect
 		if !session.Authenticated {
-			survana.Redirect(w, r, LOGIN_PATH)
+            redirect_path := LOGIN_PATH
+
+            //forward query params
+            if len(r.URL.RawQuery) > 0 {
+                redirect_path += "?" + r.URL.RawQuery
+            }
+
+			survana.Redirect(w, r, redirect_path)
 			return
 		}
 

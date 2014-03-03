@@ -20,6 +20,10 @@ type Study struct {
 func NewModule(path string, db survana.Database, config *Config, key *survana.PrivateKey) *Study {
 	mux := survana.NewRESTMux()
 
+    if config == nil {
+        config = &Config{}
+    }
+
 	m := &Study{
 		Module: &survana.Module{
 			Name:   NAME,
@@ -32,10 +36,8 @@ func NewModule(path string, db survana.Database, config *Config, key *survana.Pr
         Config: config,
 	}
 
-    if config.Authentication != nil {
-        m.Auth = auth.New(config.Authentication)
-        m.Auth.Attach(m.Module)
-    }
+    //by default, use the subject_id auth strategy
+    m.Auth = auth.NewSubjectIdStrategy(nil)
 
 	m.ParseTemplates()
 
