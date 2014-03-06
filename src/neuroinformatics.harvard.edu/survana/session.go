@@ -13,7 +13,7 @@ const (
 //the future, Id's can be regenerated on every request.
 //Id and Authenticated are aliases for Values['id'] and Values['authenticated']
 type Session struct {
-	DBID          interface{}       `bson:"_id,omitempty"`
+	DBO
 	Id            string            //the publicly visible session id
 	UserId        string            //the user id this session is associated with
 	Authenticated bool              //whether the user has logged in or not
@@ -23,22 +23,10 @@ type Session struct {
 //creates a new Session object with no Id.
 func NewSession() *Session {
 	return &Session{
+        DBO: DBO { Collection: SESSION_COLLECTION },
 		Authenticated: false,
 		Values:        make(map[string]string, 0),
 	}
-}
-
-//implement DbObject
-func (s *Session) DbId() interface{} {
-	return s.DBID
-}
-
-func (s *Session) SetDbId(id interface{}) {
-	s.DBID = id
-}
-
-func (s *Session) Collection() string {
-	return SESSION_COLLECTION
 }
 
 // Loads session info from the database

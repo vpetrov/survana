@@ -10,6 +10,7 @@ const (
 )
 
 type Study struct {
+    DBO
 	Id          string    `bson:"id,omitempty" json:"id"`
 	Name        string    `bson:"name,omitempty" json:"name"`
 	Title       string    `bson:"title,omitempty" json:"title"`
@@ -21,29 +22,15 @@ type Study struct {
 	Published   bool      `bson:"published" json:"published"`
     Subjects    map[string]bool `bson:"subjects" json:"subjects"`
 
-	//DbObject
-	DBID interface{} `bson:"_id,omitempty" json:"-"`
-
 	//ACL
 	OwnerId string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
 }
 
 func NewStudy() *Study {
 	return &Study{
+        DBO: DBO { Collection: STUDY_COLLECTION },
         Html: make([][]byte, 0),
     }
-}
-
-func (s *Study) DbId() interface{} {
-	return s.DBID
-}
-
-func (s *Study) SetDbId(id interface{}) {
-	s.DBID = id
-}
-
-func (s *Study) Collection() string {
-	return STUDY_COLLECTION
 }
 
 func FindStudy(id string, db Database) (study *Study, err error) {

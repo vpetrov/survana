@@ -119,8 +119,8 @@ func (db *MongoDB) FilteredList(collection string, props []string, result interf
 	return
 }
 
-func (db *MongoDB) FindId(id string, result DbObject) (err error) {
-	collection := result.Collection()
+func (db *MongoDB) FindId(id string, result DBI) (err error) {
+	collection := result.DbCollection()
 	if len(collection) == 0 {
 		return ErrInvalidCollection
 	}
@@ -139,15 +139,15 @@ func (db *MongoDB) FindId(id string, result DbObject) (err error) {
 // Stores objects in the database. If the objects don't return a DbId, a new
 // _id will be generated and assigned to the object. If a valid DbId exists,
 // an Update operation will be performed, otherwise - an Insert()
-// On success, the DbObject will have a valid DbId. On error, the DbId will
+// On success, the DBI will have a valid DbId. On error, the DbId will
 // be the same it used to be, or nil if there was no DbId (and an error will
 // be returned)
-func (db *MongoDB) Save(obj DbObject) (err error) {
+func (db *MongoDB) Save(obj DBI) (err error) {
 	dbid := obj.DbId()
 	var mgoid bson.ObjectId
 	var ok bool
 
-	collection := obj.Collection()
+	collection := obj.DbCollection()
 
 	if len(collection) == 0 {
 		return ErrInvalidCollection
@@ -197,7 +197,7 @@ func (db *MongoDB) Save(obj DbObject) (err error) {
 	return
 }
 
-func (db *MongoDB) Delete(obj DbObject) (err error) {
+func (db *MongoDB) Delete(obj DBI) (err error) {
 	//get the interface{} value
 	dbid := obj.DbId()
 	if dbid == nil {
@@ -205,7 +205,7 @@ func (db *MongoDB) Delete(obj DbObject) (err error) {
 	}
 
 	//get the object's collection. ignore if it's invalid
-	collection := obj.Collection()
+	collection := obj.DbCollection()
 	if len(collection) == 0 {
 		return
 	}

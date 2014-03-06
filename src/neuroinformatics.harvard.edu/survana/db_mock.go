@@ -11,9 +11,9 @@ type MockDatabase struct {
 	OnList         func(string, interface{})
 	OnFilteredList func(string, []string, interface{})
 	OnHasId        func(string) (bool, error)
-	OnFindId       func(string, DbObject)
-	OnDelete       func(DbObject)
-	OnSave         func(DbObject)
+	OnFindId       func(string, DBI)
+	OnDelete       func(DBI)
+	OnSave         func(DBI)
 }
 
 func NewMockDatabase() *MockDatabase {
@@ -66,7 +66,7 @@ func (db *MockDatabase) FilteredList(collection string, props []string, result i
 	return nil
 }
 
-func (db *MockDatabase) FindId(id string, presult DbObject) error {
+func (db *MockDatabase) FindId(id string, presult DBI) error {
 	db.Calls["FindId"]++
 	if db.OnFindId != nil {
 		db.OnFindId(id, presult)
@@ -74,7 +74,7 @@ func (db *MockDatabase) FindId(id string, presult DbObject) error {
 	return nil
 }
 
-func (db *MockDatabase) Delete(o DbObject) error {
+func (db *MockDatabase) Delete(o DBI) error {
 	db.Calls["Delete"]++
 	if db.OnDelete != nil {
 		db.OnDelete(o)
@@ -83,7 +83,7 @@ func (db *MockDatabase) Delete(o DbObject) error {
 	return nil
 }
 
-func (db *MockDatabase) Save(o DbObject) error {
+func (db *MockDatabase) Save(o DBI) error {
 	db.Calls["Save"]++
 	if db.OnSave != nil {
 		db.OnSave(o)

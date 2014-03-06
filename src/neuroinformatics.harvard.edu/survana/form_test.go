@@ -6,7 +6,7 @@ import (
 )
 
 var mock_form *Form = &Form{
-	DBID:      2,
+    DBO: DBO { DBID:2, Collection: FORM_COLLECTION },
 	Id:        "FORM_ABCD",
 	Name:      "MockForm",
 	Title:     "Mock Form ABCD",

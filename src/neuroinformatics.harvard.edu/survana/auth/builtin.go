@@ -14,13 +14,11 @@ const (
 )
 
 type builtinUser struct {
+    survana.DBO
     Id          string  `bson:"id,omitempty"`
     Password    []byte  `bson:"password,omitempty"`
     Salt        string  `bson:"salt,omitempty"`
     UserId      string  `bson:"user_id,omitempty"`
-
-    /* DbObject */
-    DBID        interface{} `bson:"_id,omitempty"`
 }
 
 type BuiltinStrategy struct {
@@ -232,27 +230,21 @@ func (b BuiltinStrategy) Logout(w http.ResponseWriter, r *survana.Request) {
 
 func newBuiltinUser(username string, password []byte, password_salt string) *builtinUser {
 	return &builtinUser{
+        DBO: survana.DBO { Collection: BUILTIN_USER_COLLECTION },
 		Id:   username,
 		Password: password,
         Salt: password_salt,
 	}
 }
 
-func (u *builtinUser) DbId() interface{} {
-	return u.DBID
+func emptyBuiltinUser() *builtinUser {
+    return &builtinUser {
+        DBO: survana.DBO { Collection: BUILTIN_USER_COLLECTION },
+    }
 }
-
-func (u *builtinUser) SetDbId(v interface{}) {
-	u.DBID = v
-}
-
-func (u *builtinUser) Collection() string {
-	return BUILTIN_USER_COLLECTION
-}
-
 
 func findBuiltinUser(username string, db survana.Database) (user *builtinUser, err error) {
-	user = &builtinUser{}
+	user = emptyBuiltinUser()
 	err = db.FindId(username, user)
 
 	if err != nil {

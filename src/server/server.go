@@ -175,7 +175,7 @@ func EnableModules(private_key *survana.PrivateKey, config *Config) (err error) 
 
 	//dashboard
 	dashboard_module := dashboard.NewModule(config.WWW+"/dashboard",
-                                            GetDB(config.DbUrl, "dashboard"),
+                                            GetDB(config.DbUrl, "dashboard_test"),
                                             config.Modules.Dashboard,
                                             private_key)
 	survana.Modules.Mount(dashboard_module.Module, "/dashboard")
@@ -185,7 +185,7 @@ func EnableModules(private_key *survana.PrivateKey, config *Config) (err error) 
     //TODO: figure out how the dashboard should share published studies with the study module
     //for now, let them use the same database
     study_module := study.NewModule(config.WWW + "/study",
-                                    GetDB(config.DbUrl, "dashboard"),
+                                    GetDB(config.DbUrl, "dashboard_test"),
                                     config.Modules.Study,
                                     private_key)
     survana.Modules.Mount(study_module.Module, "/study")

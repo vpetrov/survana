@@ -5,7 +5,7 @@ import (
 )
 
 var mock_session *Session = &Session{
-	DBID:          1,
+    DBO: DBO { DBID: 1, Collection: SESSION_COLLECTION },
 	Id:            "ABCD",
 	Authenticated: true,
 	Values:        map[string]string{"id": "ABCD", "authenticated": "1"},
@@ -29,7 +29,7 @@ func TestNewSession(t *testing.T) {
 
 func TestFindSession(t *testing.T) {
 	db := NewMockDatabase()
-	db.OnFindId = func(id string, v DbObject) {
+	db.OnFindId = func(id string, v DBI) {
 		s, ok := v.(*Session)
 		if !ok {
 			t.Fatalf("MockDatabase did not return a *Session")

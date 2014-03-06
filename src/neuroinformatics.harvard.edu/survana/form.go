@@ -11,7 +11,7 @@ const (
 )
 
 type Form struct {
-	DBID        interface{} `bson:"_id,omitempty" json:"-"`
+	DBO
 	Id          string      `bson:"id,omitempty" json:"id"`
 	Name        string      `bson:"name,omitempty" json:"name"`
 	Title       string      `bson:"title,omitempty" json:"title"`
@@ -26,6 +26,7 @@ type Form struct {
 
 func NewForm() *Form {
 	return &Form{
+        DBO: DBO { Collection: FORM_COLLECTION },
 		Fields: make([]Field, 0),
 	}
 }
@@ -42,18 +43,6 @@ func ListForms(filter []string, db Database) (forms []Form, err error) {
 	}
 
 	return
-}
-
-func (f *Form) DbId() interface{} {
-	return f.DBID
-}
-
-func (f *Form) SetDbId(id interface{}) {
-	f.DBID = id
-}
-
-func (f *Form) Collection() string {
-	return FORM_COLLECTION
 }
 
 func FindForm(id string, db Database) (form *Form, err error) {

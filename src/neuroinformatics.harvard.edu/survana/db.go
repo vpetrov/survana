@@ -6,11 +6,27 @@ import (
 )
 
 //An object that can be stored in a database.
-type DbObject interface {
+type DBO struct {
+	DBID interface{}    `bson:"_id,omitempty" json:"-"`
+	Collection string   `bson:"-" json:"-"`
+}
+
+type DBI interface {
 	DbId() interface{}
 	SetDbId(id interface{})
+	DbCollection() string
+}
 
-	Collection() string
+func (dbo *DBO) DbId() interface{} {
+    return dbo.DBID
+}
+
+func (dbo *DBO) SetDbId(id interface{}) {
+    dbo.DBID = id
+}
+
+func (dbo *DBO) DbCollection() string {
+    return dbo.Collection
 }
 
 //A database connection
@@ -24,9 +40,9 @@ type Database interface {
 	Disconnect() error
 
 	HasId(id string, collection string) (bool, error)
-	FindId(id string, presult DbObject) error
-	Delete(o DbObject) error
-	Save(o DbObject) error
+	FindId(id string, presult DBI) error
+	Delete(o DBI) error
+	Save(o DBI) error
 	List(collection string, result interface{}) error
 	FilteredList(collection string, props []string, result interface{}) error
 

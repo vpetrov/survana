@@ -9,36 +9,32 @@ const (
 )
 
 type User struct {
+    DBO
 	Id     string   `bson:"id,omitempty" json:"id,omitempty"`
 	Name   string   `bson:"name,omitempty" json:"name,omitempty"`
 	Groups []string `bson:"groups,omitempty" json:"groups,omitempty"`
     AuthType string `bson:"auth_type,omitempty" json:"auth_type,omitempty"`
-
-	//DbObject
-	DBID interface{} `bson:"_id,omitempty" json:"-"`
 }
 
 func NewUser(email, name string) *User {
 	return &User{
+        DBO: DBO{
+                DBID:nil,
+                Collection: USER_COLLECTION,
+        },
 		Id:   email,
 		Name: name,
 	}
 }
 
-func (u *User) DbId() interface{} {
-	return u.DBID
-}
-
-func (u *User) SetDbId(v interface{}) {
-	u.DBID = v
-}
-
-func (u *User) Collection() string {
-	return USER_COLLECTION
+func EmptyUser() *User {
+    return &User{
+        DBO: DBO { Collection: USER_COLLECTION },
+    }
 }
 
 func FindUser(email string, db Database) (user *User, err error) {
-	user = &User{}
+	user = EmptyUser()
 	err = db.FindId(email, user)
 
 	if err != nil {
