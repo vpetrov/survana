@@ -9,8 +9,7 @@ const (
 )
 
 type Group struct {
-	DBO
-
+    DBO         `bson:",inline,omitempty" json:"-"`
 	Id   string `bson:"id,omitempty" json:"id,omitempty"`
 	Name string `bson:"name,omitempty" json:"name,omitempty"`
 }

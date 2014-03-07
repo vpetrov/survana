@@ -36,7 +36,7 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *survana.Request) {
 		survana.Error(w, err)
 	}
 
-	study := survana.Study{}
+	study := survana.NewStudy()
 
 	//parse input data
 	err = r.ParseJSON(&study)
@@ -126,7 +126,7 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *survana.Request) {
 	}
 
 	//parse new form data sent by the client
-	user_study := &survana.Study{}
+	user_study := survana.NewStudy()
 	err = r.ParseJSON(user_study)
 	if err != nil {
 		survana.Error(w, err)

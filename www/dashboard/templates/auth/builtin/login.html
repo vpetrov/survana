@@ -1,3 +1,4 @@
+<%/* template data: auth.Config */%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -90,20 +91,41 @@
     <form role="form">
         <h2><img id="logo" src="assets/img/logo.png">Survana</h2>
         <hr>
+        <div id="message-container" class="alert alert-warning hidden">
+            <i class="glyphicon glyphicon-exclamation-sign"></i> &nbsp;<span id="message"></span>
+        </div>
         <input id="username" name="username" type="text" class="form-control" placeholder="Username" required autofocus>
         <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
         <button id="signin" class="btn btn-lg btn-default btn-block" type="button" onclick="sign_in()">Sign in</button>
+        <%if .AllowRegistration %>
         <p>New to Survana? <a href="register">Sign up!</a></p>
+        <%end%>
     </form>
 
     <!-- login handler -->
     <script type="text/javascript">
+
+        function showMessage(msg) {
+            var msg_el = document.getElementById('message'),
+                    msg_ct = document.getElementById('message-container');
+
+            msg_el.innerHTML = msg;
+            msg_ct.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            var msg_ct = document.getElementById('message-container');
+
+            msg_ct.classList.add('hidden');
+        }
+
         function sign_in() {
             var post = new XMLHttpRequest(),
                 username = document.getElementById('username').value,
                 password = document.getElementById('password').value;
 
             if (!username || !password) {
+                showMessage("Please complete all fields.");
                 return;
             }
 
@@ -122,7 +144,10 @@
                     console.log("Success. Redirecting to: ", response.message);
                     window.location.href = response.message;
                 } else {
-                    console.error("Registration failed", response);
+                    console.error("Login failed", response);
+                    if (response.message) {
+                        showMessage(response.message);
+                    }
                 }
             };
 

@@ -14,7 +14,7 @@ const (
 )
 
 type builtinUser struct {
-    survana.DBO
+    survana.DBO         `bson:",inline,omitempty"`
     Id          string  `bson:"id,omitempty"`
     Password    []byte  `bson:"password,omitempty"`
     Salt        string  `bson:"salt,omitempty"`
@@ -45,7 +45,7 @@ func (b BuiltinStrategy) Attach(module *survana.Module) {
 }
 
 func (b BuiltinStrategy) LoginPage(w http.ResponseWriter, r *survana.Request) {
-    r.Module.RenderTemplate(w, "auth/builtin/login", nil)
+    r.Module.RenderTemplate(w, "auth/builtin/login", b.Config)
 }
 
 func (b BuiltinStrategy) RegistrationPage(w http.ResponseWriter, r *survana.Request) {

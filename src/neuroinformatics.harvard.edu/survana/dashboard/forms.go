@@ -47,7 +47,7 @@ func (d *Dashboard) CreateForm(w http.ResponseWriter, r *survana.Request) {
 		survana.Error(w, err)
 	}
 
-	form := survana.Form{}
+	form := survana.NewForm()
 
 	//parse input data
 	err = r.ParseJSON(&form)
@@ -146,7 +146,7 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *survana.Request) {
 	log.Println(form)
 
 	//parse new form data sent by the client
-	user_form := &survana.Form{}
+	user_form := survana.NewForm()
 	err = r.ParseJSON(user_form)
 	if err != nil {
 		survana.Error(w, err)
@@ -202,6 +202,8 @@ func (d *Dashboard) DeleteForm(w http.ResponseWriter, r *survana.Request) {
 		survana.NotFound(w)
 		return
 	}
+
+    log.Printf("form=%#v", form)
 
 	err = form.Delete(d.Db)
 

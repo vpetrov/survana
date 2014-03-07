@@ -15,6 +15,7 @@ type DBI interface {
 	DbId() interface{}
 	SetDbId(id interface{})
 	DbCollection() string
+    SetDbCollection(c string)
 }
 
 func (dbo *DBO) DbId() interface{} {
@@ -27,6 +28,10 @@ func (dbo *DBO) SetDbId(id interface{}) {
 
 func (dbo *DBO) DbCollection() string {
     return dbo.Collection
+}
+
+func (dbo *DBO) SetDbCollection(c string) {
+    dbo.Collection = c
 }
 
 //A database connection

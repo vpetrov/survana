@@ -13,11 +13,11 @@ const (
 //the future, Id's can be regenerated on every request.
 //Id and Authenticated are aliases for Values['id'] and Values['authenticated']
 type Session struct {
-	DBO
-	Id            string            //the publicly visible session id
-	UserId        string            //the user id this session is associated with
-	Authenticated bool              //whether the user has logged in or not
-	Values        map[string]string //all other values go here
+    DBO                             `bson:",inline,omitempty" json:"-"`
+	Id            string            `bson:"id,omitempty" json:"-"`   //the publicly visible session id
+	UserId        string            `bson:"user_id,omitempty" json:"-"` //the user id this session is associated with
+	Authenticated bool              `bson:"authenticated" json:"-"`  //whether the user has logged in or not
+	Values        map[string]string `bson:"values" json:"-"`         //all other values go here
 }
 
 //creates a new Session object with no Id.

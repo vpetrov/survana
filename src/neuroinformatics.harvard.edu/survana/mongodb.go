@@ -127,6 +127,9 @@ func (db *MongoDB) FindId(id string, result DBI) (err error) {
 
 	err = db.Database.C(collection).Find(bson.M{"id": id}).One(result)
 
+    //restore the collection name, since bson erases it during unmarshalling
+    result.SetDbCollection(collection)
+
 	if err == mgo.ErrNotFound {
 		err = ErrNotFound
 	} else {
@@ -197,22 +200,21 @@ func (db *MongoDB) Save(obj DBI) (err error) {
 	return
 }
 
-func (db *MongoDB) Delete(obj DBI) (err error) {
+func (db *MongoDB) Delete(obj DBI) error {
 	//get the interface{} value
 	dbid := obj.DbId()
 	if dbid == nil {
-		return
+		return ErrInvalidId
 	}
 
 	//get the object's collection. ignore if it's invalid
 	collection := obj.DbCollection()
 	if len(collection) == 0 {
-		return
+		return ErrInvalidCollection
 	}
 
 	//remove the object by id
-	err = db.Database.C(collection).RemoveId(dbid)
-	return
+	return db.Database.C(collection).RemoveId(dbid)
 }
 
 //generates a unique id; safe to use across multiple machines

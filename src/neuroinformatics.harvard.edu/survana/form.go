@@ -11,7 +11,7 @@ const (
 )
 
 type Form struct {
-	DBO
+    DBO                     `bson:",inline,omitempty" json:"-"`
 	Id          string      `bson:"id,omitempty" json:"id"`
 	Name        string      `bson:"name,omitempty" json:"name"`
 	Title       string      `bson:"title,omitempty" json:"title"`
