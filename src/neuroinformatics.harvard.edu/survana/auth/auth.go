@@ -114,6 +114,8 @@ func Protect(handler survana.RequestHandler) survana.RequestHandler {
 		if !session.Authenticated {
             redirect_path := LOGIN_PATH
 
+            w.Header().Set("X-Session-Expired", "1")
+
             //forward query params
             if len(r.URL.RawQuery) > 0 {
                 redirect_path += "?" + r.URL.RawQuery

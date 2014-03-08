@@ -7,7 +7,6 @@ import (
     "strings"
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
-    "neuroinformatics.harvard.edu/survana/auth"
 )
 
 // registers all route handlers
@@ -18,7 +17,7 @@ func (s *Study) RegisterHandlers() {
 	app.Static("/assets/")
 
 	app.Get("/", s.NewIndex)
-    app.Get("/form", auth.Protect(s.Form))
+    app.Get("/form", s.Form)
 }
 
 func (s *Study) NewIndex(w http.ResponseWriter, r *survana.Request) {
@@ -55,8 +54,10 @@ func (s *Study) NewIndex(w http.ResponseWriter, r *survana.Request) {
         return
     }
 
+    log.Printf("auth_enabled=%v subjects=%#v", study.AuthEnabled, study.Subjects)
+
     //no auth? just render the study index page
-    if study.Subjects == nil {
+    if !study.AuthEnabled {
         s.RenderTemplate(w, "study/index", study)
         return
     }

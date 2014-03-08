@@ -95,7 +95,7 @@
 </head>
 <body>
 <div class="container">
-    <form role="form">
+    <form role="form" onsubmit="return sign_up()">
         <h2><img id="logo" src="assets/img/logo.png">Survana</h2>
         <hr>
         <div id="message-container" class="alert alert-warning hidden">
@@ -113,7 +113,7 @@
             <input id="email" name="email" type="text" class="form-control" placeholder="E-mail" required>
         </div>
 
-        <button id="signin" class="btn btn-lg btn-info btn-block" type="button" onclick="sign_up()">Sign up</button>
+        <button id="signin" class="btn btn-lg btn-info btn-block" type="submit">Sign up</button>
     </form>
 
     <!-- login handler -->
@@ -186,6 +186,8 @@
                 name: name,
                 email: email
             }));
+
+            return false;
         }
 
     </script>

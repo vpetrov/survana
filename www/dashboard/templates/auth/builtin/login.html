@@ -88,7 +88,7 @@
 </head>
 <body>
 <div class="container">
-    <form role="form">
+    <form role="form" onsubmit="return sign_in()">
         <h2><img id="logo" src="assets/img/logo.png">Survana</h2>
         <hr>
         <div id="message-container" class="alert alert-warning hidden">
@@ -96,7 +96,7 @@
         </div>
         <input id="username" name="username" type="text" class="form-control" placeholder="Username" required autofocus>
         <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
-        <button id="signin" class="btn btn-lg btn-default btn-block" type="button" onclick="sign_in()">Sign in</button>
+        <button id="signin" class="btn btn-lg btn-default btn-block" type="submit">Sign in</button>
         <%if .AllowRegistration %>
         <p>New to Survana? <a href="register">Sign up!</a></p>
         <%end%>
@@ -162,6 +162,8 @@
                 username: username,
                 password: password
             }));
+
+            return false;
         }
 
     </script>

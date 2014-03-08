@@ -16,11 +16,12 @@ type Study struct {
 	Title       string    `bson:"title,omitempty" json:"title"`
 	Description string    `bson:"description,omitempty" json:"description"`
 	Version     string    `bson:"version,omitempty" json:"version"`
-	CreatedOn   time.Time `bson:"created_on,omitempty" json:"created_on"`
+	CreatedOn   *time.Time `bson:"created_on,omitempty" json:"created_on"`
 	Forms       []Form    `bson:"forms,omitempty" json:"forms"`
     Html        [][]byte  `bson:"html,omitempty" json:"-"`
-	Published   bool      `bson:"published" json:"published"`
-    Subjects    map[string]bool `bson:"subjects" json:"subjects"`
+	Published   bool      `bson:"published,omitempty" json:"published"`
+    Subjects    map[string]bool `bson:"subjects,omitempty" json:"subjects"`
+    AuthEnabled bool      `bson:"auth_enabled,omitempty" json:"auth_enabled"`
 
 	//ACL
 	OwnerId string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
@@ -31,6 +32,12 @@ func NewStudy() *Study {
         DBO: DBO { Collection: STUDY_COLLECTION },
         Html: make([][]byte, 0),
     }
+}
+
+func (s *Study) RemoveInternalAttributes() {
+    s.Id = ""
+    s.CreatedOn = nil
+    s.OwnerId = ""
 }
 
 func FindStudy(id string, db Database) (study *Study, err error) {

@@ -73,6 +73,8 @@ func XHRRedirect(w http.ResponseWriter, r *Request, url string) {
 		Redirect: url,
 	}
 
+    w.Header().Set("X-Survana-Redirect", url)
+
 	JSONResult(w, false, data)
 }
 

@@ -130,6 +130,24 @@ app.config(['$httpProvider', function ($httpProvider) {
     }]);
 }]);
 
+//checks for an 'X-Session-Expired' header in http responses and alerts the user that their sessions had expired.
+//A better UX would be nice, perhaps a small login screen that allows the user to log back in, without refreshing.
+app.config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.interceptors.push(['$q', function ($q) {
+        return {
+            "response": function (response) {
+                var headers = response.headers();
+
+                if (headers['x-session-expired'] !== undefined) {
+                    alert('Your session has expired. Please refresh this page. Note that any unsaved changes will be lost.');
+                }
+
+                return response || $q.when(response);
+            }
+        }
+    }]);
+}]);
+
 app.run(function($rootScope /*, $location */) {
     console.log('app run');
     $rootScope.$on('$routeChangeError', function (nge, current, previous, rejection) {

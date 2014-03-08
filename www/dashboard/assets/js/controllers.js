@@ -465,12 +465,9 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
         };
 
         $scope.unpublishStudy = function () {
-            var study = copyStudy();
-            study.published = false;
-
             $scope.message = "";
 
-            $http.put('studies/edit', study, {params: $routeParams}).
+            $http.put('studies/edit', {published:false, foo:{bar:true, haha: {no:"yes"}}}, {params: $routeParams}).
                 success(function (response, code, request) {
                     //we're done.
                     if (code === 204) {
@@ -505,7 +502,7 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
             } else {
                 //otherwise, we need to mark the study object as 'published' and save it
                 $scope.study.published = true;
-                saveStudy();
+                saveStudy({published:true});
             }
         }
 
@@ -595,14 +592,15 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
             return study;
         }
 
-        function saveStudy () {
+        function saveStudy (changes) {
             //reset state
             $scope.message = "";
 
-            //create a copy of $scope.study, and replace all forms with stubs
-            var study = copyStudy();
+            if (changes === undefined || !changes) {
+                changes = $scope.study;
+            }
 
-            $http.put('studies/edit', study, {params: $routeParams}).
+            $http.put('studies/edit', changes, {params: $routeParams}).
                 success(function (response, code, request) {
                     //we're done.
                     if (code === 204) {
@@ -735,6 +733,7 @@ dashboard.controller('StudySubjectsCtrl', ['$scope', '$http', '$window', '$locat
         $scope.message = "";
 
         $scope.stopEvent = stopEvent;
+        $scope.search = "";
 
         function fetchStudy() {
             //fetch the form JSON and store it in $scope.form

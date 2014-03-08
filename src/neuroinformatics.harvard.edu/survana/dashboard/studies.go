@@ -44,8 +44,8 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *survana.Request) {
 		survana.Error(w, err)
 		return
 	}
-
-	study.CreatedOn = time.Now()
+    now := time.Now()
+	study.CreatedOn = &now
 	study.OwnerId = session.UserId
 
 	//generate a unique id
@@ -125,26 +125,32 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *survana.Request) {
 		return
 	}
 
-	//parse new form data sent by the client
-	user_study := survana.NewStudy()
-	err = r.ParseJSON(user_study)
+	//parse new form data sent by the client into the original 'study' returned
+    //by the database. This has the potential of letting the user overwrite
+    //any fields. We're relying on a future call to study.RemoveInternalAttributes()
+    //to set all internal attributes to their zero value, so that the database
+    //will ignore them (assuming the fields are declared as ',omitempty'
+	err = r.ParseJSON(study)
 	if err != nil {
 		survana.Error(w, err)
 		return
 	}
 
-	//TODO?: validate form fields? validate using a schema?
+    //restore read-only attributes
+    study.RemoveInternalAttributes()
 
-	log.Printf("%s: %#v\n", "JSON study submitted by the client", user_study)
+	log.Printf("%s: %#v\n", "JSON study submitted by the client", study)
 
 	//copy properties that should not be changed
-	user_study.DBID = study.DBID
-	user_study.Id = study.Id
-	user_study.CreatedOn = study.CreatedOn
-	user_study.OwnerId = study.OwnerId
 
-	//update the form
-	err = user_study.Save(d.Db)
+	//update the study. This needs to be refactored, because it's now sending back
+    //the ENTIRE study, when, really, we just need to somehow send only the updates.
+    //This would be possible by using map[string]interface{}, but it's not trivial
+    //to validate that only the fields that are allowed to be changed, are going to
+    //be changed, especially since the names of the fields involved in serialization
+    //are specified as struct tags (so we either use 'reflect', or come up with some
+    //other system). I'm leaving this issue for another refactoring session.
+	err = study.Save(d.Db)
 	if err != nil {
 		survana.Error(w, err)
 		return
@@ -261,8 +267,6 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *survana.Request) 
 	query := r.URL.Query()
 	study_id := query.Get("id")
 
-	log.Println("study to delete:", study_id)
-
 	//TODO: Validate alnum
 	if len(study_id) == 0 {
 		survana.BadRequest(w)
@@ -307,6 +311,9 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *survana.Request) 
             study.Subjects[id] = true
         }
     }
+
+    //auto-enable authentication for this study
+    study.AuthEnabled = true;
 
     //store the updated Survey
     err = study.Save(d.Db)
