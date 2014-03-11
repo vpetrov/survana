@@ -100,3 +100,11 @@ func (f *Study) GenerateId(db Database) (err error) {
 
 	return
 }
+
+func (s *Study) AddSubject(id string, enabled bool) {
+    if s.Subjects == nil {
+        s.Subjects = make(map[string]bool, 1)
+    }
+
+    s.Subjects[id] = enabled
+}

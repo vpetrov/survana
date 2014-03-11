@@ -308,7 +308,7 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *survana.Request) 
         _, exists := study.Subjects[id]
 
         if !exists {
-            study.Subjects[id] = true
+            study.AddSubject(id, true)
         }
     }
 
