@@ -34,7 +34,7 @@ function FinishSurvey(btn) {
 window.survana = {
     onFormLoaded: onFormLoaded,
     NextPage: NextPage,
-    FinishSurvey: FinishSurvey
+    FinishSurvey: FinishSurvey,
 };
 
 //register an onReady handler, i.e. $(document).ready(). Caveat: does not support older versions of IE

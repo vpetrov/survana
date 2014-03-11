@@ -39,7 +39,33 @@
         }
 
         questionnaire.appendChild(form_el);
+
         return questionnaire;
+    };
+
+    Survana.Validation = function (form) {
+
+        if (!form || !form.fields || !Survana.theme) {
+            return null
+        }
+
+        var config = {},
+            nfields = form.fields.length,
+            i,
+            q;
+
+        //loop over all fields and extraction 'validation' config objects into
+        //a central 'config' object, with each key being the id of the question
+        for (i = 0; i < nfields; ++i) {
+            q = form.fields[i];
+
+            if (q.validation !== undefined) {
+                config[q.id] = q.validation;
+                config[q.id].type = q.type;
+            }
+        }
+
+        return JSON.stringify(config)
     };
 
     /* Loads and updates the current theme. Questionnaires should be re-rendered */

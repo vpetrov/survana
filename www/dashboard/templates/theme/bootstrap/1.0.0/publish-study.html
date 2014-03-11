@@ -12,6 +12,7 @@
         <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/bootstrap-theme.min.css">
         <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/matrix.css">
         <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/progress.css">
+        <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/validation.css">
         <style type="text/css">
             question blockquote {
                 color: #3a3a3a;
@@ -32,16 +33,55 @@
                 </div>
                 <p class="navbar-text hidden-xs hidden-sm pull-left">{{ form.title }}</p>
                 <span >
-                <button ng-class="{'hidden':current.index==(study.forms.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="survana.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
-                <button ng-class="{'hidden':current.index<(study.forms.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="survana.FinishSurvey(this)">Finish <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+                <button ng-class="{'hidden':current.index==(study.forms.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="Survana.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+                <button ng-class="{'hidden':current.index<(study.forms.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="Survana.FinishSurvey(this)">Finish <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
             </div>
         </div>
 
         <div id="content" class="container" style="margin-top:25px;"></div>
 
+        <!-- validation configuration -->
+        <script id="validation" type="text/validation"></script>
+
         <!-- scripts must in the <body>, otherwise they cause the frame document to delay DOM parsing -->
         <script type="text/javascript" src="assets/lib/jquery/2.0.3/jquery.min.js"></script>
         <script type="text/javascript" src="assets/lib/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="assets/lib/survana/1.0.0/survana-study.js"></script>
+        <script type="text/javascript" src="assets/lib/survana/1.0.0/survana-workflow.js"></script>
+        <!-- theme-specific js -->
+        <script type="text/javascript" src="assets/lib/survana/1.0.0/theme/bootstrap/js/validation.js"></script>
+
+        <script type="text/javascript" src="assets/lib/survana/1.0.0/survana-validation.js"></script>
+
+
+        <script type="text/javascript">
+            window.startValidation = function () {
+                var validation_el = document.getElementById('validation'),
+                        validation_config;
+
+                if (!validation_el.innerHTML) {
+                    return;
+                }
+
+                try {
+                    validation_config = JSON.parse(validation_el.innerHTML);
+                    console.log('validation config:', validation_el.innerHTML);
+                } catch (e) {
+                    console.error('Invalid Validation configuration:', validation_el.innerHTML);
+                }
+
+                //register validation configuration
+                if (document.forms && document.forms[0] && Survana !== undefined) {
+                    Survana.Validation.SetConfiguration(document.forms[0], validation_config);
+                }
+            };
+
+            window.validateForm = function () {
+                if (document.forms && document.forms[0] && Survana !== undefined) {
+                    Survana.Validation.Validate(document.forms[0]);
+                }
+            };
+
+            window.startValidation();
+        </script>
     </body>
 </html>

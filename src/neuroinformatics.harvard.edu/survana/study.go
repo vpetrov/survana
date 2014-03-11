@@ -19,9 +19,9 @@ type Study struct {
 	CreatedOn   *time.Time `bson:"created_on,omitempty" json:"created_on"`
 	Forms       []Form    `bson:"forms,omitempty" json:"forms"`
     Html        [][]byte  `bson:"html,omitempty" json:"-"`
-	Published   bool      `bson:"published,omitempty" json:"published"`
+	Published   bool      `bson:"published" json:"published"`
     Subjects    map[string]bool `bson:"subjects,omitempty" json:"subjects"`
-    AuthEnabled bool      `bson:"auth_enabled,omitempty" json:"auth_enabled"`
+    AuthEnabled bool      `bson:"auth_enabled" json:"auth_enabled"`
 
 	//ACL
 	OwnerId string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`

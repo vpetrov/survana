@@ -1043,6 +1043,10 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
         $scope.theme = 'bootstrap';
         $scope.template = null;
 
+        //expect the iframe to replace this function. TODO: figure out a better way of telling the iframe to call
+        //window.validateForm()
+        $scope.verifyForm = function () {}
+
         $scope.resize = function (size) {
             $scope.size = size;
         };
@@ -1199,6 +1203,14 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                 });
             };
 
+            scope.verifyForm = function () {
+                if (!elem || !elem[0] || !elem[0].contentWindow || !elem[0].contentWindow.validateForm) {
+                    return
+                }
+
+                elem[0].contentWindow.validateForm();
+            };
+
             //when current_form changes, update the template
             scope.$watch('current.index', updateTemplate);
 
@@ -1229,7 +1241,10 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                 var frame = elem[0],
                     doc = frame.contentDocument || frame.contentWindow.document,
                     node = doc.getElementById('content'),
-                    result;
+                    validation_node = doc.getElementById('validation'),
+                    result,
+                    validation;
+
 
                 //make sure a theme, a template and a rendering node are available
                 if (!Survana.theme || !scope.template || !node) {
@@ -1243,7 +1258,19 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                         node.removeChild(node.firstChild);
                     }
 
+                    //append the form
                     node.appendChild(result);
+
+                    //validation configuration
+                    validation = Survana.Validation(ngModel.$viewValue);
+
+                    if (validation_node && validation) {
+                        validation_node.innerHTML = validation;
+                        //rely on the fact that template will include a 'startValidation()' function
+                        if (frame.contentWindow.startValidation) {
+                            frame.contentWindow.startValidation();
+                        }
+                    }
 
                     //if we're supposed to save rendered data
                     if (attrs['render']) {
