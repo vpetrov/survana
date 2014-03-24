@@ -1,218 +1,192 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Survana</title>
+        <link href="lib/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <link href="lib/fa/4.0.3/css/fa.min.css" rel="stylesheet" type="text/css">
+        <link href="css/main.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
 
-<head>
-    <meta charset='utf-8'/>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1"/>
-    <meta name="description"
-          content="Survana : An HTML5 application for administering questionnaires on tablets and mobile devices"/>
+    <nav id="nav" class="navbar navbar-inverse navbar-static-top">
+        <div class="container">
+                    <!-- brand and mobile button -->
+                    <div class="navbar-header">
+                        <!-- collapse button -->
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navmenu">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="lib/fa/4.0.3/css/fa.min.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="lib/bootstrap/3.1.1/css/bootstrap.min.css">
-
-    <title>Survana</title>
-
-    <style>
-        .menu {
-            position: absolute;
-            top: 0;
-            right: 0;
-            float: left;
-        }
-
-        .menu li {
-            display: inline-block;
-            margin: 0;
-            padding-top: 7px;
-        }
-
-        .menu a {
-            background-color: #575757;
-            padding: 7px;
-            color: white;
-            font-weight: bold;
-            border-radius: 2px;
-        }
-
-        .menu a:hover {
-            background-color: #007edf;
-            text-decoration: none;
-        }
-
-        .light {
-            color: #999999;
-            text-align:center;
-        }
-
-        .logo {
-            border: none;
-            box-shadow: none;
-            vertical-align: bottom;
-            width:90px;
-            margin:0;
-            padding:0;
-        }
-
-        .download:hover {
-            color: #e2e2e2;
-        }
-
-        .download {
-            position: relative;
-            top:10px;
-            color: #e2e2e2;
-        }
-
-        .download_icon {
-            color: #373737;
-        }
-
-        .download_icon:hover {
-            color: #007edf;
-        }
-
-        .item img {
-            height:300px;
-        }
-
-        h1 a, h1 a:hover {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .carousel {
-            margin-top:15px;
-        }
-
-        .features {
-            margin-top:35px;
-            margin-bottom:50px;
-            text-align:center;
-            background-color: white;
-            border-radius:10px;
-            box-shadow: 0px 0px 25px #666;
-        }
-    </style>
-</head>
-
-<body>
-
-<!-- HEADER -->
-<div id="header_wrap" class="outer">
-    <header class="inner">
-        <h1 id="project_title"><a href="index.html"><img src="images/logo.png" class="logo"> Survana </a></h1>
-        <ul class="menu">
-            <li><a href="#"><i class="fa fa-book"></i> Documentation</a></li>
-            <li><a href="about.html"><i class="fa fa-info-circle"></i> About</a></li>
-        </ul>
-
-        <section id="downloads" style="text-align:right">
-            <i class="fa fa-download" style="color:white; position:relative; left:-10px;"> v1.0</i>
-            <a class="download fa-stack fa-lg" href="http://vpetrov.neuroinfo.org/survana.zip">
-                <i class="fa fa-square fa-stack-2x"></i>
-                <i class="fa fa-apple fa-stack-1x download_icon"></i>
-            </a>
-
-            <a class="download fa-stack fa-lg" href="#">
-                <i class="fa fa-square fa-stack-2x"></i>
-                <i class="fa fa-linux fa-stack-1x download_icon"></i>
-            </a>
-
-            <a class="download fa-stack fa-lg" href="#">
-                <i class="fa fa-square fa-stack-2x"></i>
-                <i class="fa fa-windows fa-stack-1x download_icon"></i>
-            </a>
-        </section>
-    </header>
-</div>
-
-<!-- MAIN CONTENT -->
-<div id="main_content_wrap" class="outer">
-    <div class="container">
-        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-            <!-- Indicators -->
-            <ol class="carousel-indicators">
-                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-            </ol>
-
-            <!-- Wrapper for slides -->
-            <div class="carousel-inner">
-                <div class="item active">
-                    <img src="images/carousel/image1.png" alt="...">
-                    <div class="carousel-caption">Feature 1</div>
+                        <a class="navbar-brand visible-xs" href="#">Survana</a>
+                    </div>
+                    <div id="navmenu" class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav text-center">
+                            <li class="active"><a href="index.html">Home</a></li>
+                            <li><a href="downloads.html">Downloads</a></li>
+                            <li><a href="documentation.html">Documentation</a></li>
+                            <li><a href="about.html">About</a></li>
+                            <li class="hidden-xs">
+                            <span class="navbar-form">
+                                <button type="button" class="btn btn-primary navbar-btn">Getting Started</button>
+                            </span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="item">
-                    <img src="images/carousel/image2.png" alt="...">
-                    <div class="carousel-caption">Feature 2</div>
-                </div>
-
-                <div class="item">
-                    <img src="images/carousel/image3.png" alt="...">
-                    <div class="carousel-caption">Feature 3</div>
-                </div>
-
-                <div class="item">
-                    <img src="images/carousel/image4.png" alt="...">
-                    <div class="carousel-caption">Feature 4</div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-                <span class="glyphicon glyphicon-chevron-left"></span>
-            </a>
-            <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-            </a>
         </div>
-    </div>
-    <div class="features container">
-        <div class="row">
-            <div class="col-lg-4">
-                <h2><i class="fa fa-mobile-phone"></i> Mobile</h2>
-                <p>Survana works on any device that supports HTML5 and Javascript.</p>
-            </div>
-            <div class="col-lg-4">
-                <h2><i class="fa fa-lock"></i> Secure</h2>
-                <p>All data are encrypted using industry-standard AES256 and state of the art elliptic curve cryptography.</p>
-            </div>
-            <div class="col-lg-4">
-                <h2><i class="fa fa-code"></i> Open Source</h2>
-                <p>Survana is licensed under the New BSD License. The code is available on GitHub.</p>
-            </div>
-        </div>
+    </nav>
 
-        <div class="row">
-            <div class="col-lg-4">
-                <h2><i class="fa fa-cloud"></i> Scalable</h2>
-                <p>Survana's module architecture allows for numerous deployment and scalability scenarios.</p>
-            </div>
-            <div class="col-lg-4">
-                <h2><i class="fa fa-desktop"></i> Works Offline</h2>
-                <p>Network failures do not impact the progress of surveys. We encrypt and save data locally, until the network connection becomes available.</p>
-            </div>
-            <div class="col-lg-4">
-                <h2><i class="fa fa-bookmark"></i> Theme Support</h2>
-                <p>Survana supports theming of questionnaires, with user-supplied themes and files coming soon.</p>
+    <div class="gray jumbotron edge-bottom edge-top">
+        <div class="container">
+            <div class="row">
+
+                <div class="fold col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="row">
+                        <h1>
+                            <img id="logo" src="images/logo.png">
+                            Survana
+                        </h1>
+                    </div>
+                    <div class="row">
+                        <p class="tagline">Secure, scalable, open-source online data collection platform for desktop and mobile surveys.</p>
+
+                        <div class="divider">
+                            <span>download</span>
+                        </div>
+                    </div>
+                    <div class="download row">
+                        <ul>
+                            <li>
+                                <a href="#">
+                                    <span class="fa fa-apple fa-3x"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="fa fa-linux fa-3x"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="fa fa-windows fa-3x"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- tabs -->
+                <div class="fold col-lg-4 col-md-4 hidden-sm hidden-xs">
+                    <div class="iphone">
+                        <iframe src="iframe.html" class="iphone_screen"></iframe>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
-</div>
+    <div class="black bar">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 text-center">
+                    <ul class="quick-menu list-inline center-block">
+                        <li>Version 1.0</li>
+                        <li><a href="downloads.html">Downloads</a></li>
+                        <li><a href="#">Source</a></li>
+                        <li><a href="documentation.html">Docs</a></li>
+                        <li><a href="license.html">License</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!-- FOOTER  -->
-<div id="footer_wrap" class="outer">
-    <footer class="inner">
-        <p class="copyright">Survana was created by <a href="https://github.com/vpetrov">The Neuroinformatics Research Group at Harvard University</a></p>
-        <p>(c) 2014 The President and Fellows of Harvard College</p>
-    </footer>
-</div>
+    <div class="lightgray features">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7 col-md-7">
+                    <h3 class="lead">Survana is the easiest way to create surveys online. Quickly create, publish and share your questionnaires.</h3>
+                </div>
 
-<script type="text/javascript" src="lib/jquery/2.0.3/jquery.min.js"></script>
-<script type="text/javascript" src="lib/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <h2><i class="fa fa-mobile-phone fa-lg"></i> Mobile &amp; Responsive</h2>
+                    <p>Create questionnaires that work on any device and any modern browser, regardless of screen size, form factor or operating system.</p>
+                </div>
+                <div class="col-lg-4">
+                    <h2><i class="fa fa-lock"></i> Secure</h2>
+                    <p>All data are encrypted using the industry standard 256-bit Advanced Encryption Standard, transmitted exclusively over SSL connections and protected using state of the art Elliptic Curve cryptography.</p>
+                </div>
+            </div>
 
-</body>
+            <div class="row">
+                <div class="col-lg-4">
+                    <h2><i class="fa fa-desktop"></i> Offline Support</h2>
+                    <p>All surveys work offline, so you can take your tablet out in the field. When your network connection drops, survey progress won't be impacted.</p>
+                </div>
+                <div class="col-lg-4">
+                    <h2><i class="fa fa-cloud"></i> Scalable</h2>
+                    <p>Survana's modularized architecture allows for numerous deployment and scalability scenarios: run it on your laptop, private network or in the cloud.</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <h2><i class="fa fa-bookmark"></i> Themes</h2>
+                    <p>Survana supports theming, with user-supplied themes and files coming soon.</p>
+                </div>
+                <div class="col-lg-4">
+                    <h2><i class="fa fa-code fa-lg"></i> Free &amp; Open Source</h2>
+                    <p>Survana is licensed under the <a href="license.html">New BSD License</a>. The source code is available on GitHub.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER  -->
+    <div class="gray footer">
+        <footer class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-8 col-sm-7 col-xs-12">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="nrg-logo">
+                                <p class="text-gray">Survana was created by <a href="http://neuroinformatics.harvard.edu" class="small-caps">The Neuroinformatics Research Group at Harvard University</a></p>
+                                <p class="text-gray">&copy; 2014 The President and Fellows of Harvard College. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-5 hidden-xs pull-right">
+                    <div class="row">
+                        <a href="mailto:info@neuroinfo.org">
+                            <span class="fa-stack fa-lg">
+                              <i class="fa fa-square fa-stack-2x"></i>
+                              <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                            <span>info@neuroinfo.org</span>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a href="tel:+16174953031">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-square fa-stack-2x"></i>
+                          <i class="fa fa-phone fa-stack-1x fa-inverse"></i>
+                        </span>
+                            <span>+1 (617) 495-3031</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+    </div>
+
+        <script type="text/javascript" src="lib/jquery/2.0.3/jquery.min.js"></script>
+        <script type="text/javascript" src="lib/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    </body>
 </html>

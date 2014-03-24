@@ -1,0 +1,299 @@
+#nav {
+    margin-bottom: 0;
+}
+
+#navmenu .navbar-nav a:hover {
+    background-color: #007edf;
+}
+
+#navmenu .navbar-nav li.active a:hover {
+    background-color: #080808;
+}
+
+.divider {
+    border-left:1px solid #eee;
+    border-right:1px solid #333;
+    width:1px;
+    height:50px;
+}
+
+#navmenu .btn.btn-primary {
+    background-color: #007edf;
+    border-radius: 0;
+}
+
+.edge-top {
+    border-top:1px solid #333;
+}
+
+.edge-bottom {
+    border-bottom:1px solid #111;
+}
+
+.jumbotron {
+    color: #eee;
+    margin-bottom:0;
+
+    text-align: center;
+    padding-top:25px;
+    padding-bottom:0px;
+}
+
+.mediumtron {
+    text-align: left;
+    padding-bottom: 0px;
+    margin-bottom: 0;
+    color: #eee;
+}
+
+.tagline {
+    padding:10px;
+}
+
+#logo {
+    height: 90px;
+    vertical-align: middle;
+}
+
+#try_pills a {
+    border-radius:0;
+    color: #007edf;
+}
+
+#try_pills li {
+    margin-left:0;
+}
+
+#try_pills li.active a {
+    color: #f2f2f2;
+    background-color: #333;
+}
+
+#try_pills li a:hover {
+    background-color: #007edf;
+    color: #fff;
+}
+
+#try_pills li.active a:hover {
+    background-color: #222;
+}
+
+.black {
+    background-color: #111;
+    border-top:1px solid #333;
+}
+
+.blue {
+    background-color: #007edf;
+}
+
+.gray {
+    background-color: #222;
+}
+
+.lightgray {
+    background-color: #f2f2f2;
+}
+
+.bar {
+    padding:10px;
+}
+
+.bar ul {
+    margin-bottom:0;
+    color: #f2f2f2;
+}
+
+.bar ul a {
+    color: #999;
+}
+
+.bar ul a:hover {
+    color: #007edf;
+    text-decoration: none;
+}
+
+.download {
+    width: 100%;
+}
+
+.download ul {
+}
+
+.download ul li {
+    margin-right:10px;
+    padding:0;
+    display:inline-block;
+}
+
+
+.download a {
+    text-decoration:none;
+    border:1px solid #000;
+    background-color: #999;
+    display:inline-block;
+    border-radius:50%;
+    padding:5px;
+    width:75px;
+    height:75px;
+    box-shadow:inset 0px 0px 6px #000;
+}
+
+.download a span {
+    color: #222;
+    margin:10px;
+}
+
+
+.download a:hover {
+    background-color: #ddd;
+}
+
+.download a:hover span {
+    color: #007edf;
+}
+
+.download a:active span {
+    position:relative;
+    left:1px;
+    top:1px;
+}
+
+.quick-menu li {
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.features {
+    padding:20px 0px 50px 0px;
+}
+
+.footer {
+    padding:40px;
+    color: #f2f2f2;
+    border-top:1px solid #111;
+}
+
+.iphone {
+    position:absolute;
+    top:-50px;
+    right:0;
+    background-image:url('../images/iphone.png');
+    background-size: 265px 530px;
+    background-repeat: no-repeat;
+    width:265px;
+    height:530px;
+    z-index:1000;
+}
+
+.iphone_screen {
+    border:0;
+    width: 225px;
+    height: 377px;
+    background-color: white;
+    position: relative;
+    top: 78px;
+    overflow:hidden;
+    color: black;
+}
+
+/* -sm screens need smaller logo */
+@media (max-width: 768px) {
+    #logo {
+        height: 40px;
+    }
+
+    .jumbotron {
+        padding:0;
+    }
+
+    .mediumtron {
+        padding:0;
+    }
+
+    .quick-menu li {
+        margin-left:0;
+        margin-right:0;
+    }
+}
+
+.divider {
+    height:2px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+    border-top:1px solid #111;
+    border-left:none;
+    border-right:none;
+    width:60%;
+    margin:20px auto 20px auto;
+}
+
+.divider span {
+    position:relative;
+    top:-0.85em;
+    background-color:#222;
+    padding-left:5px;
+    padding-right:5px;
+    color: #111;
+    text-shadow: 2px 1px #444;
+    font-variant: small-caps;
+    font-size:1.2em;
+    font-variant-caps: all-petite-caps;
+    font-family:FontAwesome;
+}
+
+.nrg-logo {
+    background-image:url('../images/nrg.png');
+    background-repeat: no-repeat;
+    background-size: 50px;
+    height:50px;
+    border:0;
+    margin-right:15px;
+    padding-left:65px;
+
+}
+
+.copyright {
+    padding-left:65px;
+}
+
+.small-caps {
+    font-variant: small-caps;
+}
+
+.text-red {
+    color: crimson;
+}
+
+.text-gray {
+    color: #999;
+}
+
+.footer a {
+    text-decoration: none;
+}
+
+.vagrant-logo {
+    width:35px;
+    height:35px;
+    background: url('../images/vagrant.png') no-repeat;
+    background-size:35px;
+    display:inline-block;
+    position:relative;
+    top:5px;
+}
+
+.docker-logo {
+    width:42px;
+    height:32px;
+    display:inline-block;
+    background: url('../images/docker.png') no-repeat;
+}
+
+.virtualbox-logo {
+    width:32px;
+    height:32px;
+    background-size:85px;
+    display:inline-block;
+    background: url('../images/virtualbox.png') no-repeat 0px 0px;
+}

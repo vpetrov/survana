@@ -26,7 +26,7 @@
                             <li><a href="index.html">Home</a></li>
                             <li><a href="downloads.html">Downloads</a></li>
                             <li><a href="documentation.html">Documentation</a></li>
-                            <li class="active"><a href="about.html">About</a></li>
+                            <li><a href="about.html">About</a></li>
                             <li class="hidden-xs">
                             <span class="navbar-form">
                                 <button type="button" class="btn btn-primary navbar-btn">Getting Started</button>
@@ -42,8 +42,8 @@
         <div class="container text-left">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <h2><span class="fa fa-leaf"></span> About Survana</h2>
-                    <p class="lead text-gray">Tell me more</p>
+                    <h2><span class="fa fa-code fa-lg"></span> License</h2>
+                    <p class="lead text-gray">Details on how Survana is licensed</p>
                 </div>
             </div>
         </div>
@@ -51,14 +51,23 @@
 
     <div class="lightgray">
         <div class="container">
-            <h3>Motivation</h3>
-            <p>Conducting large online studies that target a wide variety of devices and capture sensitive information in a secure manner poses significant challenges. While the recent deluge of portable, Internet-connected devices (e.g., smartphones and tablets) has opened new opportunities for reaching study participants, these devices also introduce serious risks and other impedances such as potential data loss, sporadic Internet connectivity, and theft. To facilitate the requirements of the user community, we sought to address the mobile, open-source and secure hosting use case.</p>
+            <h3>New BSD License</h3>
+            <p>
+                <p>Copyright (c) 2014, The Neuroinformatics Research Group at Harvard University</p>
+                <p>All rights reserved.</p>
 
-            <h3>Overview</h3>
-            <p>Survana has been designed from the ground up to be a secure, scalable, cross-platform solution, with a distributed and modular architecture. Users are able to create, share, and manage surveys via a modern HTML5 dashboard. Surveys are published to one or more Survana web-servers, which make use of the jQuery Mobile framework to ensure a consistent user experience across all devices. Survana mitigates the risk of survey delivery on untrusted clients by using public key cryptography and assigning each client a random key from a per-survey pool of 1024-bit RSA key pairs that are used to encrypt data locally on the client.</p>
+                <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 
-            <h3>Security</h3>
-            <p>With each page of the questionnaire, the client generates a random 32 character password used to encrypt responses with 256-bit AES symmetric encryption. The password itself is then encrypted using the previously assigned RSA key. The encrypted payload is stored on the device in HTML5 local storage and the participant is allowed to continue with subsequent questionnaires while responses are sent to a Survana database over an SSL-encrypted channel. If the server is unavailable, the responses will remain encrypted on the client until connectivity is restored. Each questionnaire can be configured to send responses to a different database server - a feature which may be useful under IRB restrictions whereby confidential information must be kept in separate locations. Only entities holding the survey’s private RSA keys can retrieve and decrypt data in order to gain access to a participant’s responses.</p>
+                <ol>
+                    <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+                    <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+                    <li>Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.</li>
+                </ol>
+
+                <p>
+                    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+                </p>
+            </p>
         </div>
     </div>
 
