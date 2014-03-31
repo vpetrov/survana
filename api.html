@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Survana</title>
+    <link href="lib/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="lib/fa/4.0.3/css/fa.min.css" rel="stylesheet" type="text/css">
+    <link href="css/main.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<nav id="nav" class="navbar navbar-inverse navbar-static-top">
+    <div class="container">
+        <!-- brand and mobile button -->
+        <div class="navbar-header">
+            <!-- collapse button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navmenu">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="navbar-brand visible-xs" href="#">Survana</a>
+        </div>
+        <div id="navmenu" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav text-center">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="downloads.html">Downloads</a></li>
+                <li class="active"><a href="documentation.html">Documentation</a></li>
+                <li><a href="about.html">About</a></li>
+                <li class="hidden-xs">
+                            <span class="navbar-form">
+                                <button type="button" class="btn btn-primary navbar-btn">Getting Started</button>
+                            </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    </div>
+</nav>
+
+<div class="gray mediumtron edge-top edge-bottom small-caps">
+    <div class="container text-left">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-x12">
+                <h2><span class="glyphicon glyphicon-book"></span> API Documentation</h2>
+
+                <p class="lead text-gray">Read the Manual</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="lightgray">
+<div class="container">
+<div id="wiki-body" class="gollum-markdown-content instapaper_body">
+<br>
+
+<div class="row">
+
+    <div class="well col-lg-4 col-md-5 col-sm-6 text-center"><span class="fa fa-info-circle"></span> This document is
+        also available as: <a class="btn btn-default">PDF</a></div>
+</div>
+
+<h1>Survana API Documentation
+    <small>v.1.0</small>
+</h1>
+
+<h2>
+    <a name="table-of-contents" class="anchor" href="#table-of-contents"><span class="octicon octicon-link"></span></a>Table
+    of Contents</h2>
+
+<ol>
+    <li><a href="#1-overview">Questionnaires</a></li>
+    <li>
+        <a href="#2-types">Types</a>
+
+        <ul>
+            <li><a href="#element">element</a></li>
+            <li>
+                <a href="#question">question</a>
+
+                <ul>
+                    <li><a href="#rtf">rtf</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#input">input</a>
+
+                <ul>
+                    <li><a href="#text">text</a></li>
+                    <li><a href="#textbox">textbox</a></li>
+                    <li><a href="#number">number</a></li>
+                    <li><a href="#radio">radio</a></li>
+                    <li><a href="#checkbox">checkbox</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#select">select</a>
+
+                <ul>
+                    <li><a href="#option">option</a></li>
+                    <li><a href="#optgroup">optgroup</a></li>
+                </ul>
+            </li>
+            <li><a href="#slider">slider</a></li>
+            <li>
+                <a href="#group">group</a>
+
+                <ul>
+                    <li><a href="#radiogroup">radio</a></li>
+                    <li><a href="#checkboxgroup">checkbox</a></li>
+                    <li><a href="#selectgroup">select</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#store">store</a>
+
+                <ul>
+                    <li><a href="#store-list">store list</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><a href="#3-dependencies">Dependencies</a></li>
+</ol>
+
+<h2>
+    <a name="1-overview" class="anchor" href="#1-overview"><span class="octicon octicon-link"></span></a>1.
+    <a>Questionnaires</a>
+</h2>
+
+<p>All questionnaires are described in JSON format. Survana reads these descriptions and generates the UI elements that
+    form the questionnaire (questions, text boxes, buttons, etc).</p>
+
+<p>High-level view of a questionnaire:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="c1">//array of items</span>
+<span class="p">[</span>
+    <span class="c1">//first item</span>
+    <span class="p">{</span>
+        <span class="c1">//item properties</span>
+    <span class="p">},</span>
+    <span class="c1">//second item</span>
+    <span class="p">{</span>
+        <span class="c1">//item properties</span>
+    <span class="p">}</span>
+    <span class="c1">//other items, as needed</span>
+<span class="p">]</span>
+</pre>
+</div>
+
+<p>A questionnaire is an array of objects. Each property of the object is treated as an HTML attribute of the element to
+    be generated, except for properties that begin with <code></code>, which are treated as server-side instructions
+    for Survana, and will not be output to the browser.</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"text"</span><span class="p">,</span>
+    <span class="nt">"label"</span><span class="p">:</span><span class="s2">"Age:"</span><span class="p">,</span>
+    <span class="nt">"id"</span><span class="p">:</span><span class="s2">"age"</span><span class="p">,</span>
+    <span class="nt">"maxlength"</span><span class="p">:</span><span class="mi">3</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>This JSON object describes a text input box, with a label of "Age:" and an HTML attribute of <code>maxlength=3</code>.
+    Survana will generate the following HTML code: <code>&lt;label for="age"&gt;&lt;input type="text" id="age"
+        maxlength="3"&gt;&lt;/label&gt;"</code>.</p>
+
+<h2>
+    <a name="2-types" class="anchor" href="#2-types"><span class="octicon octicon-link"></span></a>2. <a>Types</a>
+</h2>
+
+<p>The <code>type</code> property specifies what kind of UI element to generate (text boxes, labels, radiogroups,
+    etc). The following is a list of all recognized <code>type</code> values:</p>
+
+<ul>
+    <li>
+        <a href="#element">element</a> - A basic HTML element
+    </li>
+    <li>
+        <a href="#question">question</a> - A dedicated field for question text (styled)
+    </li>
+    <li>
+        <a href="#rtf">rtf</a> - HTML-enhanced questions.
+    </li>
+    <li>
+        <a href="#text">text</a> - A text field
+    </li>
+    <li>
+        <a href="#number">number</a> - A number field
+    </li>
+    <li>
+        <a href="#slider">slider</a> - A slider with a number box to display the current value
+    </li>
+    <li>
+        <a href="#radio">radio</a> - A radio field
+    </li>
+    <li>
+        <a href="#radiogroup">group</a> - A collection of radio fields (single choice)
+    </li>
+    <li>
+        <a href="#checkbox">checkbox</a> - A checkbox field
+    </li>
+    <li>
+        <a href="#checkboxgroup">checkboxgroup</a> - A collection of checkbox fields (multiple choice)
+    </li>
+    <li>
+        <a href="#input">input</a> - A generic HTML <code>&lt;input&gt;</code> field
+    </li>
+    <li>
+        <a href="#option">option</a> - An HTML <code>&lt;option&gt;</code> element in a <a href="#select">select</a> or
+        <a href="#optgroup">optgroup</a> field
+    </li>
+    <li>
+        <a href="#optgroup">optgroup</a> - A named group of <a href="#option">option</a> elements
+    </li>
+    <li>
+        <a href="#select">select</a> - A list of <a href="#option">option</a> elements (single choice), optionally
+        grouped using <a href="#optgroup">optgroup</a>
+    </li>
+    <li>
+        <a href="#store">store</a> - A well known database of values (such as countries, US states, etc)
+    </li>
+</ul>
+<p>If the <code>type</code> property is omitted, Survana will try to intelligently detect the type of the item, in the
+    following order:</p>
+
+<ol>
+    <li><a href="#basic-html-element">element</a></li>
+    <li><a href="#group">group</a></li>
+    <li><a href="#store">store</a></li>
+</ol>
+<h3>
+    <a name="basic-html-element" class="anchor" href="#basic-html-element"><span
+            class="octicon octicon-link"></span></a><a>Basic HTML element</a>
+</h3>
+
+<p>A basic HTML element is an item that contains a <code>tag</code> property and/or has an <code>type</code> value of
+    <code>element</code>. The following example instructs Survana to create an HTML element with the specified inner
+    HTML text:</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+   <span class="nt">"tag"</span><span class="p">:</span><span class="s2">"div"</span><span class="p">,</span>
+   <span class="nt">"html"</span><span class="p">:</span><span class="s2">"Hello, world"</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<ul>
+    <li>
+        <code>tag</code> - HTML element tag name
+    </li>
+    <li>
+        <code>html</code> - the text value of the HTML element
+    </li>
+</ul>
+<p>All other properties of the item will by default be output as attributes of the element.</p>
+
+<h3>
+    <a name="question" class="anchor" href="#question"><span class="octicon octicon-link"></span></a><a>Question</a>
+</h3>
+
+<p>A question is simply a heading containing text. For other styles, see <a href="#rtf">rtf</a>.</p>
+
+<p><test src="http://i.imgur.com/9r39A.png" alt="Question"></p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"question"</span><span class="p">,</span>
+    <span class="nt">"html"</span><span class="p">:</span><span class="s2">"Why did the chicken cross the road?"</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<ul>
+    <li>
+        <code>html</code> - the text of the question.
+    </li>
+</ul>
+<h3>
+    <a name="rtf" class="anchor" href="#rtf"><span class="octicon octicon-link"></span></a><a>rtf</a>
+</h3>
+
+<p>For questions that should not look like headings, <code>rtf</code> is an element that can either display simple text,
+    or HTML-enhanced text. The <code>html</code> property of an <code>rtf</code> element is only minimally enhanced by
+    the UI framework, allowing greater control over the style of the text.</p>
+
+<div class="highlight highlight-json"><pre><span class="p">[{</span>
+    <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"rtf"</span><span class="p">,</span>
+    <span class="nt">"html"</span><span class="p">:</span><span class="s2">"Why did the chicken cross the road?"</span>
+<span class="p">},</span>
+<span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"rtf"</span><span class="p">,</span>
+    <span class="nt">"html"</span><span class="p">:</span><span class="s2">"Why &lt;strong&gt;did&lt;/strong&gt; the &lt;u&gt;chicken&lt;/u&gt; cross the road?"</span>
+<span class="p">}]</span>
+</pre>
+</div>
+
+<h3>
+    <a name="text" class="anchor" href="#text"><span class="octicon octicon-link"></span></a><a>Text</a>
+</h3>
+
+<p>A <code>text</code> field is an <a href="#input">input</a> field specialized for text entry.</p>
+
+<p><test src="http://i.imgur.com/VWxy1.png" alt="Textbox"></p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"text"</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>Options inherited from <a href="#input">input</a>:</p>
+
+<ul>
+    <li>
+        <code>label</code> - prepend a label to the input. If label is <code>""</code> (empty string), it will cause
+        the field to align to the left of its container. If the label is <code>" "</code> (space), the label will be
+        invisible to the user (but the field will not change its alignment).
+    </li>
+    <li>
+        <code>inline</code> - display the field immediately after the label (no alignment).
+    </li>
+    <li>
+        <code>maximize</code> - fill the entire space to the right of the field.
+    </li>
+    <li>
+        <code>suffix</code> - append any HTML or <code>type</code> elements to the text field.
+    </li>
+    <li>
+        <code>id</code> - assign an HTML <code>id</code> and <code>name</code> value to the input (required for
+        storing responses)
+    </li>
+</ul>
+<p>Relevant HTML attributes:</p>
+
+<ul>
+    <li>
+        <code>disabled</code> - if set to "disabled", will show the field as disabled. This is useful in combination
+        with <a href="#depend">depend</a>.
+    </li>
+    <li>
+        <code>placeholder</code> - shows a message inside the box, if it's empty.
+    </li>
+    <li>
+        <code>maxlength</code> - the maximum number of characters allowed.
+    </li>
+</ul>
+<p>A screenshot showing various combinations of the options above:</p>
+
+<p><test src="http://i.imgur.com/wMQXK.png" alt="Text fields with various options"></p>
+
+<h3>
+    <a name="number" class="anchor" href="#number"><span class="octicon octicon-link"></span></a><a>Number</a>
+</h3>
+
+<p>A <code>number</code> field is an <a href="#input">input</a> field specialized for numeric data.</p>
+
+<p><test src="http://i.imgur.com/MFuPU.png" alt="Number"></p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"number"</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>Options inherited from <a href="#input">input</a>:</p>
+
+<ul>
+    <li>
+        <code>label</code> - prepend a label to the field. If label is <code>""</code> (empty string), it will cause
+        the box to align to the left of its container. If the label is <code>" "</code> (space), the label will be
+        invisible to the user (but the field will not change its alignment).
+    </li>
+    <li>
+        <code>inline</code> - display the field immediately after the label (no alignment).
+    </li>
+    <li>
+        <code>maximize</code> - fill the entire space to the right of the field.
+    </li>
+    <li>
+        <code>suffix</code> - append any HTML or <code>type</code> elements to the field.
+    </li>
+    <li>
+        <code>id</code> - assign an HTML <code>id</code> and <code>name</code> value to the input (required for
+        storing responses)
+    </li>
+</ul>
+<p>Relevant HTML attributes:</p>
+
+<ul>
+    <li>
+        <code>disabled</code> - if set to "disabled", will show the field as disabled. This is useful in combination
+        with <a href="#depend">depend</a>.
+    </li>
+    <li>
+        <code>placeholder</code> - shows a message inside the box, if it's empty.
+    </li>
+    <li>
+        <code>maxlength</code> - the maximum number of characters allowed.
+    </li>
+</ul>
+<p>A screenshot showing various combinations of the options above:</p>
+
+<p><test src="http://i.imgur.com/na36v.png" alt="Number fields with various options"></p>
+
+<h3>
+    <a name="slider" class="anchor" href="#slider"><span class="octicon octicon-link"></span></a><a>Slider</a>
+</h3>
+
+<p>A <code>slider</code> field is an <a href="#input">input</a> field specialized for numeric data that falls in a known
+    range of values.</p>
+
+<p><test src="http://i.imgur.com/P057c.png" alt="Slider"></p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"slider"</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>Options inherited from <a href="#input">input</a>:</p>
+
+<ul>
+    <li>
+        <code>label</code> - prepend a label to the field. If label is <code>""</code> (empty string), it will cause
+        the box to align to the left of its container. If the label is <code>" "</code> (space), the label will be
+        invisible to the user (but the field will not change its alignment).
+    </li>
+    <li>
+        <code>inline</code> - display the field immediately after the label (no alignment).
+    </li>
+    <li>
+        <code>maximize</code> - fill the entire space to the right of the field.
+    </li>
+    <li>
+        <code>suffix</code> - append any HTML or <code>type</code> elements to the field.
+    </li>
+    <li>
+        <code>id</code> - assign an HTML <code>id</code> and <code>name</code> value to the input (required for
+        storing responses)
+    </li>
+</ul>
+<p>Relevant HTML attributes:</p>
+
+<ul>
+    <li>
+        <code>disabled</code> - if set to "disabled", will show the field as disabled. This is useful in combination
+        with <a href="#depend">depend</a>.
+    </li>
+    <li>
+        <code>placeholder</code> - shows a message inside the box, if it's empty.
+    </li>
+    <li>
+        <code>maxlength</code> - the maximum number of characters allowed.
+    </li>
+</ul>
+<p>A screenshot showing various combinations of the options above:</p>
+
+<p><test src="http://i.imgur.com/wi6TK.png" alt="Slider fields with various options"></p>
+
+<h3>
+    <a name="radio" class="anchor" href="#radio"><span class="octicon octicon-link"></span></a><a>Radio</a>
+</h3>
+
+<p>A radio input field. Mostly used as part of a radio <a href="#group">group</a>.</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"radio"</span><span class="p">,</span>
+    <span class="nt">"value"</span><span class="p">:</span><span class="mi">0</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>See <a href="#group">group</a>.</p>
+
+<h3>
+    <a name="checkbox" class="anchor" href="#checkbox"><span class="octicon octicon-link"></span></a><a>Checkbox</a>
+</h3>
+
+<p>A checkbox input field. Mostly used as part of a <a href="#checkboxgroup">checkboxgroup</a>.</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"checkbox"</span><span class="p">,</span>
+    <span class="nt">"value"</span><span class="p">:</span><span class="mi">0</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>See <a href="#group">group</a>.</p>
+
+<h3>
+    <a name="group" class="anchor" href="#group"><span class="octicon octicon-link"></span></a><a>group</a>
+</h3>
+
+<p>Several components can be grouped together: <a href="#radiogroup">radio</a>, <a href="#checkboxgroup">checkbox</a>
+    and <a href="#selectgroup">select</a>. </p>
+
+<h4>
+    <a name="radio-group" class="anchor" href="#radio-group"><span class="octicon octicon-link"></span></a><a>radio
+    group</a>
+</h4>
+
+<p>A group of <a href="#radio">radio</a> buttons. The user is only allowed to pick one element out of the group.</p>
+
+<p><test src="http://i.imgur.com/FErkd.png" alt="Horizontal radiogroup"></p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"group"</span><span class="p">:</span><span class="s2">"radio"</span><span class="p">,</span>
+    <span class="nt">"items"</span><span class="p">:{</span>
+        <span class="nt">"Yes"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nt">"No"</span><span class="p">:</span><span class="mi">0</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<ul>
+    <li>
+        <code>items</code> : An array of objects (or an object) of the form: <code>{ "some label" : "some value"
+        }</code>.
+    </li>
+    <li>
+        <code>direction</code>: Either <code>vertical</code> or <code>horizontal</code> (default).
+    </li>
+    <li>
+        <code>label</code> - prepend a label to the field. If label is <code>""</code> (empty string), it will cause
+        the box to align to the left of its container. If the label is <code>" "</code> (space), the label will be
+        invisible to the user (but the field will not change its alignment).
+    </li>
+    <li>
+        <code>inline</code> - display the field immediately after the label (no alignment).
+    </li>
+    <li>
+        <code>maximize</code> - fill the entire space to the right of the field. Doesn't enlarge radio buttons in
+        horizontal radiogroups.
+    </li>
+    <li>
+        <code>id</code> - assign an HTML <code>name</code> value to the radio buttons, and an <code>id</code> value,
+        autoincremented for every item
+    </li>
+</ul>
+<p>Relevant HTML attributes:</p>
+
+<ul>
+    <li>
+        <code>disabled</code> - if set to "disabled", will show the field as disabled. This is useful in combination
+        with <a href="#depend">depend</a>.
+    </li>
+</ul>
+<p>A screenshot showing various combinations of the options above:
+    <test src="http://i.imgur.com/eSbri.png" alt="Radiogroup Demo"></p>
+
+<h4>
+    <a name="checkbox-group" class="anchor" href="#checkbox-group"><span class="octicon octicon-link"></span></a><a>checkbox
+    group</a>
+</h4>
+
+<p>A group of <a href="#checkbox">checkbox</a> buttons. The user is allowed to pick multiple elements in the group.</p>
+
+<p><test src="http://i.imgur.com/nIMWF.png" alt="Checkboxgroup"></p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"checkboxgroup"</span><span
+            class="p">,</span>
+    <span class="nt">"items"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">"Boston"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">"Cambridge"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">"Watertown"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<ul>
+    <li>
+        <code>items</code> - An object of the form <code>{ "item label" : "item value" }</code>
+    </li>
+    <li>
+        <code>id</code> - assign an HTML <code>name</code> value and an autogenerated <code>id</code> to each checkbox
+        (required for storing responses)
+    </li>
+</ul>
+<p><test src="http://i.imgur.com/7G53u.png" alt="Checkboxgroup examples"></p>
+
+<h3>
+    <a name="input" class="anchor" href="#input"><span class="octicon octicon-link"></span></a><a>Input</a>
+</h3>
+
+<p>An <code>input</code> field is a raw HTML <code>&lt;input&gt;</code> element, which can be enhanced using the options
+    below. Some fields such as <a href="#text">text</a> and <a href="#number">number</a>, rely on this generic <code>input</code>
+    field.</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"input"</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>Options:</p>
+
+<ul>
+    <li>
+        <code>label</code> - prepend a label to the input. If label is <code>""</code> (empty string), it will cause
+        the field to align to the left of its container. If the label is <code>" "</code> (space), the label will be
+        invisible to the user (but the field will not change its alignment).
+    </li>
+    <li>
+        <code>inline</code> - display the field immediately after the label (no alignment).
+    </li>
+    <li>
+        <code>maximize</code> - fill the entire space to the right of the field.
+    </li>
+    <li>
+        <code>suffix</code> - append any HTML or <code>type</code> elements to the text field.
+    </li>
+    <li>
+        <code>id</code> - assign an HTML <code>id</code> and <code>name</code> value to the input (required for
+        storing responses)
+    </li>
+</ul>
+<p>Relevant HTML attributes:</p>
+
+<ul>
+    <li>
+        <code>type</code> - type of <code>&lt;input&gt;</code> (see <a
+            href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#attr-input-type">list
+        of HTML5 input types</a> )
+    </li>
+    <li>
+        <code>disabled</code> - if set to "disabled", will show the field as disabled. This is useful in combination
+        with <a href="#depend">depend</a>.
+    </li>
+    <li>
+        <code>placeholder</code> - shows a message inside the box, if it's empty.
+    </li>
+    <li>
+        <code>maxlength</code> - the maximum number of characters allowed.
+    </li>
+</ul>
+<p><test src="http://i.imgur.com/HWs23.png" alt="Raw HTML5 input elements"></p>
+
+<h3>
+    <a name="option" class="anchor" href="#option"><span class="octicon octicon-link"></span></a><a>Option</a>
+</h3>
+
+<p>An HTML <code>&lt;option&gt;</code> element in a <a href="#select">select</a> or <a href="#optgroup">optgroup</a>
+    field.</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"option"</span><span class="p">,</span>
+    <span class="nt">"label"</span><span class="p">:</span><span class="s2">"My Option"</span><span class="p">,</span>
+    <span class="nt">"value"</span><span class="p">:</span><span class="s2">"1"</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<ul>
+    <li>
+        <code>label</code> - text to be displayed
+    </li>
+    <li>
+        <code>value</code> - value for this option
+    </li>
+</ul>
+<h3>
+    <a name="optgroup" class="anchor" href="#optgroup"><span class="octicon octicon-link"></span></a><a>Optgroup</a>
+</h3>
+
+<p>A named group of <a href="#option">option</a> elements within a <a href="#select">select</a> field.</p>
+
+<p><test src="http://i.imgur.com/vHxIa.png" alt="Several optgroup fields in a select field"></p>
+
+<div class="highlight highlight-javascript"><pre><span class="p">{</span>
+    <span class="c1">// ... declaration of a "select" field</span>
+    <span class="nx">items</span><span class="o">:</span><span class="p">[</span>
+             <span class="p">{</span>
+                 <span class="s2">"type"</span><span class="o">:</span> <span class="s2">"optgroup"</span><span
+            class="p">,</span>
+                 <span class="s2">"label"</span><span class="o">:</span> <span class="s2">"Grade School"</span><span
+            class="p">,</span>
+                 <span class="s2">"items"</span><span class="o">:</span> <span class="p">[</span>
+                     <span class="p">{</span>
+                         <span class="s2">"1"</span><span class="o">:</span> <span class="mi">1</span><span
+            class="p">,</span>
+                         <span class="s2">"2"</span><span class="o">:</span> <span class="mi">2</span>
+                         <span class="c1">// ... other options</span>
+                     <span class="p">}</span>
+                 <span class="p">]</span>
+             <span class="p">},</span>
+             <span class="p">{</span>
+                 <span class="c1">// ... another optgroup</span>
+             <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<ul>
+    <li>
+        <code>label</code> - a label for the option group
+    </li>
+    <li>
+        <code>items</code> - an object of the form <code>{ "opt label":"opt value" }</code> or <code>option</code>
+        items.
+    </li>
+</ul>
+<h3>
+    <a name="select" class="anchor" href="#select"><span class="octicon octicon-link"></span></a><a>Select</a>
+</h3>
+
+<p>A list of <a href="#option">option</a> elements (single choice), optionally grouped using <a href="#optgroup">optgroup</a>.
+</p>
+
+<p>A select field containing only <a href="#option">option</a> elements:</p>
+
+<p><test src="http://i.imgur.com/NHT7y.png" alt="Select field containing only option elements"></p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"select"</span><span class="p">,</span>
+    <span class="nt">"empty"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">"label"</span><span class="p">:</span> <span class="s2">"Country:"</span><span class="p">,</span>
+    <span class="nt">"items"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+        <span class="nt">"United States"</span><span class="p">:</span><span class="s2">"US"</span><span
+            class="p">,</span>
+            <span class="nt">"Andorra"</span><span class="p">:</span><span class="s2">"AD"</span><span
+            class="p">,</span>
+            <span class="nt">"United Arab Emirates"</span><span class="p">:</span><span class="s2">"AE"</span><span
+            class="p">,</span>
+            <span class="nt">"Afghanistan"</span><span class="p">:</span><span class="s2">"AF"</span><span
+            class="p">,</span>
+            <span class="nt">"Antigua and Barbuda"</span><span class="p">:</span><span class="s2">"AG"</span><span
+            class="p">,</span>
+            <span class="nt">"Anguilla"</span><span class="p">:</span><span class="s2">"AI"</span><span
+            class="p">,</span>
+            <span class="nt">"Albania"</span><span class="p">:</span><span class="s2">"AL"</span><span
+            class="p">,</span>
+            <span class="nt">"Armenia"</span><span class="p">:</span><span class="s2">"AM"</span><span
+            class="p">,</span>
+            <span class="nt">"Netherlands Antilles"</span><span class="p">:</span><span class="s2">"AN"</span><span
+            class="p">,</span>
+            <span class="nt">"Angola"</span><span class="p">:</span><span class="s2">"AO"</span><span class="p">,</span>
+            <span class="nt">"Antarctica"</span><span class="p">:</span><span class="s2">"AQ"</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>A select field which uses <a href="#optgroup">optgroup</a> elements:</p>
+
+<p><test src="http://i.imgur.com/vHxIa.png" alt="Several optgroup fields in a select field"></p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"select"</span><span class="p">,</span>
+    <span class="nt">"label"</span><span class="p">:</span> <span class="s2">" "</span><span class="p">,</span>
+    <span class="nt">"empty"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">"items"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"optgroup"</span><span
+            class="p">,</span>
+            <span class="nt">"label"</span><span class="p">:</span> <span class="s2">"Grade School"</span><span
+            class="p">,</span>
+            <span class="nt">"items"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">"1"</span><span class="p">:</span> <span class="mi">1</span><span
+            class="p">,</span>
+                    <span class="nt">"2"</span><span class="p">:</span> <span class="mi">2</span><span
+            class="p">,</span>
+                    <span class="nt">"3"</span><span class="p">:</span> <span class="mi">3</span><span
+            class="p">,</span>
+                    <span class="nt">"4"</span><span class="p">:</span> <span class="mi">4</span><span
+            class="p">,</span>
+                    <span class="nt">"5"</span><span class="p">:</span> <span class="mi">5</span><span
+            class="p">,</span>
+                    <span class="nt">"6"</span><span class="p">:</span> <span class="mi">6</span><span
+            class="p">,</span>
+                    <span class="nt">"7"</span><span class="p">:</span> <span class="mi">7</span><span
+            class="p">,</span>
+                    <span class="nt">"8"</span><span class="p">:</span> <span class="mi">8</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>Options:</p>
+
+<ul>
+    <li>
+        <code>label</code> - field label.
+    </li>
+    <li>
+        <code>empty</code> - make the first option in a <code>select</code> be an empty item.
+    </li>
+    <li>
+        <code>items</code> - a list of <a href="#option">option</a> or <a href="#optgroup">optgroup</a> elements.
+    </li>
+    <li>
+        <code>id</code> - assign an HTML <code>id</code> and <code>name</code> value to the select box (required for
+        storing responses)
+    </li>
+</ul>
+<h3>
+    <a name="store" class="anchor" href="#store"><span class="octicon octicon-link"></span></a><a>Store</a>
+</h3>
+
+<p>A store is a collection of items, representing well-known values (e.g. list of countries, list of US states, etc).
+    When a questionnaire asks for "Country of Birth" and "Country of Residence", one could create a <a href="#select">select</a>
+    with 200 <a href="#option">option</a> items for "Country of Birth" and then duplicate it for "Country of Residence",
+    but that would create a 600+ line long questionnaire. That's not cool. A more elegant solution would be to use a
+    <code>store</code> provided by Survana and generate appropriate fields based on the values in the collection.</p>
+
+<p>For example, the <code>countries</code> collection contains a list of countries and their codes:</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"United States"</span><span class="p">:</span><span class="s2">"US"</span><span class="p">,</span>
+    <span class="nt">"Andorra"</span><span class="p">:</span><span class="s2">"AD"</span><span class="p">,</span>
+    <span class="nt">"United Arab Emirates"</span><span class="p">:</span><span class="s2">"AE"</span><span
+            class="p">,</span>
+    <span class="nt">"Afghanistan"</span><span class="p">:</span><span class="s2">"AF"</span><span class="p">,</span>
+    <span class="nt">"Antigua and Barbuda"</span><span class="p">:</span><span class="s2">"AG"</span><span
+            class="p">,</span>
+    <span class="nt">"Anguilla"</span><span class="p">:</span><span class="s2">"AI"</span><span class="p">,</span>
+    <span class="nt">"Albania"</span><span class="p">:</span><span class="s2">"AL"</span><span class="p">,</span>
+    <span class="nt">"Armenia"</span><span class="p">:</span><span class="s2">"AM"</span><span class="p">,</span>
+    <span class="nt">"Netherlands Antilles"</span><span class="p">:</span><span class="s2">"AN"</span><span
+            class="p">,</span>
+    <span class="nt">"Angola"</span><span class="p">:</span><span class="s2">"AO"</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>On each line, the first string is called a "key" (e.g. "United States") and the second string is called a "value"
+    (e.g. "US").</p>
+
+<p>Suppose we would like to create a "Country of Birth" <a href="#select">select</a> field:</p>
+
+<div class="highlight highlight-javascript"><pre>    <span class="s2">"type"</span><span class="o">:</span><span
+        class="s2">"select"</span><span class="p">,</span>
+    <span class="s2">"label"</span><span class="o">:</span><span class="s2">"Country of Birth:"</span><span class="p">,</span>
+    <span class="s2">"items"</span><span class="o">:</span><span class="p">[</span>
+        <span class="c1">// ... countries go here</span>
+    <span class="p">]</span>
+</pre>
+</div>
+
+<p>To use the <code>countries</code> store in a <a href="#select">select</a> field (or any other field that takes an
+    array of <code>items</code>), one must include the following item:</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span>  <span class="s2">"store"</span><span class="p">,</span>
+    <span class="nt">"store"</span><span class="p">:</span> <span class="s2">"countries"</span><span
+            class="p">,</span>
+    <span class="nt">"sort"</span><span class="p">:</span>  <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">"item"</span><span class="p">:</span>  <span class="p">{</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"option"</span><span
+            class="p">,</span>
+        <span class="nt">"label"</span><span class="p">:</span> <span class="s2">"key"</span><span class="p">,</span>
+        <span class="nt">"value"</span><span class="p">:</span> <span class="s2">"value"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<ul>
+    <li>
+        <code>store</code> - the name of the store (see Store List)
+    </li>
+    <li>
+        <code>sort</code> - sort the collection
+    </li>
+    <li>
+        <code>item</code> - a template for the item to generate (see below)
+    </li>
+</ul>
+<p><code>item</code> specifies how to use the <code>key</code> and <code>value</code> properties of each item in the
+    <code>countries</code> store. The code snippet above will generate an <a href="#option">option</a> field for each
+    item, with <code>key</code> and <code>value</code> replaced by the actual values in the store:</p>
+
+<div class="highlight highlight-json"><pre><span class="p">[</span>
+    <span class="p">{</span>
+       <span class="nt">"type"</span><span class="p">:</span><span class="s2">"option"</span><span class="p">,</span>
+       <span class="nt">"label"</span><span class="p">:</span><span class="s2">"United States"</span><span
+            class="p">,</span>
+       <span class="nt">"value"</span><span class="p">:</span><span class="s2">"US"</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+       <span class="nt">"type"</span><span class="p">:</span><span class="s2">"option"</span><span class="p">,</span>
+       <span class="nt">"label"</span><span class="p">:</span><span class="s2">"Andorra"</span><span
+            class="p">,</span>
+       <span class="nt">"value"</span><span class="p">:</span><span class="s2">"AD"</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre>
+</div>
+
+<p>Thus, Survana generates a long list of <code>items</code>, instead of the person creating the questionnaire. </p>
+
+<p>Finally, the declaration of the <code>select</code> looks like so:</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"type"</span><span class="p">:</span><span class="s2">"select"</span><span class="p">,</span>
+    <span class="nt">"label"</span><span class="p">:</span><span class="s2">"Country of Birth:"</span><span class="p">,</span>
+    <span class="nt">"items"</span><span class="p">:[</span>
+        <span class="p">{</span>
+            <span class="nt">"type"</span><span class="p">:</span>  <span class="s2">"store"</span><span
+            class="p">,</span>
+            <span class="nt">"store"</span><span class="p">:</span> <span class="s2">"countries"</span><span
+            class="p">,</span>
+            <span class="nt">"sort"</span><span class="p">:</span>  <span class="kc">true</span><span
+            class="p">,</span>
+            <span class="nt">"item"</span><span class="p">:</span>  <span class="p">{</span>
+                <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"option"</span><span
+            class="p">,</span>
+                <span class="nt">"label"</span><span class="p">:</span> <span class="s2">"key"</span><span
+            class="p">,</span>
+                <span class="nt">"value"</span><span class="p">:</span> <span class="s2">"value"</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+<p>The <code>type</code> property is optional. It is sufficient to provide an <code>store</code> property for the
+    item to be recognized as a <a href="#store">store</a>.</p>
+
+<h4>
+    <a name="store-list" class="anchor" href="#store-list"><span class="octicon octicon-link"></span></a><a>Store
+    List</a>
+</h4>
+
+<p>The following is a list of all known stores in Survana:</p>
+
+<ul>
+    <li>
+        <p><code>countries</code> - Countries</p>
+
+        <div class="highlight highlight-json"><pre><span class="p">{</span> <span class="nt">"United States"</span><span
+                class="p">:</span><span class="s2">"US"</span> <span class="p">}</span>
+</pre>
+        </div>
+    </li>
+    <li>
+        <p><code>states</code> - U.S. states</p>
+
+        <div class="highlight highlight-json"><pre><span class="p">{</span> <span class="nt">"Massachusetts"</span><span
+                class="p">:</span><span class="s2">"MA"</span> <span class="p">}</span>
+</pre>
+        </div>
+    </li>
+    <li>
+        <p><code>years</code> - All years since 1900 till 2012</p>
+
+        <div class="highlight highlight-json"><pre><span class="p">{</span> <span class="nt">"2012"</span><span
+                class="p">:</span> <span class="mi">2012</span> <span class="p">}</span>
+</pre>
+        </div>
+    </li>
+    <li>
+        <p><code>months</code> - All months in a year</p>
+
+        <div class="highlight highlight-json"><pre><span class="p">{</span> <span class="nt">"January"</span><span
+                class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+</pre>
+        </div>
+    </li>
+    <li>
+        <p><code>days</code> - All days in a month (1 - 31)</p>
+
+        <div class="highlight highlight-json"><pre><span class="p">{</span> <span class="nt">"1"</span><span
+                class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+</pre>
+        </div>
+    </li>
+</ul>
+<p>User-stores are not supported at the moment.</p>
+
+<h2>
+    <a name="3-dependencies" class="anchor" href="#3-dependencies"><span class="octicon octicon-link"></span></a>3. <a>Dependencies</a>
+</h2>
+
+<p>Certain fields become relevant (or irrelevant) depending on the response to one or more previous questions. To
+    describe such dependencies between fields, Survana requires one to specify conditional expressions on the value of
+    those fields.</p>
+
+<p>For example, field <code>xyz</code> is relevant only if the value of the <code>age</code> field (not shown) is
+    greater than or equal to 21.</p>
+
+<div class="highlight highlight-javascript"><pre>   <span class="p">{</span>
+        <span class="s2">"id"</span><span class="o">:</span> <span class="s2">"xyz"</span><span class="p">,</span>
+        <span class="c1">//...</span>
+        <span class="s2">"depend"</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"test"</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"age"</span><span class="o">:</span> <span class="p">{</span>        <span class="c1">//id of the field this field depends on</span>
+                    <span class="s2">"&gt;="</span><span class="o">:</span> <span class="mi">21</span>    <span
+            class="c1">//condition to test for</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//...</span>
+   <span class="p">}</span>
+</pre>
+</div>
+
+<p>For equality tests, there's a shorthand syntax:</p>
+
+<div class="highlight highlight-javascript"><pre>   <span class="p">{</span>
+        <span class="s2">"id"</span><span class="o">:</span> <span class="s2">"xyz"</span><span class="p">,</span>
+        <span class="c1">//...</span>
+        <span class="s2">"depend"</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"test"</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"age"</span><span class="o">:</span> <span class="mi">21</span>    <span class="c1">// condition: age = 21</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//...</span>
+   <span class="p">}</span>
+</pre>
+</div>
+
+<p>The following are all operators recognized by <code>test</code>:</p>
+
+<ul>
+    <li>
+        <code>=</code> - <code>"=": 21</code> - equals 21
+    </li>
+    <li>
+        <code>!=</code> - <code>"!=": 21</code> - does not equal 21
+    </li>
+    <li>
+        <code>&gt;</code> - <code>"&gt;": 21</code> - greater than 21
+    </li>
+    <li>
+        <code>&gt;=</code> - <code>"&gt;=": 21</code> - greater than or equal to 21
+    </li>
+    <li>
+        <code>&lt;</code> - <code>"&lt;": 21</code> - less than 21
+    </li>
+    <li>
+        <code>&lt;=</code> - <code>"&lt;=": 21</code> - less than or equal to 21
+    </li>
+    <li>
+        <code>in</code> - <code>"in": [19,20,21]</code> - either 19 or 20 or 21
+    </li>
+    <li>
+        <code>has</code> - <code>"has": 21</code> - (<a href="#checkboxgroup">checkbox</a> only) response contains 21
+    </li>
+</ul>
+<p>It is also possible to test the value of multiple fields:</p>
+
+<div class="highlight highlight-javascript"><pre>   <span class="p">{</span>
+        <span class="s2">"id"</span><span class="o">:</span> <span class="s2">"xyz"</span><span class="p">,</span>
+        <span class="c1">//...</span>
+        <span class="s2">"depend"</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"test"</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"age"</span><span class="o">:</span> <span class="mi">21</span><span class="p">,</span>    <span
+            class="c1">// age = 21</span>
+                <span class="s2">"license"</span><span class="o">:</span> <span class="mi">1</span>  <span class="c1">// and license = 1 </span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//...</span>
+   <span class="p">}</span>
+</pre>
+</div>
+
+<p>The above example shows an <code>and</code> expression (i.e. 'age is 21 and license is 1'). Generally,
+    <code>and</code> expressions are specified within curly braces <code>{}</code>. </p>
+
+<p>An example of testing for a range ('age is between 18 and 21'), using an <code>and</code> expression:</p>
+
+<div class="highlight highlight-javascript"><pre>   <span class="p">{</span>
+        <span class="s2">"id"</span><span class="o">:</span> <span class="s2">"xyz"</span><span class="p">,</span>
+        <span class="c1">//...</span>
+        <span class="s2">"depend"</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"test"</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"age"</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">"&gt;="</span><span class="o">:</span> <span class="mi">18</span><span
+            class="p">,</span>   <span class="c1">//greater than or equal to 18</span>
+                    <span class="s2">"&lt;="</span><span class="o">:</span> <span class="mi">21</span>    <span
+            class="c1">//and less than or equal to 21</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//...</span>
+   <span class="p">}</span>
+</pre>
+</div>
+
+<p>The other supported expression type is <code>or</code>, which makes use of brackets <code>[]</code>:</p>
+
+<div class="highlight highlight-javascript"><pre>   <span class="p">{</span>
+        <span class="s2">"id"</span><span class="o">:</span> <span class="s2">"xyz"</span><span class="p">,</span>
+        <span class="c1">//...</span>
+        <span class="s2">"depend"</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"test"</span><span class="o">:</span> <span class="p">[</span>
+                <span class="p">{</span> <span class="s2">"age"</span><span class="o">:</span> <span
+            class="mi">21</span> <span class="p">},</span>    <span class="c1">//age is 21</span>
+                <span class="p">{</span> <span class="s2">"license"</span><span class="o">:</span> <span
+            class="mi">1</span> <span class="p">}</span>  <span class="c1">//or license is 1</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="c1">//...</span>
+   <span class="p">}</span>
+</pre>
+</div>
+
+<p>Below is the implementation of a more complex test, 'either age is between 18 <code>and</code> 21, <code>and</code>
+    license is 1, <code>or</code> age is greater than 50':</p>
+
+<div class="highlight highlight-javascript"><pre>   <span class="p">{</span>
+        <span class="s2">"id"</span><span class="o">:</span> <span class="s2">"xyz"</span><span class="p">,</span>
+        <span class="c1">//...</span>
+        <span class="s2">"depend"</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"test"</span><span class="o">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">"age"</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">"&gt;="</span><span class="o">:</span> <span class="mi">18</span><span
+            class="p">,</span>    <span class="c1">// age is between 18 and 21</span>
+                        <span class="s2">"&lt;="</span><span class="o">:</span> <span class="mi">21</span>
+                    <span class="p">},</span>
+                    <span class="s2">"license"</span><span class="o">:</span> <span class="mi">1</span>    <span
+            class="c1">// and license = 1</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">"age"</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="s2">"&gt;"</span><span class="o">:</span> <span class="mi">50</span>     <span
+            class="c1">// or age is greater than 50</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="c1">//...</span>
+   <span class="p">}</span>
+</pre>
+</div>
+
+<p>A canonical dependency declaration contains the following keywords:</p>
+
+<ul>
+    <li>
+        <code>depend</code> - Start of the dependency declaration object
+    </li>
+    <li>
+        <code>test</code> - Start of the condition to test for
+    </li>
+    <li>
+        <code>true</code> - <em>(optional)</em> Action(s) to perform when the result of <code>test</code> is positive
+        (default: <code>[enable,focus]</code>)
+    </li>
+    <li>
+        <code>false</code> - <em>(optional)</em> Action(s) to perform when the result of <code>test</code> is negative
+        (default: <code>[disable, blur]</code>)
+    </li>
+</ul>
+<p>When the result of the <code>test</code> is positive, the <code>true</code> action(s) are performed, otherwise the
+    <code>false</code> actions are performed. </p>
+
+<p>Survana supports the following actions:</p>
+
+<ul>
+    <li>
+        <code>clear</code> - clears the field
+    </li>
+    <li>
+        <code>focus</code> - sets the focus on the field
+    </li>
+    <li>
+        <code>blur</code> - removes the focus from the field
+    </li>
+    <li>
+        <code>enable</code> - enables the field
+    </li>
+    <li>
+        <code>disable</code> - disables the field (and clears its content)
+    </li>
+    <li>
+        <code>hide</code> - hides the field
+    </li>
+    <li>
+        <code>show</code> - shows the field
+    </li>
+    <li>
+        <code>message</code> - displays a message; parameters:
+
+        <ul>
+            <li>
+                <code>message</code> - the text to display
+            </li>
+            <li>
+                <code>title</code> - <em>(optional)</em> title of the message box (default: <code>Message</code>)
+            </li>
+        </ul>
+    </li>
+    <li>
+        <code>hidenext</code> - prevents the user from continuing to the next questionnaire
+    </li>
+    <li>
+        <code>shownext</code> - allows the user to continue to the next questionnaire
+    </li>
+</ul>
+<p>Actions can be chained together, to achieve the desired effect. For example, to prevent the participant from
+    continuing, unless they've agreed to the terms and conditions, a dependency could be set on the Agree/Disagree field
+    itself:</p>
+
+<div class="highlight highlight-javascript"><pre>   <span class="p">{</span>
+        <span class="s2">"id"</span><span class="o">:</span> <span class="s2">"terms"</span><span class="p">,</span>
+        <span class="s2">"group"</span><span class="o">:</span> <span class="s2">"radio"</span><span
+            class="p">,</span>
+        <span class="s2">"items"</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"Agree"</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"Disagree"</span><span class="o">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="s2">"depend"</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"test"</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">"terms"</span><span class="o">:</span> <span class="mi">1</span>    <span class="c1">// dependency on ourselves. checks when value = 1, i.e. 'Agree'</span>
+            <span class="p">},</span>
+            <span class="s2">"true"</span><span class="o">:</span> <span class="p">[</span><span
+            class="s2">"shownext"</span><span class="p">],</span>     <span class="c1">// if the user chose Agree, allow them to continue</span>
+            <span class="s2">"false"</span><span class="o">:</span> <span class="p">[</span>
+                      <span class="s2">"hidenext"</span><span class="p">,</span>    <span class="c1">// otherwise, hide the 'Next' button and display a message</span>
+                      <span class="p">{</span>
+                          <span class="s2">"action"</span><span class="o">:</span> <span
+            class="s2">"message"</span><span class="p">,</span>
+                          <span class="s2">"title"</span><span class="o">:</span> <span class="s2">"Terms and Conditions"</span><span
+            class="p">,</span>
+                          <span class="s2">"message"</span><span class="o">:</span> <span class="s2">"You must agree to our Terms and Conditions in order to continue."</span>
+                      <span class="p">}</span>
+                     <span class="p">]</span>
+        <span class="p">}</span>
+   <span class="p">}</span>
+</pre>
+</div>
+
+<p><test src="http://i.imgur.com/w9l7Yfp.png"
+        alt="Survana displays a message when the participant chooses the 'Disagree' option"></p>
+
+<p>Actions are performed in the order in which they're listed.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- FOOTER  -->
+<div class="gray footer">
+    <footer class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-7 col-x12">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-x12">
+                        <div class="nrg-logo">
+                            <p class="text-gray">Survana was created by <a href="http://neuroinformatics.harvard.edu"
+                                                                           class="small-caps">The Neuroinformatics
+                                Research Group at Harvard University</a></p>
+
+                            <p class="text-gray">&copy; 2014 The President and Fellows of Harvard College. All rights
+                                reserved.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-5 hidden-xs pull-right">
+                <div class="row">
+                    <a href="mailto:help@survana.org">
+                            <span class="fa-stack fa-lg">
+                              <i class="fa fa-square fa-stack-2x"></i>
+                              <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        <span>help@survana.org</span>
+                    </a>
+                </div>
+                <div class="row">
+                    <a href="tel:+16174953031">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-square fa-stack-2x"></i>
+                          <i class="fa fa-phone fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <span>+1 (617) 495-3031</span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script type="text/javascript" src="lib/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="lib/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+</body>
+</html>
