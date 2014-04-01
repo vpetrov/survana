@@ -2,18 +2,25 @@ if (typeof Survana === undefined) {
     throw Error("Survana-Bootstrap requires Survana");
 }
 
+/* isArray() polyfill */
+if(!Array.isArray) {
+    Array.isArray = function(arg) {
+        return Object.prototype.toString.call(arg) === '[object Array]';
+    };
+}
+
 var id = "bootstrap",
     engine_version = "1.0.0",
     ncolumns = 12,
-    //default controls take up all columns (an entire row)
+//default controls take up all columns (an entire row)
     control_width = {
         'l': ncolumns,
         'm': ncolumns,
         's': ncolumns,
         'xs': ncolumns
     },
-    //default width for the first column
-    //xs doesn't make sense, because the matrix will be resized to vertical on xs screens
+//default width for the first column
+//xs doesn't make sense, because the matrix will be resized to vertical on xs screens
     matrix_width = {
         'l': 4,
         'm': 4,
@@ -23,8 +30,16 @@ var id = "bootstrap",
 
 var BootstrapEngine = function (doc) {
 
+    //make the 'doc' param optional, with the default value being the current document
+    if (doc === undefined && !doc && document !== undefined && document) {
+        doc = document;
+    }
+
     var types = {
-        button: radio_button,
+        html: html,
+        button: button,
+        radiobutton: radio_button,
+        checkboxbutton: checkbox_button,
         input: input,
         text: text,
         radio: radio,
@@ -38,16 +53,35 @@ var BootstrapEngine = function (doc) {
         matrix: matrix
     };
 
-    var radio_count = 0,
+    var group_types = {
+        button: group_button,
+        radio: radio,
+        checkbox: checkbox,
+        select: select,
+        option: option
+    };
+
+    var button_count = 0,
+        radio_count = 0,
         checkbox_count = 0,
-        input_count = 0;
+        input_count = 0,
+        question_count = 0,
+        select_count = 0;
 
     function _html(elem, field, value) {
         elem.innerHTML = value || field.html || "";
     }
 
     function _value(elem, value) {
-        elem.setAttribute('value', value);
+        if (value !== undefined && value !== null) {
+            elem.setAttribute('value', value);
+        }
+    }
+
+    function _placeholder(elem, field) {
+        if (field.placeholder !== undefined && field.placeholder) {
+            elem.setAttribute('placeholder', field.placeholder);
+        }
     }
 
     function _size(elem, field, s) {
@@ -80,10 +114,18 @@ var BootstrapEngine = function (doc) {
 
         var c = elem.getAttribute('class') || "";
 
-        console.log('align ', elem.getAttribute('id'), field.align)
-
         if (field.align) {
             elem.setAttribute('class', c + ' text-' + field.align);
+        }
+    }
+
+    function _alignEl(elem, field) {
+        var c = elem.getAttribute('class') || "";
+
+        switch (field.align) {
+            case 'left': elem.setAttribute('class', c + ' pull-left'); break;
+            case 'center': elem.setAttribute('class', c + ' center-block'); break;
+            case 'right': elem.setAttribute('class', c + ' pull-right'); break;
         }
     }
 
@@ -141,16 +183,35 @@ var BootstrapEngine = function (doc) {
 
     function group(field) {
 
-        var container = doc.createElement('div'),
+        var container,
             elem,
             f,
             i,
             c = "group",
             child_id = 0;
 
-        if (field.fields === undefined) {
+        //create a specialized container
+        switch (field.group) {
+            case "option":  container = doc.createElement('optgroup');
+                            if (field.html) {
+                                container.setAttribute('label', field.html);
+                            }
+                            break;
+            default: container = doc.createElement('div');
+        }
+
+
+        //this prevents empty groups, except for optgroups - one might want empty optgroups with labels
+        if (field.fields === undefined || !field.fields) {
+            if (field.group === "option") {
+                return container;
+            }
+
             return null;
         }
+
+        console.log('group field', field);
+
 
         for (i in field.fields) {
             f = field.fields[i];
@@ -171,8 +232,13 @@ var BootstrapEngine = function (doc) {
                 f.name = field.name || field.id;
             }
 
-            //crate the child element
-            elem = by_type(f);
+            //propagate the 'multi' property, if it doesn't interfere with the child
+            if ((f.multi === undefined || f.multi === null) && (field.multi !== undefined)) {
+                f.multi = field.multi;
+            }
+
+            //create the child element
+            elem = by_type(f, f.type, group_types);
 
             //append child to list
             if (elem) {
@@ -184,8 +250,8 @@ var BootstrapEngine = function (doc) {
 
         switch (field.group) {
             case 'button': c += ' btn-group btn-group-justified';
-                           container.setAttribute('data-toggle', 'buttons');
-                           break;
+                container.setAttribute('data-toggle', 'buttons');
+                break;
         }
 
         container.setAttribute('class', c);
@@ -240,15 +306,15 @@ var BootstrapEngine = function (doc) {
         header.setAttribute('class', 'row matrix-header-row');
 
         /*  push the columns to the right the same distance as the width of the first column
-            the width of the rest of the columns should be the same as for the controls in each cell
-            the labels in the header and on each control must match
-        */
+         the width of the rest of the columns should be the same as for the controls in each cell
+         the labels in the header and on each control must match
+         */
         column_row_wrapper.setAttribute('class', ' col-lg-push-' + fcol_width.l +
-                                                 ' col-md-push-' + fcol_width.m +
-                                                 ' col-sm-push-' + fcol_width.s +
-                                                 ' col-lg-' + total_col_width.l +
-                                                 ' col-md-' + total_col_width.m +
-                                                 ' col-sm-' + total_col_width.s);
+            ' col-md-push-' + fcol_width.m +
+            ' col-sm-push-' + fcol_width.s +
+            ' col-lg-' + total_col_width.l +
+            ' col-md-' + total_col_width.m +
+            ' col-sm-' + total_col_width.s);
 
         //make a row to contain all the column header cells
         column_header_wrapper.setAttribute('class', 'row');
@@ -258,9 +324,9 @@ var BootstrapEngine = function (doc) {
             el = doc.createElement('div');
             //mark each header cell. it should be hidden on 'xs' devices, and the text in the middle
             el.setAttribute('class', ' matrix-header hidden-xs text-center' +
-                                     ' col-lg-' + col_width.l +
-                                     ' col-md-' + col_width.m +
-                                     ' col-sm-' + col_width.s);
+                ' col-lg-' + col_width.l +
+                ' col-md-' + col_width.m +
+                ' col-sm-' + col_width.s);
 
             _noanswer(el, field.columns[i]);
 
@@ -284,7 +350,7 @@ var BootstrapEngine = function (doc) {
         container.appendChild(header);
 
         /*  MATRIX ROWS
-            Each  header label is repeated here and displayed on 'xs' screens
+         Each  header label is repeated here and displayed on 'xs' screens
          */
 
         var row,
@@ -350,7 +416,7 @@ var BootstrapEngine = function (doc) {
 
             //append equalized label
             if (field.equalize) {
-                padded_row_label = document.createElement('label');
+                padded_row_label = doc.createElement('label');
                 padded_row_label.setAttribute('class', 'matrix-question control-label equalized-padded');
                 _size(padded_row_label, null, fcol_width);
                 if (field.numbers) {
@@ -402,9 +468,68 @@ var BootstrapEngine = function (doc) {
         return container;
     }
 
+    function html(field) {
+        var elem = doc.createElement('span');
+
+        _html(elem, field);
+
+        return elem;
+    }
+
+    function button(field) {
+        if (field === undefined || !field) {
+            return null;
+        }
+
+        var elem = doc.createElement('button');
+
+        elem.setAttribute('id', field.id || 'button_' + (++button_count));
+        elem.setAttribute('type', 'button');
+        elem.setAttribute('class', 'btn btn-default');
+        if (field.click) {
+            elem.setAttribute('onclick', field.click);
+        }
+
+        _html(elem, field);
+        _alignEl(elem, field);
+
+        return elem;
+    }
+
+    /* <label class="btn btn-default">
+            <input type="radio" id="" name="">
+       </label>
+    */
+    function group_button(field) {
+        if (field === undefined || !field) {
+            return null;
+        }
+
+        var elem = doc.createElement('input'),
+            id = field.id || 'input_' + (input_count++),
+            name = field.name || id;
+
+        elem.setAttribute('id', id);
+        elem.setAttribute('name', name);
+        console.log('button group field=', field);
+        if (field.multi) {
+            elem.setAttribute('type', 'checkbox');
+        } else {
+            elem.setAttribute('type', 'radio');
+        }
+
+
+        //wrap the <input> with a <label>
+        var label = doc.createElement('label');
+        label.setAttribute('class', 'btn btn-default');
+        _html(label, field);
+
+        label.appendChild(elem);
+        return label;
+    }
+
     //returns an <input> element
     function input(field) {
-        console.log('Creating input element');
 
         //create <input>
         var elem = doc.createElement('input'),
@@ -416,9 +541,7 @@ var BootstrapEngine = function (doc) {
         elem.setAttribute('type', field.type || "text");
         elem.setAttribute('class', 'form-control');
 
-        if (field.placeholder) {
-            elem.setAttribute('placeholder', field.placeholder);
-        }
+        _placeholder(elem, field);
 
         return elem;
     }
@@ -464,6 +587,10 @@ var BootstrapEngine = function (doc) {
         return container;
     }
 
+    function group_radio(field) {
+        console.log('GROUP RADIO');
+    }
+
     function checkbox(field) {
         var container = doc.createElement('div'),
             elem = doc.createElement('input'),
@@ -501,14 +628,14 @@ var BootstrapEngine = function (doc) {
     }
 
     /*
-         <label class="btn btn-default">
-            <input type="radio" name="sex" id="sex:0">Male</input>
-         </label>
+     <label class="btn btn-default">
+     <input type="radio" name="sex" id="sex:0">Male</input>
+     </label>
      */
     function radio_button(field) {
         var elem = doc.createElement('label'),
             child = doc.createElement('input'),
-            id = field.id || 'button_' + radio_count++,
+            id = field.id || 'radiobutton_' + radio_count++,
             name = field.name || id;
 
         elem.setAttribute('class', 'btn btn-default');
@@ -528,16 +655,45 @@ var BootstrapEngine = function (doc) {
         return elem;
     }
 
+    /*
+     <label class="btn btn-default">
+     <input type="checkbox" name="sex" id="sex:0">Male</input>
+     </label>
+     */
+    function checkbox_button(field) {
+        var elem = doc.createElement('label'),
+            child = doc.createElement('input'),
+            id = field.id || 'checkbox_' + checkbox_count++,
+            name = field.name || id;
+
+        elem.setAttribute('class', 'btn btn-default');
+
+        child.setAttribute('type', 'checkbox');
+        child.setAttribute('id', id)
+        child.setAttribute('name', name);
+
+        _value(child, field.value);
+
+        elem.innerHTML += field.html;
+
+        if (child) {
+            elem.appendChild(child);
+        }
+
+        return elem;
+    }
+
     function option(field) {
         var elem = doc.createElement('option');
 
         _html(elem, field);
-
-        if (field.value !== undefined) {
-            elem.setAttribute('value', field.value)
-        }
+        _value(elem, field.value);
 
         return elem;
+    }
+
+    function group_option(field) {
+        return option(field);
     }
 
     function optgroup(field) {
@@ -550,8 +706,8 @@ var BootstrapEngine = function (doc) {
 
         if (field.fields) {
             for (var f in field.fields) {
-                if (field.hasOwnProperty(f)) {
-                    child = option(field[f]);
+                if (field.fields.hasOwnProperty(f)) {
+                    child = option(field.fields[f]);
 
                     if (child) {
                         elem.appendChild(child);
@@ -565,8 +721,12 @@ var BootstrapEngine = function (doc) {
 
     function select(field) {
         var elem = doc.createElement('select'),
+            id = field.id || 'select_' + select_count++,
+            name = field.name || id,
             c;
 
+        elem.setAttribute('id', id);
+        elem.setAttribute('name', name);
         elem.setAttribute('class', 'form-control');
 
         if (field.fields) {
@@ -574,12 +734,15 @@ var BootstrapEngine = function (doc) {
                 if (field.fields.hasOwnProperty(f)) {
                     c = field.fields[f];
 
-                    //an optgroup will have a 'fields' property, simple options won't have it
-                    if (c.fields === undefined) {
-                        c = option(c);
+                    //set the child type to either "optgroup" or "option"
+                    if (c.fields) {
+                        c.type = "group";
+                        c.group = "option";
                     } else {
-                        c = optgroup(c);
+                        c.type = "option";
                     }
+
+                    c = by_type(c);
 
                     if (c) {
                         elem.appendChild(c);
@@ -604,21 +767,40 @@ var BootstrapEngine = function (doc) {
         return doc.createElement('hr');
     }
 
-    //returns an element generated from one of the functions in the 'types' object,
-    //or null.
-    function by_type(field, t) {
+
+    /**
+     * Calls a handler based on the 'type' property of the 'field' object.
+     * @param field A user-specified object containing a .type property
+     * @param t An optional default type, if field.type doesn't exist
+     * @param col An optional collection object with pointers to the type handlers. default: 'types'
+     * @returns HTMLElement on Success, null on Failure
+     */
+    function by_type(field, t, col) {
 
         var type = field.type || t,
             elem;
 
+        if (type === undefined || !type) {
+            //no type information? autodetect the type of this element
+            if (field.group) {
+                type = "group";
+            } else if (field.html) {
+                type = "html";
+            }
+        }
+
+        if (col === undefined || !col) {
+            col = types;
+        }
+
         //supported field?
-        if (type && (types[type] !== undefined)) {
+        if (type && (col[type] !== undefined)) {
 
             //set the field type, in case it wasn't already set
             field.type = type;
 
             //generate the element
-            elem = types[type](field);
+            elem = col[type](field);
         }
 
         return elem;
@@ -688,43 +870,75 @@ var BootstrapEngine = function (doc) {
         return result;
     }
 
-    //generates a textual addon (either prefix or suffix)
-    function addon_text(field) {
-        var elem;
-
-        elem = document.createElement('span');
-        elem.setAttribute('class', 'input-group-addon');
-
-        if (typeof field === "object") {
-            //assume .html exists
-            _html(elem, field);
-        } else {
-            //assume string, number or other simple type
-            _html(elem, {html:field});
-        }
-
-        return elem;
-    }
-
     //generates an addon element (suffix or prefix).
     //in theory, this can be any control supported by bootstrap.
     function addon(field) {
-        var elem;
+        var elem, container;
 
-        //TODO: arrays
-        if (typeof field === "object") {
-            //if a type has been specified, use it
-            if (field.type !== undefined) {
-                elem = by_type(field);
-            } else if (field.html !== undefined) {
-                //if there is no type, but there's a label, assume it's a text addon
-                elem = addon_text(field);
-            }
-        } else {
-            elem = addon_text(field);
+        if (typeof field !== "object") {
+            return null;
         }
 
-        return elem;
+        container = doc.createElement('span');
+        elem = by_type(field);
+
+        switch (field.type) {
+            case 'button':  container.setAttribute('class', 'input-group-btn');
+                            break;
+            default:        container.setAttribute('class', 'input-group-addon');
+        }
+
+        if (elem) {
+            container.appendChild(elem);
+        }
+
+        return container || elem;
+    }
+
+    /* @note generates and returns a container element
+        @note To support array of addons (i.e. multiple prefixes or multiple suffixes), this method must construct
+        multiple <span class="input-group"> as siblings, one for each affix
+    * */
+    function affix(elem, obj, container) {
+
+        var el;
+
+        if (obj === undefined || !obj) {
+            return container;
+        }
+
+        if (container === undefined || !container) {
+            //create container group
+            //TODO: figure out if <select> works with input group
+            container = doc.createElement('div');
+            container.setAttribute('class', 'input-group');
+        }
+
+        el = addon(obj);
+        if (el) {
+            container.appendChild(el);
+        } else {
+            console.warn(obj.id,"prefix or suffix declared, but no element was generated for",obj);
+        }
+
+        return container;
+    }
+
+    function _prefix(elem, field, container) {
+        container = affix(elem, field.prefix, container);
+        if (container) {
+            container.appendChild(elem);
+        }
+
+        return container;
+    }
+
+    function _suffix(elem, field,container) {
+        container = affix(elem, field.suffix, container);
+        if (container && !container.contains(elem)) {
+            container.insertBefore(elem, container.lastChild);
+        }
+        return container;
     }
 
     //returns the control for a question. this can either be an element, or a group of elements (input with suffix)
@@ -734,37 +948,8 @@ var BootstrapEngine = function (doc) {
 
         //generate the actual control
         elem = by_type(field);
-
-        //generate any suffixes or prefixes
-        if (field.suffix || field.prefix) {
-            var prefix, suffix;
-
-            //create container group
-            //TODO: figure out if <select> works with input group
-            container = document.createElement('div');
-            container.setAttribute('class', 'input-group');
-
-            if (field.prefix) {
-                prefix = addon(field.prefix);
-                if (prefix) {
-                    container.appendChild(prefix);
-                } else {
-                    console.warn(field.id,"prefix declared, but no element was generated for",field.prefix);
-                }
-            }
-
-            //append the child after the prefix
-            container.appendChild(elem)
-
-            if (field.suffix) {
-                suffix = addon(field.suffix);
-                if (suffix) {
-                    container.appendChild(suffix);
-                } else {
-                    console.warn(field.id,"suffix declared, but no element generated for",field.suffix);
-                }
-            }
-        }
+        container = _prefix(elem, field, container);
+        container = _suffix(elem, field, container);
 
         return container || elem;
     }
@@ -772,6 +957,11 @@ var BootstrapEngine = function (doc) {
     // <question id="%QID%"><div class="form-group"> ... </div></question>
     function question(field) {
         var q, form_group, row, label, cwrap, elem, sizes;
+
+        //auto-assign a field id if necessary
+        if (!field.id) {
+            field.id = "question" + (++question_count);
+        }
 
         sizes = getSizes(field);
 

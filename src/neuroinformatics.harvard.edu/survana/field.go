@@ -23,6 +23,8 @@ type Field struct {
 	Columns  *[]Field `bson:"columns,omitempty" json:"columns,omitempty"`    //table headers
 	Rows     *[]Field `bson:"rows,omitempty" json:"rows,omitempty"`          //table rows
 	Equalize bool     `bson:"equalize,omitempty" json:"equalize,omitempty"`  //make all rows equal height
+    Click    string   `bson:"click,omitempty" json:"click,omitempty"`        //onclick handlers, JS function names
+    Multi    bool     `bson:"multi,omitempty" json:"multi,omitempty"`        //multi-option groups
     Validation  map[string]interface{} `bson:"validation,omitempty" json:"validation,omitempty"`
 }
 

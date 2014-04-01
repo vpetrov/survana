@@ -21,7 +21,7 @@
             return null
         }
 
-        var Q = new Survana.engine[Survana.theme](document);
+        var Q = new Survana.engine[Survana.theme]();
 
         // parses a list of fields
         var questionnaire = document.createDocumentFragment(),
