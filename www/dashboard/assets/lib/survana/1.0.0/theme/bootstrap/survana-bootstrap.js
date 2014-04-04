@@ -477,23 +477,51 @@ var BootstrapEngine = function (doc) {
     }
 
     function button(field) {
+
         if (field === undefined || !field) {
             return null;
         }
 
-        var elem = doc.createElement('button');
+        field.id = field.id || 'button_' + (++button_count)
 
-        elem.setAttribute('id', field.id || 'button_' + (++button_count));
-        elem.setAttribute('type', 'button');
-        elem.setAttribute('class', 'btn btn-default');
-        if (field.click) {
-            elem.setAttribute('onclick', field.click);
+        var tpl = Handlebars.compile([
+            "<button id='{{ id }}' type='button' class='btn btn-default' click='{{ click }}'>",
+            "{{ html }}",
+            "</button>"
+        ].join(""));
+
+        function button1() {
+            return tpl(field);
         }
 
-        _html(elem, field);
-        _alignEl(elem, field);
+        function button2() {
+            var elem = doc.createElement('button');
 
-        return elem;
+             elem.setAttribute('id', field.id);
+             elem.setAttribute('type', 'button');
+             elem.setAttribute('class', 'btn btn-default');
+             elem.setAttribute('onclick', field.click);
+             elem.innerHTML = field.html;
+
+             return elem;
+        }
+
+        var t1 = Date.now(),
+            r;
+
+        for (var i = 0; i < 100000; ++i) {
+            r = button1();
+        }
+
+        console.log('button1:', Date.now() - t1, 'ms');
+
+        for (var i = 0; i < 100000; ++i) {
+            r = button2();
+        }
+
+        console.log('button2:', Date.now() - t1, 'ms');
+
+        return button2();
     }
 
     /* <label class="btn btn-default">

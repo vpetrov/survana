@@ -23,24 +23,7 @@
 
         var Q = new Survana.engine[Survana.theme]();
 
-        // parses a list of fields
-        var questionnaire = document.createDocumentFragment(),
-            form_el = Q.form(form),
-            i,
-            elem,
-            nfields = form.fields.length;
-
-        //loop over all fields
-        for (i = 0; i < nfields; ++i) {
-            elem = Q.question(form.fields[i]);
-            if (elem) {
-                form_el.appendChild(elem);
-            }
-        }
-
-        questionnaire.appendChild(form_el);
-
-        return questionnaire;
+        return Q.questionnaire(form.fields);
     };
 
     Survana.Validation = function (form) {
