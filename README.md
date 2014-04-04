@@ -3,7 +3,9 @@ Survana
 
 An HTML5 application for administering questionnaires on tablets and mobile devices. Developed by the Neuroinformatics Research Group at Harvard University.
 
-Field:  button
+Field:
+------
+        button
         input
         text
         label
@@ -16,6 +18,7 @@ Field:  button
     * button:
         - html:string
         - click:string //JS function name
+        - align:string = ["center", "left", "right"]
 
     * input:
         - id:string
@@ -49,6 +52,33 @@ Field:  button
         - fields: Array(<Field:option,group:option>)
 
     * group
+        - id:string
+        - name:string
+        - label: <Field:label>
+        - group:string = <GroupField:*>
+        - fields: Array(<GroupField:*>)
+
+    * matrix
+        - striped:bool
+        - hover:bool
+        - equalize:bool
+        - matrix:string = <Field:*> = Field:radio
+        - columns:Array(<Column>)
+        - rows:Array(<Row>)
+
+
+GroupField:
+----------
+            button
+            radio
+            checkbox
+            option
+
+        * button:
+            - id:string
+            - name:string
+            - html:string
+            - value:string|number
 
         * radio:
             - id:string
@@ -62,7 +92,7 @@ Field:  button
             - html:string
             - value:string|number
 
-        * option: @(option)
+        * option:       @(option)
 
         * radiobutton:
             - id:string
@@ -71,7 +101,10 @@ Field:  button
             - value:string|number
 
         * checkboxbutton:
-
+            - id:string
+            - name:string
+            - html:string
+            - value:string|number
 
 
 Html:
