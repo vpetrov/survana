@@ -6,6 +6,14 @@ An HTML5 application for administering questionnaires on tablets and mobile devi
 Building
 ========
 
+`make` or `make osx`
+
+Prerequisites:
+
+  * git, hg, bzr (for downloading Go libraries with `go get`)
+  * make
+  * go 1.2+
+
 All binaries and apps will be placed in `bin`.
 
 To build just the server, type `make`.
