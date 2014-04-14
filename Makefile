@@ -20,6 +20,7 @@ COVERFILE := survana.coverage
 OSX_PROJECT_NAME:=Survana
 OSX_TARGET:=bin/${OSX_PROJECT_NAME}.app
 OSX_BUILD_ARCHIVE:=build/${OSX_PROJECT_NAME}.xcarchive
+OSX_BUILD_RESOURCES:=${OSX_BUILD_ARCHIVE}/Products/Applications/Survana.app/Contents/Resources/
 
 OSX_ROOT:=src/platform/osx
 OSX_PROJECT_ROOT:=${OSX_ROOT}/${OSX_PROJECT_NAME}
@@ -47,6 +48,8 @@ ${OSX_TARGET}: ${OSX_BUILD_ARCHIVE} ${OSX_PROJECT}
 	
 ${OSX_BUILD_ARCHIVE}: ${OSX_PROJECT}
 	${XCODE} -project ${OSX_PROJECT} -scheme ${OSX_PROJECT_NAME} archive -archivePath ${OSX_BUILD_ARCHIVE}
+	@mkdir -p ${OSX_BUILD_RESOURCES}/services/server
+	@cp -r ${BIN_DIR}/server ${BIN_DIR}/ssl ${OSX_BUILD_RESOURCES}/services/server/
 
 osx-clean:
 	rm -rf ${OSX_TARGET} ${OSX_BUILD_ARCHIVE}

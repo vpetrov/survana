@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		251A7ED018FA231B0052A49A /* install.sh in Resources */ = {isa = PBXBuildFile; fileRef = 251A7ECF18FA231B0052A49A /* install.sh */; };
 		571DEFD2188880D500FE2A0F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 571DEFD1188880D500FE2A0F /* Cocoa.framework */; };
 		571DEFDC188880D500FE2A0F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 571DEFDA188880D500FE2A0F /* InfoPlist.strings */; };
 		571DEFDE188880D500FE2A0F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DEFDD188880D500FE2A0F /* main.m */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		251A7ECF18FA231B0052A49A /* install.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
 		570FA8271891D8E900B86330 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		570FA8291891D90C00B86330 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		571DEFCE188880D500FE2A0F /* Survana.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Survana.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,6 +161,7 @@
 				571DEFDF188880D500FE2A0F /* Survana-Prefix.pch */,
 				571DEFE0188880D500FE2A0F /* Credits.rtf */,
 				575F48B5189F2D1B00590441 /* shutdown.js */,
+				251A7ECF18FA231B0052A49A /* install.sh */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				571DEFDC188880D500FE2A0F /* InfoPlist.strings in Resources */,
 				571DEFE2188880D500FE2A0F /* Credits.rtf in Resources */,
 				571DF00C18888C0000FE2A0F /* survana-logo-bw-inverted.png in Resources */,
+				251A7ED018FA231B0052A49A /* install.sh in Resources */,
 				571DF00E18888EC300FE2A0F /* Images.xcassets in Resources */,
 				571DF00A18888AE600FE2A0F /* survana-logo-bw.png in Resources */,
 				571DEFE8188880D500FE2A0F /* MainMenu.xib in Resources */,
@@ -422,7 +426,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Survana/Survana-Prefix.pch";
 				INFOPLIST_FILE = "Survana/Survana-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -436,7 +440,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Survana/Survana-Prefix.pch";
 				INFOPLIST_FILE = "Survana/Survana-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
