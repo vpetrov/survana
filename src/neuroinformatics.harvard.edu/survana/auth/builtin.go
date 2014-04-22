@@ -5,12 +5,18 @@ import (
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
     "bytes"
-    "time"
+    "errors"
     )
 
 const (
 	BUILTIN_USER_COLLECTION = "builtin_users"
     SALT_ENTROPY = 3
+    BERR_INVALID_CREDENTIALS = "Invalid username or password"
+
+    ADMIN_USERNAME = "admin"
+    ADMIN_PASSWORD = "admin"
+    ADMIN_NAME = "Administrator"
+    ADMIN_EMAIL = "root@localhost"
 )
 
 type builtinUser struct {
@@ -35,13 +41,60 @@ func (b BuiltinStrategy) Attach(module *survana.Module) {
     app := module.Mux
 
     app.Get("/login", survana.NotLoggedIn(b.LoginPage))
-    app.Post("/login", survana.NotLoggedIn(b.Login))
+    app.Post("/login", survana.NotLoggedIn(Login))
 
     //Registration is optional
     if b.Config.AllowRegistration {
         app.Get("/register", survana.NotLoggedIn(b.RegistrationPage))
         app.Post("/register", survana.NotLoggedIn(b.Register))
     }
+
+    //setup the admin account
+    setupAdminAccount(module)
+}
+
+func setupAdminAccount(module *survana.Module) {
+    var (
+            admin_user      *builtinUser
+            admin_profile   *survana.User
+            err             error
+            db              survana.Database = module.Db
+        )
+
+    admin_user, err = findBuiltinUser(ADMIN_USERNAME, db)
+    if err != nil {
+        log.Fatal(err)
+        return
+    }
+
+    //create a new user if it doesn't exist, then create Survana profile 
+    if admin_user == nil {
+        //create builtin user
+        password_salt := generateRandomSalt(SALT_ENTROPY)
+        password_hash := hash(ADMIN_PASSWORD, password_salt)
+        admin_user = newBuiltinUser(ADMIN_USERNAME, password_hash, password_salt)
+
+        //create profile
+        admin_profile = survana.NewUser(ADMIN_EMAIL, ADMIN_NAME)
+        admin_profile.AuthType = BUILTIN;
+
+        //link the builtin user and Survana profile
+        admin_user.UserId = admin_profile.Id
+
+        //save the admin user
+        err = db.Save(admin_user)
+        if err != nil {
+            log.Fatal(err)
+            return
+        }
+
+        //save the admin profile
+        err = db.Save(admin_profile)
+        if err != nil {
+            log.Fatal(err)
+            return
+        }
+    } 
 }
 
 func (b BuiltinStrategy) LoginPage(w http.ResponseWriter, r *survana.Request) {
@@ -52,20 +105,7 @@ func (b BuiltinStrategy) RegistrationPage(w http.ResponseWriter, r *survana.Requ
     r.Module.RenderTemplate(w, "auth/builtin/register", nil)
 }
 
-func (b BuiltinStrategy) Login(w http.ResponseWriter, r *survana.Request) {
-
-    //get the session
-	session, err := r.Session()
-	if err != nil {
-		survana.Error(w, err)
-		return
-	}
-
-    //if the user is already authenticated, redirect to home
-	if session != nil && session.Authenticated {
-		survana.Redirect(w, r, "/")
-		return
-	}
+func (b BuiltinStrategy) Login(w http.ResponseWriter, r *survana.Request) (profile_id string, err error) {
 
     //this is why each strategy needs to be able to render its
     //login screens, so that it can ask for custom fields.
@@ -76,7 +116,7 @@ func (b BuiltinStrategy) Login(w http.ResponseWriter, r *survana.Request) {
 
     err = r.ParseJSON(&data)
     if err != nil {
-        survana.Error(w, err)
+        log.Println(err)
         return
     }
 
@@ -84,71 +124,71 @@ func (b BuiltinStrategy) Login(w http.ResponseWriter, r *survana.Request) {
     password, ok2 := data["password"]
 
     if !ok1 || !ok2 || len(username) == 0 || len(password) == 0 {
-        survana.BadRequest(w)
+        err = errors.New("Invalid request")
         return
     }
 
     //find this user in the built-in user database
-    bUser, err := findBuiltinUser(username, r.Module.Db)
+    user, err := findBuiltinUser(username, r.Module.Db)
     if err != nil {
-        survana.Error(w, err)
         return
     }
 
     //not found?
-    if bUser == nil {
+    if user == nil {
         log.Printf("No such builtin user: %v", username)
-        survana.JSONResult(w, false, "Invalid username or password")
+        err = errors.New("Invalid username or password")
         return
     }
 
-    log.Printf("password=%v salt=%v", password, bUser.Salt)
-
-    sha512_password := hash(password, bUser.Salt)
-
-    log.Printf("sha512_password=%v", sha512_password)
-    log.Printf("  user_password=%v", bUser.Password)
-
+    sha512_password := hash(password, user.Salt)
 
     //wrong password?
-    if !bytes.Equal(sha512_password, bUser.Password) {
-        log.Println("hashes are not equal :/")
-        survana.JSONResult(w, false, "Invalid username or password")
+    if !bytes.Equal(sha512_password, user.Password) {
+        err = errors.New(BERR_INVALID_CREDENTIALS)
         return
     }
 
-    /* TODO: the code below sets the authentication cookie.
-       This should be moved to auth.Login(), which calls strategy.Login()
-       and then sets this cookie.
-   */
+    return user.UserId, nil
+}
 
-	//mark the session as authenticated
-	session.Authenticated = true
+func createBuiltinProfile(username, password, name, email string, db survana.Database) (user *builtinUser, profile *survana.User, err error) {
+    //query the database to check if the username exists
+    username_exists, err := db.HasId(username, BUILTIN_USER_COLLECTION)
+    if err != nil {
+        log.Println(err)
+        return
+    }
 
-	//regenerate the session Id
-	session.Id = r.Module.Db.UniqueId()
+    //make sure users can't register duplicate usernames
+    if username_exists {
+        err = errors.New("This username already exists")
+        return
+    }
 
-	//set the current user
-	session.UserId = bUser.UserId
+    //create a Survana user (profile)
+    profile = survana.NewUser(email, name)
+    profile.AuthType = BUILTIN;
+    err = db.Save(profile)
+    if err != nil {
+        log.Println(err)
+        return
+    }
 
-	// update the session
-	err = session.Save(r.Module.Db)
-	if err != nil {
-		survana.Error(w, err)
-		return
-	}
+    //hash the password 
+    password_salt := generateRandomSalt(SALT_ENTROPY)
+    password_hash := hash(password, password_salt)
 
-	//set the cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     survana.SESSION_ID,
-		Value:    session.Id,
-		Path:     r.Module.MountPoint,
-		Expires:  time.Now().Add(survana.SESSION_TIMEOUT),
-		Secure:   true,
-		HttpOnly: true,
-	})
-    //success
-    survana.JSONResult(w, true, r.Module.MountPoint + "/")
+    //create an entry to store auth details
+    user = newBuiltinUser(username, password_hash, password_salt)
+    user.UserId = user.Id //TODO: change to ProfileId
+    err = db.Save(user)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+
+    return user, profile, nil
 }
 
 func (b BuiltinStrategy) Register(w http.ResponseWriter, r *survana.Request) {
@@ -185,42 +225,13 @@ func (b BuiltinStrategy) Register(w http.ResponseWriter, r *survana.Request) {
         return
     }
 
-    //query the database to check if the username exists
-    username_exists, err := r.Module.Db.HasId(username, BUILTIN_USER_COLLECTION)
+    _, _, err = createBuiltinProfile(username, password, email, name, r.Module.Db)
     if err != nil {
-        survana.Error(w, err)
+        survana.JSONResult(w, true, r.Module.MountPoint + "/")
         return
     }
 
-    //make sure users can't register duplicate usernames
-    if username_exists {
-        survana.JSONResult(w, false, "This username already exists")
-        return
-    }
-
-    //hash the password 
-    password_salt := generateRandomSalt(SALT_ENTROPY)
-    password_hash := hash(password, password_salt)
-
-    //create a Survana user (profile)
-    user := survana.NewUser(email, name)
-    user.AuthType = BUILTIN;
-    err = r.Module.Db.Save(user)
-    if err != nil {
-        survana.Error(w, err)
-        return
-    }
-
-    //create an entry to store auth details
-    bUser := newBuiltinUser(username, password_hash, password_salt)
-    bUser.UserId = user.Id
-    err = r.Module.Db.Save(bUser)
-    if err != nil {
-        survana.Error(w, err)
-        return
-    }
-
-    survana.JSONResult(w, true, r.Module.MountPoint + "/")
+    survana.JSONResult(w, false, err)
 }
 
 //default logout

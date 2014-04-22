@@ -13,8 +13,7 @@ const (
 type Dashboard struct {
 	*survana.Module
     Config *Config //dashboard.Config
-
-    Auth auth.Strategy
+    Auth           auth.Strategy
 }
 
 

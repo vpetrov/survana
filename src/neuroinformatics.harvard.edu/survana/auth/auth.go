@@ -33,6 +33,60 @@ func New(config *Config) Strategy {
     return nil
 }
 
+func Login(w http.ResponseWriter, r *survana.Request) {
+    //get the session
+	session, err := r.Session()
+	if err != nil {
+		survana.Error(w, err)
+		return
+	}
+
+    //if the user is already authenticated, redirect to home
+	if session != nil && session.Authenticated {
+		survana.Redirect(w, r, "/")
+		return
+	}
+
+    //TODO: make this work! (and delete the hard-coded built-in strategy!)
+    //user, err := r.Module.Auth.Login(w, r);
+    bauth := NewBuiltinStrategy(&Config{Type:BUILTIN})
+    profile_id, err := bauth.Login(w, r);
+
+    if err != nil {
+        survana.JSONResult(w, false, err)
+        return
+    }
+
+	//mark the session as authenticated
+	session.Authenticated = true
+
+	//regenerate the session Id
+	session.Id = r.Module.Db.UniqueId()
+
+	//set the current user
+	session.UserId = profile_id
+
+	// update the session
+	err = session.Save(r.Module.Db)
+	if err != nil {
+		survana.Error(w, err)
+		return
+	}
+
+	//set the cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     survana.SESSION_ID,
+		Value:    session.Id,
+		Path:     r.Module.MountPoint,
+		Expires:  time.Now().Add(survana.SESSION_TIMEOUT),
+		Secure:   true,
+		HttpOnly: true,
+	})
+
+    //success
+    survana.JSONResult(w, true, r.Module.MountPoint + "/")
+}
+
 //Logs out a user.
 //returns 204 No Content on success
 //returns 500 Internal Server Error on failure

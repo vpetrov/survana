@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"net/http"
+    "errors"
 	"neuroinformatics.harvard.edu/survana"
     "neuroinformatics.harvard.edu/survana/auth"
 )
@@ -60,6 +61,12 @@ func (d *Dashboard) Index(w http.ResponseWriter, r *survana.Request) {
     user, err := r.User()
     if err != nil {
         survana.Error(w, err)
+        return
+    }
+
+    //profile not found?
+    if user == nil {
+        survana.Error(w, errors.New("User profile not found"))
         return
     }
 

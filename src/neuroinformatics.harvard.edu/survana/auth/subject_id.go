@@ -47,7 +47,7 @@ func (sid SubjectIdStrategy) RegistrationPage(w http.ResponseWriter, r *survana.
     survana.NotFound(w)
 }
 
-func (sid SubjectIdStrategy) Login(w http.ResponseWriter, r *survana.Request) {
+func (sid SubjectIdStrategy) Login(w http.ResponseWriter, r *survana.Request) (profile_id string, err error) {
     //get the session
 	session, err := r.Session()
 	if err != nil {
@@ -135,6 +135,8 @@ func (sid SubjectIdStrategy) Login(w http.ResponseWriter, r *survana.Request) {
 	})
 
     survana.Redirect(w, r, "?" + r.URL.RawQuery)
+
+    return "", nil
 }
 
 func (sid SubjectIdStrategy) Register(w http.ResponseWriter, r *survana.Request) {
