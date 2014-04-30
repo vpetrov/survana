@@ -53,7 +53,8 @@ func Login(w http.ResponseWriter, r *survana.Request) {
     profile_id, err := bauth.Login(w, r);
 
     if err != nil {
-        survana.JSONResult(w, false, err)
+        log.Println("login error:", err)
+        survana.JSONResult(w, false, err.Error())
         return
     }
 
