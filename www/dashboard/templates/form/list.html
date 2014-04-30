@@ -37,6 +37,13 @@
             </button>
         </span>
     </div>
+
+    <div style="margin-top:15px" ng-hide="forms.length">
+        <span class="alert alert-info">
+            <span class="glyphicon glyphicon-info-sign"></span> You haven't created any forms yet. <a href="#/forms/create" class="alert-link">Click here</a> to create a new form.
+        </span>
+    </div>
+
     <table class="table form-table">
         <tbody>
             <tr data-ng-repeat="form in forms | filter:search" ng-class="{ warning:isSelected(form.id) }" class="hover">
