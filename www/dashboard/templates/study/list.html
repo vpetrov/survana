@@ -37,6 +37,14 @@
             </button>
         </span>
     </div>
+
+    <div style="margin-top:15px" ng-hide="studies.length">
+        <span class="alert alert-info">
+            <span class="glyphicon glyphicon-info-sign"></span> You haven't created any studies yet. <a href="#/studies/create" class="alert-link">Click here</a> to create a new study.
+        </span>
+    </div>
+
+
     <table class="table table-hover">
         <tbody>
         <tr data-ng-repeat="study in studies | filter:search" ng-class="{ warning:isSelected(study.id) }" class="hover">
