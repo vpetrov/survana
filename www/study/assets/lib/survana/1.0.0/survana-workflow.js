@@ -1,6 +1,13 @@
-/***********
-* WORKFLOW *
-***********/
+/* survana-workflow.js
+
+Survana.Workflow contains function that are responsible for the control flow during the taking of a survey.
+
+Dependencies: survana-storage.js
+
+@author Victor Petrov <victor_petrov@harvard.edu>
+@license BSD
+@date 05/01/2014
+*/
 
 "use strict";
 
@@ -10,16 +17,29 @@ if (!window.Survana) {
 
 (function (Survana) {
 
-    var study_id = sessionStorage['study_id'],
-        localWorkflow = localStorage[study_id + "-workflow"],
-        workflow,
-        current;
+    if (!Survana.Storage || !Survana.Storage.IsAvailable) {
+        console.error('Survana Storage is not available.');
+        return;
+    }
+
+    var context = {
+        workflow: {},
+        current: 0
+    };
+
+    /** Handles errors reported by Survana.Storage
+     * @todo Log the error on the server, display notification to user
+     * @param {Error} e
+     */
+    function onStorageError(e) {
+        console.error(e);
+    }
 
     function onFormLoaded() {
-        if (localWorkflow) {
-            workflow = JSON.parse(localWorkflow);
-            current = localStorage[study_id + "-current"] | 0;
-        }
+        Survana.Storage.Get(context, function (result) {
+            context = result;
+            context.current |= 0; //convert 'current' to a number
+        }, onStorageError);
     }
 
     function onDOMContentLoaded () {
@@ -30,6 +50,10 @@ if (!window.Survana) {
         onFormLoaded();
     }
 
+    /** Callback function for goign to the next form. This function performs response validation and will load the next
+     * form or scroll the page to the first error.
+     * @param btn {HTMLButtonElement} The source button
+     */
     Survana.NextPage = function (btn) {
 
         //disable the button
@@ -39,9 +63,13 @@ if (!window.Survana) {
 
         //if validation succeeds, go to the next form
         if (Survana.Validation.Validate(document.forms[0])) {
-            current++;
-            localStorage[study_id + "-current"] = current;
-            window.location.href = workflow[current];
+            context.current++;
+            //Store the incremented value of 'current'
+            Survana.Storage.Set('current', context.current, function () {
+                //load the next form
+                window.location.href = context.workflow[context.current];
+            }, onStorageError);
+
         } else if (btn) {
             btn.removeAttribute('disabled');
             //scroll to first error
@@ -53,13 +81,16 @@ if (!window.Survana) {
         }
     };
 
+    /** Terminates the survey by disabling the source button and removing all workflow from storage.
+     * @param btn {HTMLButtonElement} The source button
+     */
     Survana.FinishSurvey = function (btn) {
         if (btn) {
             btn.setAttribute('disabled', 'disabled');
         }
 
-        delete localStorage[study_id + "-current"];
-        delete localStorage[study_id + "-workflow"];
+        //remove the entire workflow from storage
+        Survana.Storage.Remove(context, null, onStorageError);
     };
 
 

@@ -7,6 +7,7 @@
             display: none;
         }
     </style>
+    <script type="text/javascript" src="assets/lib/survana/1.0.0/survana-storage.js"></script>
 </head>
 <body>
     <div id="message" class="hidden"></div>
@@ -21,30 +22,41 @@
 
         startStudy(study_id, workflow);
 
+        function onStorageError(e) {
+            console.error(e);
+        }
+
         function startStudy(study_id, workflow) {
-            var current_form,
-                current_workflow;
+            var context = {
+                current: null,
+                workflow: null
+            };
 
             //first run or new window/tab
             if (!sessionStorage['study_id']) {
                 //set the current study_id
                 sessionStorage['study_id'] = study_id;
 
-                //check for an existing session in a previous tab
-                current_form = localStorage[study_id + '-current'];
-                current_workflow = localStorage[study_id + '-workflow']
+                Survana.Storage.SetPrefix(study_id);
 
-                //if we've found a valid session, reuse it
-                if (current_form !== undefined && current_workflow !== undefined) {
-                    current_form |= 0; //cast to int
-                    //nothing to do for the workflow
-                } else {
-                    //start a new session
-                    current_form = 0;
-                    localStorage[study_id + '-current'] = current_form;
-                    localStorage[study_id + '-workflow'] = JSON.stringify(workflow);
-                    localStorage[study_id + '-start'] = (new Date()).valueOf();
-                }
+                //check for existing sessions in other tabs (attempt to resume)
+                Survana.Storage.Get(context, function (result) {
+                    context = result;
+
+                    //if we've found a valid session, reuse it
+                    if (context.current !== null && context.workflow !== null) {
+                        context.current |= 0; //cast to int
+                        //nothing to do for the workflow
+                    } else {
+                        @@@@ FIX THIS BLOCK
+                        //start a new session
+                        current_form = 0;
+                        localStorage[study_id + '-current'] = current_form;
+                        localStorage[study_id + '-workflow'] = JSON.stringify(workflow);
+                        localStorage[study_id + '-start'] = (new Date()).valueOf();
+                    }
+
+                }, onStorageError);
 
             } else {
                 //resume study (if study_id is present, assume all other fields are present too)
