@@ -1,6 +1,6 @@
-/***********
-* WORKFLOW *
-***********/
+/****************
+* WORKFLOW stub *
+****************/
 
 "use strict";
 
@@ -9,10 +9,18 @@ if (!window.Survana) {
 }
 
 (function (Survana) {
-    Survana.NextPage = function (e) {
+    function next_page() {
         Survana.Validation.Validate(document.forms[0]);
         e.stopPropagation();
         return false;
     }
-    Survana.FinishSurvey = function () {}
+
+    function finish_survey() {
+        //stub
+    }
+
+    Survana.Workflow = {
+        NextPage: next_page,
+        FinishSurvey: finish_survey
+    };
 }(window.Survana));

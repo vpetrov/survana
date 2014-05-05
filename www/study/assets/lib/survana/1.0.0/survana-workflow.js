@@ -24,7 +24,9 @@ if (!window.Survana) {
 
     var context = {
         workflow: {},
-        current: 0
+        current: 0,
+        start: 0,
+        completed: false
     };
 
     /** Handles errors reported by Survana.Storage
@@ -54,7 +56,7 @@ if (!window.Survana) {
      * form or scroll the page to the first error.
      * @param btn {HTMLButtonElement} The source button
      */
-    Survana.NextPage = function (btn) {
+    function next_page(btn) {
 
         //disable the button
         if (btn) {
@@ -70,29 +72,42 @@ if (!window.Survana) {
                 window.location.href = context.workflow[context.current];
             }, onStorageError);
 
-        } else if (btn) {
-            btn.removeAttribute('disabled');
+        } else {
             //scroll to first error
             var error_el = document.forms[0].querySelector('.s-error');
             if (error_el) {
                 var y = error_el.offsetTop - 100;
                 window.scrollBy(0, y);
             }
+
+            //enable the button
+            if (btn) {
+                btn.removeAttribute('disabled');
+            }
         }
-    };
+    }
 
     /** Terminates the survey by disabling the source button and removing all workflow from storage.
      * @param btn {HTMLButtonElement} The source button
      */
-    Survana.FinishSurvey = function (btn) {
+    function finish_survey(btn) {
         if (btn) {
             btn.setAttribute('disabled', 'disabled');
+            btn.style.visibility = 'hidden';
         }
 
         //remove the entire workflow from storage
-        Survana.Storage.Remove(context, null, onStorageError);
-    };
+        Survana.Storage.Remove(context, function () {
+            //but mark this study as completed
+            Survana.Storage.Set('completed', true, null, onStorageError);
+        }, onStorageError);
+    }
 
+    //Workflow API
+    Survana.Workflow = {
+        NextPage: next_page,
+        FinishSurvey: finish_survey
+    };
 
     //register an onReady handler, i.e. $(document).ready(). Caveat: does not support older versions of IE
     document.addEventListener("DOMContentLoaded", onDOMContentLoaded);

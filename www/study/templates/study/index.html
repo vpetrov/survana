@@ -55,7 +55,8 @@
             session = {
                 current:    null,
                 workflow:   null,
-                start:      null
+                start:      null,
+                completed:  null
             };
 
         //create a scope for all storage access
@@ -64,6 +65,12 @@
         //check for existing sessions in other tabs (attempt to resume)
         Survana.Storage.Get(session, function (result) {
             session = result;
+
+            //if the user has already completed the study, display a notification
+            if (session.completed) {
+                showMessage("Thank you for completing this survey.");
+                return;
+            }
 
             //if we've found a valid session, reuse it
             if (isSessionValid(session)) {
@@ -74,6 +81,7 @@
                 session.current = 0;
                 session.workflow = workflow;
                 session.start = (new Date()).valueOf();
+                session.completed = false;
             }
 
             //store any changes made

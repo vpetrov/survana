@@ -117,7 +117,6 @@ if (!window.Survana) {
      * @param form The HTMLFormElement being validated
      * @param config (optional) Validation configuration
      * @param messages (optional) Custom error messages
-     * @constructor
      */
     Survana.Validation.Validate = function (form, config, messages) {
 
@@ -247,6 +246,8 @@ if (!window.Survana) {
 
         elements = groupElementsByName(form.elements);
 
+        var is_form_valid = true;
+
         //loop through all known fields
         for (field in config) {
             if (!config.hasOwnProperty(field)) {
@@ -288,7 +289,11 @@ if (!window.Survana) {
             if (is_valid) {
                 valid(field, field_config);
             }
+
+            is_form_valid = is_form_valid && is_valid;
         }
+
+        return is_form_valid;
     };
 
 

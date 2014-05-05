@@ -117,7 +117,6 @@ if (!window.Survana) {
      * @param form The HTMLFormElement being validated
      * @param config (optional) Validation configuration
      * @param messages (optional) Custom error messages
-     * @constructor
      */
     Survana.Validation.Validate = function (form, config, messages) {
 

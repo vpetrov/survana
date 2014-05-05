@@ -53,6 +53,7 @@ if (!window.Survana) {
     function set_scope(p) {
         if (p) {
             scope = p + "-";
+            console.log('Survana.Storage: new scope:', scope);
         }
     }
 
@@ -71,6 +72,8 @@ if (!window.Survana) {
             value   = 'test',
             value2;
 
+        //at least in Safari 7 in Private Browsing mode, localStorage is defined, but throws an error when accessed.
+        //this will perform a short test to see if we can actually read from and write to localStorage
         try {
             //save value
             window.localStorage[key] = value;
@@ -390,6 +393,17 @@ if (!window.Survana) {
                 'Remove': storage_remove,
                 'SetScope': set_scope
             };
+
+            //attempt to auto-detect the storage scope
+            if (document && document.body) {
+                var scope = document.body.getAttribute('data-storage-scope');
+                if (scope) {
+                    console.log('setting the scope');
+                    Survana.Storage.SetScope(scope);
+                } else {
+                    console.log('not setting the scope');
+                }
+            }
         });
 
         console.log("Survana Storage: using adapter", Survana.Storage.Name);
