@@ -15,7 +15,7 @@ take a success and error callback.
                                                       This is a shortcut for Set(object, null, success, error)
     Survana.Storage.Remove(key, success, error)     - Removes the object identified by 'key'.
                                                       To remove multiple objects, pass an object with keys/values.
-    Survana.Storage.SetPrefix(prefix)               - Sets a prefix for all 'key' parameters of Get/Set/Remove
+    Survana.Storage.SetScope(scope)                 - Sets a scope for all 'key' parameters of Get/Set/Remove
 
 Note: currently, only the LocalStorage adapter is implemented.
 Dependencies: none
@@ -44,15 +44,15 @@ if (!window.Survana) {
         'Remove': local_storage_remove
     };
 
-    //no prefix by default
-    var prefix = '';
+    //no scope by default
+    var scope = '';
 
-    /** Sets a prefix for all storage keys
+    /** Sets a scope for all storage keys
      * @param p
      */
-    function set_prefix(p) {
+    function set_scope(p) {
         if (p) {
-            prefix = p + "-";
+            scope = p + "-";
         }
     }
 
@@ -110,7 +110,7 @@ if (!window.Survana) {
                     continue;
                 }
 
-                result = localStorage[prefix + id];
+                result = localStorage[scope + id];
 
                 //skip values that aren't available
                 if (result === undefined) {
@@ -141,7 +141,7 @@ if (!window.Survana) {
         }
 
         try {
-            result = localStorage[prefix + key];
+            result = localStorage[scope + key];
             //always return null if the value doesn't exist
             if (result === undefined) {
                 result = null;
@@ -171,7 +171,7 @@ if (!window.Survana) {
                     continue;
                 }
                 value = obj[key];
-                localStorage[prefix + key] = JSON.stringify(value);
+                localStorage[scope + key] = JSON.stringify(value);
             }
         } catch (e) {
             return error && error(e);
@@ -193,7 +193,7 @@ if (!window.Survana) {
         }
 
         try {
-            localStorage[prefix + key] = JSON.stringify(value);
+            localStorage[scope + key] = JSON.stringify(value);
         } catch (e) {
             return error && error(e);
         }
@@ -214,7 +214,7 @@ if (!window.Survana) {
                     continue;
                 }
 
-                delete localStorage[prefix + key];
+                delete localStorage[scope + key];
             }
         } catch (e) {
             return error && error(e);
@@ -235,7 +235,7 @@ if (!window.Survana) {
         }
 
         try {
-            delete localStorage[prefix + key];
+            delete localStorage[scope + key];
         } catch (e) {
             return error && error(e);
         }
@@ -388,7 +388,7 @@ if (!window.Survana) {
                 'Set': storage_set,
                 'Save': storage_save,
                 'Remove': storage_remove,
-                'SetPrefix': set_prefix
+                'SetScope': set_scope
             };
         });
 
