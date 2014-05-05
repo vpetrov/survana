@@ -46,6 +46,46 @@ if (!window.Survana) {
     };
 
     Survana.Validation.Constraints = {
+        equal: function (values, target_id) {
+            if (!values || !values.length || !target_id)
+            return false;
+
+            var i, v, els, target_el, target_value;
+
+            els = document.getElementsByName(target_id);
+
+            if (!els) {
+                return false;
+            }
+
+            target_el = els[0];
+
+            //if the element couldn't be found, return false
+            if (!target_el) {
+                return false;
+            }
+
+            target_value = target_el.value;
+
+            //if the target doesn't have a valid value, return false
+            if (target_value === null || target_value === undefined) {
+                return false;
+            }
+
+            //cast target_value to String
+            target_value = String(target_value);
+
+            //check all values against the target value, as Strings
+            for (i = 0; i < values.length; ++i) {
+                v = String(values[i]);
+
+                if (v !== target_value) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
         optional: function (values, is_optional) {
             if (is_optional) {
                 return true;
@@ -308,6 +348,9 @@ if (!window.Survana) {
         },
         'optional': function () {
             return "This field is required";
+        },
+        'equal': function (target) {
+            return "This field must match " + target;
         },
         'numeric': function () {
             return "This field requires a numeric value";

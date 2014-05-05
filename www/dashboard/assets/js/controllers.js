@@ -1177,6 +1177,9 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
 
             function updateTemplate() {
                 $compile(elem.contents())(scope);
+
+                //re-render the model
+                ngModel.$render();
             }
 
             //quick hack to pass this value form the scope to the iframe
@@ -1230,9 +1233,6 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                 doc.close();
 
                 updateTemplate();
-
-                //re-render the model
-                ngModel.$render();
             });
 
             //update the view
@@ -1280,7 +1280,7 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                             //store the HTML data into the variable pointed to by data-render
                             scope[attrs['render']] = "<!DOCTYPE html><html>" + doc.documentElement.innerHTML + "</html>";
                             //update the currently rendered form index
-                            scope.current.rendered++;
+                            scope.current.rendered = scope.current.index;
                         });
                     }
                 }

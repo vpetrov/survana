@@ -230,19 +230,24 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *survana.Request) 
         return
     }
 
+    log.Println("study=", study, "form_index", form_index, "study.Forms.length=", len(study.Forms))
+
     if study == nil || form_index >= len(study.Forms) {
         survana.NotFound(w)
         return
     }
 
     log.Println("should publish form index", form_index)
+    log.Println("this study has ", len(study.Forms), "forms")
 
     if (study.Html == nil) {
         study.Html = make([][]byte, len(study.Forms))
     }
 
-    //overwrite the HTML
-    study.Html[form_index] = html
+    log.Println("length of study.Html=", len(study.Html))
+
+    //study.Forms holds the number of unique forms in this study, but the
+    study.Html = append(study.Html, html)
 
     //save the study
     err = study.Save(d.Db)

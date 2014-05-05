@@ -46,6 +46,10 @@ if (!window.Survana) {
     };
 
     Survana.Validation.Constraints = {
+        equalTo: function (values, target) {
+            console.log('equalTo', arguments);
+            return true;
+        },
         optional: function (values, is_optional) {
             if (is_optional) {
                 return true;
