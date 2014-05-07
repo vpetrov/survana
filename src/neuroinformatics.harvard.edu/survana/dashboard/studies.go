@@ -141,7 +141,10 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *survana.Request) {
 
 	log.Printf("%s: %#v\n", "JSON study submitted by the client", study)
 
-	//copy properties that should not be changed
+	//make sure 'Html' stays in sync with 'published'
+    if !study.Published {
+        study.Html = nil
+    }
 
 	//update the study. This needs to be refactored, because it's now sending back
     //the ENTIRE study, when, really, we just need to somehow send only the updates.
@@ -230,24 +233,27 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *survana.Request) 
         return
     }
 
-    log.Println("study=", study, "form_index", form_index, "study.Forms.length=", len(study.Forms))
+    //count the total number of forms in the study
+    nforms := len(study.Forms)
 
-    if study == nil || form_index >= len(study.Forms) {
+    log.Println("study=", study, "form_index", form_index, "study.Forms.length=", nforms)
+
+    if study == nil || form_index >= nforms {
         survana.NotFound(w)
         return
     }
 
-    log.Println("should publish form index", form_index)
-    log.Println("this study has ", len(study.Forms), "forms")
-
-    if (study.Html == nil) {
-        study.Html = make([][]byte, len(study.Forms))
+    //make the Html array have the same number of elements as study.Forms
+    if (len(study.Html) != nforms) {
+        html := make([][]byte, nforms, nforms)
+        //preserve any existing elements
+        copy(html, study.Html)
+        //switch the pointer to the new array
+        study.Html = html
     }
 
-    log.Println("length of study.Html=", len(study.Html))
-
-    //study.Forms holds the number of unique forms in this study, but the
-    study.Html = append(study.Html, html)
+    //assign the html
+    study.Html[form_index] = html
 
     //save the study
     err = study.Save(d.Db)

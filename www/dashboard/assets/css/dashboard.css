@@ -130,3 +130,6 @@
     height: 480px;
 }
 
+.ng-cloak {
+    display: none !important;
+}

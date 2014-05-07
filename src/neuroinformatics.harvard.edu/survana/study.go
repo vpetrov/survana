@@ -18,7 +18,7 @@ type Study struct {
 	Version     string    `bson:"version,omitempty" json:"version"`
 	CreatedOn   *time.Time `bson:"created_on,omitempty" json:"created_on"`
 	Forms       []Form    `bson:"forms,omitempty" json:"forms"`
-    Html        [][]byte  `bson:"html,omitempty" json:"-"`
+    Html        [][]byte  `bson:"html" json:"-"`
 	Published   bool      `bson:"published" json:"published"`
     Subjects    map[string]bool `bson:"subjects,omitempty" json:"subjects"`
     AuthEnabled bool      `bson:"auth_enabled" json:"auth_enabled"`

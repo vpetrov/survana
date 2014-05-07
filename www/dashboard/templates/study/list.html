@@ -38,7 +38,7 @@
         </span>
     </div>
 
-    <div style="margin-top:15px" ng-hide="studies.length">
+    <div style="margin-top:15px;" ng-hide="loading || studies.length" class="ng-cloak">
         <span class="alert alert-info">
             <span class="glyphicon glyphicon-info-sign"></span> You haven't created any studies yet. <a href="#/studies/create" class="alert-link">Click here</a> to create a new study.
         </span>

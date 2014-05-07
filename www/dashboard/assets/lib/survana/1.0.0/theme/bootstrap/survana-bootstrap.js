@@ -42,6 +42,7 @@ var BootstrapEngine = function (doc) {
         checkboxbutton: checkbox_button,
         input: input,
         text: text,
+        number: number,
         radio: radio,
         checkbox: checkbox,
         option: option,
@@ -548,6 +549,11 @@ var BootstrapEngine = function (doc) {
 
     //syntactic sugar for input()
     function text(field) {
+        return input(field);
+    }
+
+    function number(field) {
+        field.type = 'number';
         return input(field);
     }
 

@@ -44,14 +44,17 @@ dashboard.controller('StudyListCtrl', ['$scope', '$http',
         $scope.selected = [];
         $scope.message = '';
         $scope.search = '';
+        $scope.loading = true;
 
         $http.get('studies/list').success(function (response, code, request) {
             if (response.success) {
                 $scope.studies = response.message;
+                $scope.loading = false;
             } else {
                 console.log('Error message', response.message);
             }
         }).error(function () {
+                $scope.loading = false;
                 console.log("Error fetching studies/list");
             });
 
@@ -848,14 +851,17 @@ dashboard.controller('FormListCtrl', ['$scope', '$http',
         $scope.message = '';
         $scope.search = '';
         $scope.max_selected = 10;
+        $scope.loading = true;
 
         $http.get('forms/list').success(function (response, code, request) {
             if (response.success) {
+                $scope.loading = false;
                 $scope.forms = response.message;
             } else {
                 console.log('Error message', response.message);
             }
         }).error(function () {
+                $scope.loading = false;
                 console.log("Error fetching", $location.path())
             });
 

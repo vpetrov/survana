@@ -38,7 +38,7 @@
         </span>
     </div>
 
-    <div style="margin-top:15px" ng-hide="forms.length">
+    <div style="margin-top:15px" ng-hide="loading || forms.length" class="ng-cloak">
         <span class="alert alert-info">
             <span class="glyphicon glyphicon-info-sign"></span> You haven't created any forms yet. <a href="#/forms/create" class="alert-link">Click here</a> to create a new form.
         </span>
