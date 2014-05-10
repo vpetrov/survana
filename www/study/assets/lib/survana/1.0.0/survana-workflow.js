@@ -17,7 +17,7 @@ if (!window.Survana) {
 
 (function (Survana) {
 
-    if (!Survana.Storage || !Survana.Storage.IsAvailable) {
+    if (!Survana.DesignerMode && (!Survana.Storage || !Survana.Storage.IsAvailable)) {
         console.error('Survana Storage is not available.');
         return;
     }
@@ -65,6 +65,10 @@ if (!window.Survana) {
 
         //if validation succeeds, go to the next form
         if (Survana.Validation.Validate(document.forms[0])) {
+            //don't do anything in designer mode if validation suceeded
+            if (Survana.DesignerMode) {
+                return;
+            }
             context.current++;
             //Store the incremented value of 'current'
             Survana.Storage.Set('current', context.current, function () {
@@ -91,6 +95,10 @@ if (!window.Survana) {
      * @param btn {HTMLButtonElement} The source button
      */
     function finish_survey(btn) {
+        if (Survana.DesignerMode) {
+            return;
+        }
+
         if (btn) {
             btn.setAttribute('disabled', 'disabled');
             btn.style.visibility = 'hidden';
@@ -110,5 +118,7 @@ if (!window.Survana) {
     };
 
     //register an onReady handler, i.e. $(document).ready(). Caveat: does not support older versions of IE
-    document.addEventListener("DOMContentLoaded", onDOMContentLoaded);
+    if (!Survana.DesignerMode) {
+        document.addEventListener("DOMContentLoaded", onDOMContentLoaded);
+    }
 }(window.Survana));

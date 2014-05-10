@@ -42,6 +42,7 @@ var BootstrapEngine = function (doc) {
         checkboxbutton: checkbox_button,
         input: input,
         text: text,
+        number: number,
         radio: radio,
         checkbox: checkbox,
         option: option,
@@ -193,10 +194,10 @@ var BootstrapEngine = function (doc) {
         //create a specialized container
         switch (field.group) {
             case "option":  container = doc.createElement('optgroup');
-                if (field.html) {
-                    container.setAttribute('label', field.html);
-                }
-                break;
+                            if (field.html) {
+                                container.setAttribute('label', field.html);
+                            }
+                            break;
             default: container = doc.createElement('div');
         }
 
@@ -497,9 +498,9 @@ var BootstrapEngine = function (doc) {
     }
 
     /* <label class="btn btn-default">
-     <input type="radio" id="" name="">
-     </label>
-     */
+            <input type="radio" id="" name="">
+       </label>
+    */
     function group_button(field) {
         if (field === undefined || !field) {
             return null;
@@ -548,6 +549,11 @@ var BootstrapEngine = function (doc) {
 
     //syntactic sugar for input()
     function text(field) {
+        return input(field);
+    }
+
+    function number(field) {
+        field.type = 'number';
         return input(field);
     }
 
@@ -884,7 +890,7 @@ var BootstrapEngine = function (doc) {
 
         switch (field.type) {
             case 'button':  container.setAttribute('class', 'input-group-btn');
-                break;
+                            break;
             default:        container.setAttribute('class', 'input-group-addon');
         }
 
@@ -896,9 +902,9 @@ var BootstrapEngine = function (doc) {
     }
 
     /* @note generates and returns a container element
-     @note To support array of addons (i.e. multiple prefixes or multiple suffixes), this method must construct
-     multiple <span class="input-group"> as siblings, one for each affix
-     * */
+        @note To support array of addons (i.e. multiple prefixes or multiple suffixes), this method must construct
+        multiple <span class="input-group"> as siblings, one for each affix
+    * */
     function affix(elem, obj, container) {
 
         var el;
@@ -1022,9 +1028,9 @@ var BootstrapEngine = function (doc) {
     };
 };
 
-Survana.engine[id] = BootstrapEngine;
+Survana.Engine[id] = BootstrapEngine;
 
 //set this as the default theme, if no default exists
-if (Survana.theme === undefined) {
-    Survana.theme = id;
+if (!Survana.Theme) {
+    Survana.Theme = id;
 }

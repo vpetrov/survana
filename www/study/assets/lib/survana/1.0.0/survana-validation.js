@@ -16,6 +16,36 @@ if (!window.Survana) {
     Survana.Validation.NO_VALIDATION = 's-no-validation';
     Survana.Validation.INVALID = 's-invalid';
 
+    /** Extracts validation configuration from all questions.
+     * @param form {Object} The form JSON
+     * @returns {String}    The string representation of an Object whose keys are question IDs and whose values are
+     *                      validation parameters.
+     */
+    Survana.Validation.ExtractConfiguration = function (form) {
+
+        if (!form || !form.fields) {
+            return null
+        }
+
+        var config = {},
+            nfields = form.fields.length,
+            i,
+            q;
+
+        //loop over all fields and extraction 'validation' config objects into
+        //a central 'config' object, with each key being the id of the question
+        for (i = 0; i < nfields; ++i) {
+            q = form.fields[i];
+
+            if (q.validation !== undefined) {
+                config[q.id] = q.validation;
+                config[q.id].type = q.type;
+            }
+        }
+
+        return JSON.stringify(config)
+    };
+
     Survana.Validation.SetConfiguration = function (form, config, messages) {
         validation_config[form.id] = {
             config: config,
@@ -139,7 +169,7 @@ if (!window.Survana) {
             Survana.Validation.SetConfiguration(form, config, messages);
         }
 
-        function groupElementsByName(elements) {
+        function group_elements_by_name(elements) {
             var result = {},
                 el,
                 name;
@@ -173,19 +203,24 @@ if (!window.Survana) {
         }
 
         //returns the value of an element based on its declared field type
-        function getValueByType(element, field_type) {
+        function get_value_by_type(element, field_type) {
+            //prefer to use field_type as the type of the field represented by 'element'
+            switch (field_type) {
+                default: break; //todo: implement custom components
+            }
+
             switch (element.tagName.toLowerCase()) {
                 case 'input':
-                        switch (element.getAttribute('type')) {
-                            case 'radio':
-                            case 'checkbox':
-                                if (element.checked) {
-                                    return element.value;
-                                }
-                                return undefined;
-                            default: return element.value;
-                        }
-                        break;
+                    switch (element.getAttribute('type')) {
+                        case 'radio':
+                        case 'checkbox':
+                            if (element.checked) {
+                                return element.value;
+                            }
+                            return undefined;
+                        default: return element.value;
+                    }
+                    break;
                 case 'button':
                 case 'select':
                     return element.value;
@@ -194,7 +229,7 @@ if (!window.Survana) {
             }
         }
 
-        function getValuesFromGroup(group, field_type) {
+        function get_values_from_group(group, field_type) {
             var result = [],
                 value;
 
@@ -203,7 +238,7 @@ if (!window.Survana) {
             }
 
             for (var i = 0; i < group.length; ++i) {
-                value = getValueByType(group[i], field_type);
+                value = get_value_by_type(group[i], field_type);
                 if (value !== undefined) {
                     result.push(value);
                 }
@@ -248,7 +283,7 @@ if (!window.Survana) {
 
         var field, field_config, constraint, elements, group, values, is_valid;
 
-        elements = groupElementsByName(form.elements);
+        elements = group_elements_by_name(form.elements);
 
         var is_form_valid = true;
 
@@ -271,7 +306,7 @@ if (!window.Survana) {
                 continue;
             }
 
-            values = getValuesFromGroup(group, field_config.type);
+            values = get_values_from_group(group, field_config.type);
 
             is_valid = true;
             //check all user-specified constraints

@@ -419,9 +419,9 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
-            Survana.setTheme(newTheme,
+            Survana.SetTheme(newTheme,
                 function () {
-                    fetchTemplate(newTheme, Survana.version);
+                    fetchTemplate(newTheme, Survana.Version);
                     fetchStudy();
                 },
                 function () {
@@ -696,9 +696,9 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
-            Survana.setTheme(newTheme,
+            Survana.SetTheme(newTheme,
                 function () {
-                    fetchTemplate(newTheme, Survana.version);
+                    fetchTemplate(newTheme, Survana.Version);
                 },
                 function () {
                     console.error('Failed to load Survana Themes!');
@@ -1094,9 +1094,9 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
-            Survana.setTheme(newTheme,
+            Survana.SetTheme(newTheme,
                 function () {
-                    fetchTemplate(newTheme, Survana.version);
+                    fetchTemplate(newTheme, Survana.Version);
                     fetchForm();
                 },
                 function () {
@@ -1253,7 +1253,7 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
 
 
                 //make sure a theme, a template and a rendering node are available
-                if (!Survana.theme || !scope.template || !node) {
+                if (!Survana.Theme || !scope.template || !node) {
                     return;
                 }
 
@@ -1268,7 +1268,7 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                     node.appendChild(result);
 
                     //validation configuration
-                    validation = Survana.Validation(ngModel.$viewValue);
+                    validation = Survana.Validation.ExtractConfiguration(ngModel.$viewValue);
 
                     if (validation_node && validation) {
                         validation_node.innerHTML = validation;

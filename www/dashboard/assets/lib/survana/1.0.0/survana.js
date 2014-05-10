@@ -1,27 +1,25 @@
+/* survana.js
+
+Defines an API for all survana-enabled client-side modules. Auto-detects the path to survana.js, stores a list of all
+available questionnaire engines, and defines methods for generating HTML from JSON definition of forms, as well as
+utility methods for loading scripts and changing Survana themes.
+*/
+
+"use strict";
+
 (function(window, document, undefined) {
-    'use strict';
 
-    if (window.Survana === undefined) {
-        window.Survana = {
-            engine : {},
-            theme: null,
-            version: "1.0.0"
-        }
-    }
+    /** Generates HTML from a questionnaire's description
+     * @param form The JSON description of a questionnaire
+     * @returns {DocumentFragment} An HTML rendering in a DocumentFragment object
+     */
+    function questionnaire(form) {
 
-    var Survana = window.Survana,
-        scriptName = 'survana.js',
-        themePath = 'theme/',
-        scriptPath;
-
-    /* Generate HTML from a questionnaire description */
-    Survana.Questionnaire = function (form) {
-
-        if (!form || !form.fields || !Survana.theme) {
+        if (!form || !form['fields'] || !Survana.Theme) {
             return null
         }
 
-        var Q = new Survana.engine[Survana.theme]();
+        var Q = new window.Survana.Engine[window.Survana.Theme](document);
 
         // parses a list of fields
         var questionnaire = document.createDocumentFragment(),
@@ -41,56 +39,14 @@
         questionnaire.appendChild(form_el);
 
         return questionnaire;
-    };
+    }
 
-    Survana.Validation = function (form) {
-
-        if (!form || !form.fields || !Survana.theme) {
-            return null
-        }
-
-        var config = {},
-            nfields = form.fields.length,
-            i,
-            q;
-
-        //loop over all fields and extraction 'validation' config objects into
-        //a central 'config' object, with each key being the id of the question
-        for (i = 0; i < nfields; ++i) {
-            q = form.fields[i];
-
-            if (q.validation !== undefined) {
-                config[q.id] = q.validation;
-                config[q.id].type = q.type;
-            }
-        }
-
-        return JSON.stringify(config)
-    };
-
-    /* Loads and updates the current theme. Questionnaires should be re-rendered */
-    Survana.setTheme = function (theme_id, success, error) {
-
-        //load the theme dynamically
-        if (Survana.engine[theme_id] === undefined) {
-            console.log('Loading theme', theme_id);
-
-            loadScript(scriptPath + themePath + theme_id + '/survana-' + theme_id + '.js',
-                function () {
-                    Survana.theme = theme_id;
-                    success();
-                },
-                error);
-        } else {
-            Survana.theme = theme_id;
-            if (success) {
-                success();
-            }
-        }
-    };
-
-    //Loads a js file using <script> tags appended to <body>
-    function loadScript(path, success, error) {
+    /** Loads a js file using <script> tags appended to <body>
+     * @param path      {String}    Path to the Javascript file
+     * @param success   {Function}  The success callback, the first argument is the onload event object
+     * @param error     {Function}  The error callback, the first rgument is the onerror event object
+     */
+    function load_script(path, success, error) {
         var script = document.createElement('script');
         script.setAttribute('src', path);
         script.setAttribute('type', 'text/javascript');
@@ -102,24 +58,76 @@
         document.body.appendChild(script);
     }
 
-    //detect script path
-    var scripts = document.getElementsByTagName('script'),
-        s,
-        src;
+    /** Loads and updates the current theme. Questionnaires should be re-rendered
+     * @param theme_id  {String}    ID of the theme to load
+     * @param success   {Function}  The success callback, called when the theme file was loaded
+     * @param error     {Function}  The error callback in case of a network failure
+     */
+    function set_theme(theme_id, success, error) {
 
-    for (s in scripts) {
-        src = scripts[s].src;
+        //load the theme dynamically
+        if (!window.Survana.Engine[theme_id]) {
+            console.log('Loading theme', theme_id);
 
-        if (src === undefined || !src.length) {
-            continue;
-        }
-
-        if (src.indexOf(scriptName) >= 0) {
-            scriptPath = src.substr(0, src.length - scriptName.length);
+            load_script(window.Survana.ScriptPath + window.Survana.ThemePath + theme_id + '/survana-' + theme_id + '.js',
+                function () {
+                    Survana.Theme = theme_id;
+                    success && success(theme_id);
+                },
+                error);
+        } else {
+            //if the theme is already available, set it as the current theme and call the success function
+            Survana.Theme = theme_id;
+            success && success(theme_id);
         }
     }
 
-    if (!scriptPath) {
-        throw Error("Failed to detect Survana's script path.");
+    /** Searches for the path to a script specified by 'scriptName'
+     * @param scriptName {String} The name of the script to search for.
+     * @returns {String|null} Path to the 'scriptName', or null if not found
+     */
+    function detect_script_path(scriptName) {
+        //detect script path
+        var scripts = document.getElementsByTagName('script'),
+            s,
+            src;
+
+        for (s in scripts) {
+            if (!scripts.hasOwnProperty(s)) {
+                continue;
+            }
+
+            src = scripts[s].src;
+            if (!src) {
+                continue;
+            }
+
+            //
+            if (src.indexOf(scriptName) >= 0) {
+                return src.substr(0, src.length - scriptName.length);
+            }
+        }
+
+        return null;
     }
+
+    //API
+    window.Survana = {
+        //paths
+        ThemePath:  "theme/",
+        ScriptPath: detect_script_path('survana.js'),
+
+        //properties
+        Engine :    {},
+        Theme:      null,
+        Version:    "1.0.0",
+
+        //methods
+        Questionnaire:  questionnaire,
+        SetTheme:       set_theme,
+        LoadScript:     load_script,
+
+        //Switches
+        DesignerMode: true
+    };
 })(window, document);

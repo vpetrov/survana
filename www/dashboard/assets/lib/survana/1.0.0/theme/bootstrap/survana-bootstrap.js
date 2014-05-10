@@ -1028,9 +1028,9 @@ var BootstrapEngine = function (doc) {
     };
 };
 
-Survana.engine[id] = BootstrapEngine;
+Survana.Engine[id] = BootstrapEngine;
 
 //set this as the default theme, if no default exists
-if (Survana.theme === undefined) {
-    Survana.theme = id;
+if (!Survana.Theme) {
+    Survana.Theme = id;
 }

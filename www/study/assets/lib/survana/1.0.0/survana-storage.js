@@ -2,8 +2,8 @@
 
 Survana.Storage is an abstraction of persistent storage available in browsers. It can make use of localStorage,
 IndexedDB or FileWriter, and will automatically select the best adapter. To override the automatic selection, set
-Survana.Storage = {} before loading this file. The API is fully asynchronous (even for localStorage), and all methods
-take a success and error callback.
+Survana.Storage = {} before loading this file (you might need to call Storage.SetScope() manually).
+The API is fully asynchronous (even for localStorage), and all relevant methods take a success and error callback.
 
     Survana.Storage.Name                            - (string)  Name of the storage adapter
     Survana.Storage.IsAvailable                     - (boolean) Whether any storage is available
@@ -379,11 +379,29 @@ if (!window.Survana) {
         return adapter.Remove.apply(this, arguments);
     }
 
+    /** Auto-detects the scope by looking at an attribute of <body>
+     *
+     */
+    function auto_detect_scope(attr) {
+        if (!attr) {
+            return;
+        }
+
+        //attempt to auto-detect the storage scope
+        if (document && document.body) {
+            var scope = document.body.getAttribute('data-storage-scope');
+            if (scope && Survana.Storage) {
+                Survana.Storage.SetScope(scope);
+            }
+        }
+    }
+
     //only look for an adapter if no manual override has been set
     if (!Survana.Storage) {
         find_best_adapter(adapters, 0, function (a) {
             adapter = a;
 
+            //Storage API
             Survana.Storage = {
                 'Name': adapter ? adapter.Name : "None",
                 'IsAvailable': Boolean(adapter),
@@ -394,18 +412,12 @@ if (!window.Survana) {
                 'SetScope': set_scope
             };
 
-            //attempt to auto-detect the storage scope
-            if (document && document.body) {
-                var scope = document.body.getAttribute('data-storage-scope');
-                if (scope) {
-                    console.log('setting the scope');
-                    Survana.Storage.SetScope(scope);
-                } else {
-                    console.log('not setting the scope');
-                }
-            }
+            auto_detect_scope('data-storage-scope');
         });
 
+        console.log("Survana Storage: using adapter", Survana.Storage.Name);
+    } else {
+        auto_detect_scope('data-storage-scope');
         console.log("Survana Storage: using adapter", Survana.Storage.Name);
     }
 }(window.Survana));
