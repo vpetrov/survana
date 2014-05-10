@@ -1,0 +1,6 @@
+[submodule "www/study/assets/lib/survana/1.0.0"]
+	path = www/study/assets/lib/survana/1.0.0
+	url = git://github.com/vpetrov/survanajs.git
+[submodule "www/dashboard/assets/lib/1.0.0"]
+	path = www/dashboard/assets/lib/survana/1.0.0
+	url = git://github.com/vpetrov/survanajs.git
