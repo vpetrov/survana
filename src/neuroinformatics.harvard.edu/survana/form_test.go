@@ -3,10 +3,11 @@ package survana
 import (
 	"testing"
 	"time"
+    "github.com/vpetrov/perfect"
 )
 
 var mock_form *Form = &Form{
-    DBO: DBO { DBID:2, Collection: FORM_COLLECTION },
+    DBO: perfect.DBO { DBID:2, Collection: FORM_COLLECTION },
 	Id:        "FORM_ABCD",
 	Name:      "MockForm",
 	Title:     "Mock Form ABCD",
@@ -24,7 +25,7 @@ func TestNewForm(t *testing.T) {
 }
 
 func TestListForms(t *testing.T) {
-	db := NewMockDatabase()
+	db := perfect.NewMockDatabase()
 	db.OnFilteredList = func(collection string, props []string, result interface{}) {
 
 		if collection != FORM_COLLECTION {
