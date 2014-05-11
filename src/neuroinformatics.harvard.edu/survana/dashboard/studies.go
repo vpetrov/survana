@@ -4,36 +4,37 @@ import (
 	"log"
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
+    "github.com/vpetrov/perfect"
 	"time"
     "strconv"
 )
 
-func (d *Dashboard) StudyListPage(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) StudyListPage(w http.ResponseWriter, r *perfect.Request) {
 	d.RenderTemplate(w, "study/list", nil)
 }
 
-func (d *Dashboard) StudyList(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) StudyList(w http.ResponseWriter, r *perfect.Request) {
 	studies, err := survana.ListStudies(d.Db)
 
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
-	survana.JSONResult(w, true, studies)
+	perfect.JSONResult(w, true, studies)
 }
 
-func (d *Dashboard) CreateStudyPage(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) CreateStudyPage(w http.ResponseWriter, r *perfect.Request) {
 	d.RenderTemplate(w, "study/create", nil)
 }
 
-func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
 	var err error
 
 	//get the current session
 	session, err := r.Session()
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 	}
 
 	study := survana.NewStudy()
@@ -41,7 +42,7 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *survana.Request) {
 	//parse input data
 	err = r.ParseJSON(&study)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
     now := time.Now()
@@ -51,13 +52,13 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *survana.Request) {
 	//generate a unique id
 	err = study.GenerateId(d.Db)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 	}
 
 	//save the study
 	err = study.Save(d.Db)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
@@ -66,40 +67,40 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *survana.Request) {
 		Id string `json:"id"`
 	}{Id: study.Id}
 
-	survana.JSONResult(w, true, result)
+	perfect.JSONResult(w, true, result)
 }
 
-func (d *Dashboard) GetStudy(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) GetStudy(w http.ResponseWriter, r *perfect.Request) {
 	query := r.URL.Query()
 	study_id := query.Get("id")
 
 	//TODO: Validate alnum
 	if len(study_id) == 0 {
-		survana.BadRequest(w)
+		perfect.BadRequest(w)
 		return
 	}
 
 	study, err := survana.FindStudy(study_id, d.Db)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
 	//not found?
 	if study == nil {
-		survana.NotFound(w)
+		perfect.NotFound(w)
 		return
 	}
 
 	//return the form as JSON
-	survana.JSONResult(w, true, study)
+	perfect.JSONResult(w, true, study)
 }
 
-func (d *Dashboard) EditStudyPage(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) EditStudyPage(w http.ResponseWriter, r *perfect.Request) {
 	d.RenderTemplate(w, "study/edit", nil)
 }
 
-func (d *Dashboard) EditStudy(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) EditStudy(w http.ResponseWriter, r *perfect.Request) {
 	var err error
 
 	//get the study id
@@ -108,20 +109,20 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *survana.Request) {
 
 	//TODO: Validate alnum
 	if len(study_id) == 0 {
-		survana.BadRequest(w)
+		perfect.BadRequest(w)
 		return
 	}
 
 	//make sure the form exists
 	study, err := survana.FindStudy(study_id, d.Db)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
 	//not found?
 	if study == nil {
-		survana.NotFound(w)
+		perfect.NotFound(w)
 		return
 	}
 
@@ -132,7 +133,7 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *survana.Request) {
     //will ignore them (assuming the fields are declared as ',omitempty'
 	err = r.ParseJSON(study)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
@@ -155,15 +156,15 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *survana.Request) {
     //other system). I'm leaving this issue for another refactoring session.
 	err = study.Save(d.Db)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
 	//success
-	survana.NoContent(w)
+	perfect.NoContent(w)
 }
 
-func (d *Dashboard) DeleteStudy(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) DeleteStudy(w http.ResponseWriter, r *perfect.Request) {
 	var err error
 
 	//get the form id
@@ -174,62 +175,62 @@ func (d *Dashboard) DeleteStudy(w http.ResponseWriter, r *survana.Request) {
 
 	//TODO: Validate alnum
 	if len(study_id) == 0 {
-		survana.BadRequest(w)
+		perfect.BadRequest(w)
 		return
 	}
 
 	//make sure the form exists
 	study, err := survana.FindStudy(study_id, d.Db)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
 	//not found?
 	if study == nil {
-		survana.NotFound(w)
+		perfect.NotFound(w)
 		return
 	}
 
 	err = study.Delete(d.Db)
 
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
 	log.Println("study", study_id, "deleted")
-	survana.NoContent(w)
+	perfect.NoContent(w)
 }
 
-func (d *Dashboard) ViewStudyPage(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) ViewStudyPage(w http.ResponseWriter, r *perfect.Request) {
 	d.RenderTemplate(w, "study/view", nil)
 }
 
-func (d *Dashboard) PublishStudyPage(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) PublishStudyPage(w http.ResponseWriter, r *perfect.Request) {
 	d.RenderTemplate(w, "study/publish", nil)
 }
 
-func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *perfect.Request) {
 
 	query := r.URL.Query()
 	study_id := query.Get("id")
     form_index, err := strconv.Atoi(query.Get("f"))
 
 	if (len(study_id) == 0) || err != nil || form_index < 0 {
-		survana.BadRequest(w)
+		perfect.BadRequest(w)
 		return
 	}
 
 	html, err := r.BodyBytes(r.Body)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
     study, err := survana.FindStudy(study_id, d.Db)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
@@ -239,7 +240,7 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *survana.Request) 
     log.Println("study=", study, "form_index", form_index, "study.Forms.length=", nforms)
 
     if study == nil || form_index >= nforms {
-        survana.NotFound(w)
+        perfect.NotFound(w)
         return
     }
 
@@ -258,20 +259,20 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *survana.Request) 
     //save the study
     err = study.Save(d.Db)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
     log.Println("done saving published form")
 
-	survana.NoContent(w)
+	perfect.NoContent(w)
 }
 
-func (d *Dashboard) StudySubjectsPage(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) StudySubjectsPage(w http.ResponseWriter, r *perfect.Request) {
 	d.RenderTemplate(w, "study/subjects", nil)
 }
 
-func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *perfect.Request) {
 	var err error
 
 	//get the form id
@@ -280,20 +281,20 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *survana.Request) 
 
 	//TODO: Validate alnum
 	if len(study_id) == 0 {
-		survana.BadRequest(w)
+		perfect.BadRequest(w)
 		return
 	}
 
 	//make sure the form exists
 	study, err := survana.FindStudy(study_id, d.Db)
 	if err != nil {
-		survana.Error(w, err)
+		perfect.Error(w, err)
 		return
 	}
 
 	//not found?
 	if study == nil {
-		survana.NotFound(w)
+		perfect.NotFound(w)
 		return
 	}
 
@@ -301,13 +302,13 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *survana.Request) 
     ids := make([]string, 0)
     err = r.JSONBody(r.Body, &ids)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
     nids := len(ids)
     if nids == 0 {
-        survana.BadRequest(w)
+        perfect.BadRequest(w)
         return
     }
 
@@ -329,9 +330,9 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *survana.Request) 
     //store the updated Survey
     err = study.Save(d.Db)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
-    survana.JSONResult(w, true, study.Subjects)
+    perfect.JSONResult(w, true, study.Subjects)
 }

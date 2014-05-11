@@ -3,8 +3,8 @@ package dashboard
 import (
 	"net/http"
     "errors"
-	"neuroinformatics.harvard.edu/survana"
-    "neuroinformatics.harvard.edu/survana/auth"
+	"github.com/vpetrov/perfect"
+    "github.com/vpetrov/perfect/auth"
 )
 
 // registers all route handlers
@@ -57,22 +57,22 @@ func (d *Dashboard) RegisterHandlers() {
 }
 
 // sends the app skeleton to the client
-func (d *Dashboard) Index(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) Index(w http.ResponseWriter, r *perfect.Request) {
     user, err := r.User()
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
     //profile not found?
     if user == nil {
-        survana.Error(w, errors.New("User profile not found"))
+        perfect.Error(w, errors.New("User profile not found"))
         return
     }
 
     data := &struct {
-                Module *survana.Module
-                User *survana.User
+                Module *perfect.Module
+                User *perfect.User
             }{
                 Module: d.Module,
                 User:user,
@@ -82,10 +82,10 @@ func (d *Dashboard) Index(w http.ResponseWriter, r *survana.Request) {
 }
 
 // displays the home page
-func (d *Dashboard) Home(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) Home(w http.ResponseWriter, r *perfect.Request) {
 	d.RenderTemplate(w, "home", nil)
 }
 
-func (d *Dashboard) Sidebar(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) Sidebar(w http.ResponseWriter, r *perfect.Request) {
 	d.RenderTemplate(w, "sidebar", nil)
 }

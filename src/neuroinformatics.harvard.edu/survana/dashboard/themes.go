@@ -2,10 +2,10 @@ package dashboard
 
 import (
 	"net/http"
-	"neuroinformatics.harvard.edu/survana"
+	"github.com/vpetrov/perfect"
 )
 
-func (d *Dashboard) Theme(w http.ResponseWriter, r *survana.Request) {
+func (d *Dashboard) Theme(w http.ResponseWriter, r *perfect.Request) {
 	template_name := "index"
 
 	//get the form id
@@ -17,7 +17,7 @@ func (d *Dashboard) Theme(w http.ResponseWriter, r *survana.Request) {
 
 	//TODO: Validate alnum
 	if (len(theme_id) == 0) || (len(theme_version) == 0) {
-		survana.BadRequest(w)
+		perfect.BadRequest(w)
 		return
 	}
 

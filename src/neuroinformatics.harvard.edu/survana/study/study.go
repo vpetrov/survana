@@ -1,8 +1,8 @@
 package study
 
 import (
-	"neuroinformatics.harvard.edu/survana"
-    "neuroinformatics.harvard.edu/survana/auth"
+	"github.com/vpetrov/perfect"
+    "github.com/vpetrov/perfect/auth"
 )
 
 const (
@@ -11,21 +11,21 @@ const (
 
 //The Admin component
 type Study struct {
-	*survana.Module
+	*perfect.Module
     Config *Config
     Auth auth.Strategy
 }
 
 // creates a new Admin module
-func NewModule(path string, db survana.Database, config *Config, key *survana.PrivateKey) *Study {
-	mux := survana.NewRESTMux()
+func NewModule(path string, db perfect.Database, config *Config, key *perfect.PrivateKey) *Study {
+	mux := perfect.NewRESTMux()
 
     if config == nil {
         config = &Config{}
     }
 
 	m := &Study{
-		Module: &survana.Module{
+		Module: &perfect.Module{
 			Name:   NAME,
 			Path:   path,
 			Db:     db,
@@ -37,7 +37,7 @@ func NewModule(path string, db survana.Database, config *Config, key *survana.Pr
 	}
 
     //by default, use the subject_id auth strategy
-    m.Auth = auth.NewSubjectIdStrategy(nil)
+    m.Auth = NewSubjectIdStrategy(nil)
 
 	m.ParseTemplates()
 

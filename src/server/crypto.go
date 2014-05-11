@@ -3,10 +3,10 @@ package main
 import (
     "io/ioutil"
     "os"
-	"neuroinformatics.harvard.edu/survana"
+    "github.com/vpetrov/perfect"
     )
 
-func GetPrivateKey(keypath string) (private_key *survana.PrivateKey, err error) {
+func GetPrivateKey(keypath string) (private_key *perfect.PrivateKey, err error) {
     var create_new_key bool = true
 
     if len(keypath) > 0 {
@@ -18,7 +18,7 @@ func GetPrivateKey(keypath string) (private_key *survana.PrivateKey, err error) 
     }
 
     if create_new_key {
-        private_key, err = survana.GeneratePrivateKey()
+        private_key, err = perfect.GeneratePrivateKey()
         if err != nil {
             return
         }
@@ -33,19 +33,19 @@ func GetPrivateKey(keypath string) (private_key *survana.PrivateKey, err error) 
     return
 }
 
-func ReadPrivateKey(keypath string) (private_key *survana.PrivateKey, err error) {
+func ReadPrivateKey(keypath string) (private_key *perfect.PrivateKey, err error) {
     keydata, err := ioutil.ReadFile(keypath)
     if err != nil {
         return
     }
 
-    private_key = survana.NewPrivateKey()
+    private_key = perfect.NewPrivateKey()
     err = private_key.UnmarshalJSON(keydata)
 
     return
 }
 
-func SavePrivateKey(key *survana.PrivateKey, keypath string) (err error) {
+func SavePrivateKey(key *perfect.PrivateKey, keypath string) (err error) {
     keydata, err := key.MarshalJSON()
     if err != nil {
         return

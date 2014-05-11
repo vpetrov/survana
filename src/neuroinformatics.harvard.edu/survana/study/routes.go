@@ -7,6 +7,7 @@ import (
     "strings"
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
+    "github.com/vpetrov/perfect"
 )
 
 // registers all route handlers
@@ -20,7 +21,7 @@ func (s *Study) RegisterHandlers() {
     app.Get("/form", s.Form)
 }
 
-func (s *Study) NewIndex(w http.ResponseWriter, r *survana.Request) {
+func (s *Study) NewIndex(w http.ResponseWriter, r *perfect.Request) {
     var (
             err error
             study_id string
@@ -45,12 +46,12 @@ func (s *Study) NewIndex(w http.ResponseWriter, r *survana.Request) {
     //otherwise, fetch the study
     study, err := survana.FindStudy(study_id, s.Db)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
     if study == nil {
-        survana.NotFound(w)
+        perfect.NotFound(w)
         return
     }
 
@@ -66,7 +67,7 @@ func (s *Study) NewIndex(w http.ResponseWriter, r *survana.Request) {
     //get the session
     session, err := r.Session()
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
@@ -100,13 +101,13 @@ func (s *Study) NewIndex(w http.ResponseWriter, r *survana.Request) {
 
     err = session.Save(s.Db)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
 	//set the cookie and make it valid for a month
 	http.SetCookie(w, &http.Cookie{
-		Name:     survana.SESSION_ID,
+		Name:     perfect.SESSION_ID,
 		Value:    session.Id,
 		Path:     r.Module.MountPoint,
 		Expires:  time.Now().Add(time.Hour * 24 * 30),
@@ -119,7 +120,7 @@ func (s *Study) NewIndex(w http.ResponseWriter, r *survana.Request) {
 }
 
 // sends the app skeleton to the client
-func (s *Study) Index(w http.ResponseWriter, r *survana.Request) {
+func (s *Study) Index(w http.ResponseWriter, r *perfect.Request) {
     var (
             err error
             study_id string
@@ -145,12 +146,12 @@ func (s *Study) Index(w http.ResponseWriter, r *survana.Request) {
     //otherwise, fetch the study
     study, err := survana.FindStudy(study_id, s.Db)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
     if study == nil {
-        survana.NotFound(w)
+        perfect.NotFound(w)
         return
     }
 
@@ -158,12 +159,12 @@ func (s *Study) Index(w http.ResponseWriter, r *survana.Request) {
 }
 
 // sends the app skeleton to the client
-func (s *Study) Login(w http.ResponseWriter, r *survana.Request) {
+func (s *Study) Login(w http.ResponseWriter, r *perfect.Request) {
     var err error
 
     //render the home page if no study was mentioned
     if (len(r.URL.RawQuery) == 0) {
-        survana.BadRequest(w)
+        perfect.BadRequest(w)
         return
     }
 
@@ -175,12 +176,12 @@ func (s *Study) Login(w http.ResponseWriter, r *survana.Request) {
     //otherwise, fetch the study
     study, err := survana.FindStudy(study_id, s.Db)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
     if study == nil {
-        survana.NotFound(w)
+        perfect.NotFound(w)
         return
     }
 
@@ -189,34 +190,34 @@ func (s *Study) Login(w http.ResponseWriter, r *survana.Request) {
 
     err = r.ParseJSON(&form)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
     //read the subject id
     subject_id, ok := form["subject_id"]
     if !ok || len(subject_id) == 0 {
-        survana.JSONResult(w, false, "Please complete all the fields.")
+        perfect.JSONResult(w, false, "Please complete all the fields.")
         return
     }
 
     //check that the subject id exists in the study.Subjects and it's enabled
     enabled, ok := study.Subjects[subject_id]
     if !ok {
-        survana.JSONResult(w, false, "We were unable to find this ID.")
+        perfect.JSONResult(w, false, "We were unable to find this ID.")
         return
     }
 
     if !enabled {
-        survana.JSONResult(w, false, "This ID has already been used.")
+        perfect.JSONResult(w, false, "This ID has already been used.")
         return
     }
 
-    survana.JSONResult(w, true, s.MountPoint + "/go?" + study_id)
+    perfect.JSONResult(w, true, s.MountPoint + "/go?" + study_id)
 }
 
 
-func (s *Study) Form(w http.ResponseWriter, r *survana.Request) {
+func (s *Study) Form(w http.ResponseWriter, r *perfect.Request) {
     var err error
 
     query := r.URL.Query()
@@ -226,24 +227,24 @@ func (s *Study) Form(w http.ResponseWriter, r *survana.Request) {
 
     form_index, err := strconv.Atoi(index)
     if err != nil || len(study_id) == 0 || form_index < 0 {
-        survana.BadRequest(w)
+        perfect.BadRequest(w)
         return
     }
 
     study, err := survana.FindStudy(study_id, s.Db)
     if err != nil {
-        survana.Error(w, err)
+        perfect.Error(w, err)
         return
     }
 
     if study == nil {
-        survana.NotFound(w)
+        perfect.NotFound(w)
         return
     }
 
     //make sure the study has been published
     if !study.Published || form_index >= len(study.Html) {
-        survana.NotFound(w)
+        perfect.NotFound(w)
         return
     }
 
@@ -251,7 +252,7 @@ func (s *Study) Form(w http.ResponseWriter, r *survana.Request) {
     html := study.Html[form_index]
 
     if len(html) == 0 {
-        survana.NotFound(w)
+        perfect.NotFound(w)
         return
     }
 

@@ -7,9 +7,9 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"neuroinformatics.harvard.edu/survana"
 	"neuroinformatics.harvard.edu/survana/dashboard"
 	"neuroinformatics.harvard.edu/survana/study"
+    "github.com/vpetrov/perfect"
 	"os"
 	"os/user"
 	"strconv"
@@ -25,7 +25,7 @@ const (
 
 var (
 	configFile string
-	DB         survana.Database
+	DB         perfect.Database
 )
 
 func main() {
@@ -80,7 +80,7 @@ func main() {
 	log.Println("Listening on ", config.IP+":"+config.Port, "as", config.Username)
 
 	//Go!
-	err = http.Serve(listener, survana.Modules)
+	err = http.Serve(listener, perfect.Modules)
 	if err != nil {
 		panic(err)
 	}
@@ -169,7 +169,7 @@ func Listen(config *Config) (tlsListener net.Listener, err error) {
 
 
 //Create and mount all known modules
-func EnableModules(private_key *survana.PrivateKey, config *Config) (err error) {
+func EnableModules(private_key *perfect.PrivateKey, config *Config) (err error) {
 
     log.Println("%#v", config);
 
@@ -178,7 +178,7 @@ func EnableModules(private_key *survana.PrivateKey, config *Config) (err error) 
                                             GetDB(config.DbUrl, "dashboard_test"),
                                             config.Modules.Dashboard,
                                             private_key)
-	survana.Modules.Mount(dashboard_module.Module, "/dashboard")
+	perfect.Modules.Mount(dashboard_module.Module, "/dashboard")
 
 
     //study
@@ -188,12 +188,12 @@ func EnableModules(private_key *survana.PrivateKey, config *Config) (err error) 
                                     GetDB(config.DbUrl, "dashboard_test"),
                                     config.Modules.Study,
                                     private_key)
-    survana.Modules.Mount(study_module.Module, "/study")
+    perfect.Modules.Mount(study_module.Module, "/study")
 
 	return nil
 }
 
-func GetDB(u string, dbname string) survana.Database {
+func GetDB(u string, dbname string) perfect.Database {
 	dburl, err := url.Parse(u)
 	if err != nil {
 		panic(err)
@@ -203,7 +203,7 @@ func GetDB(u string, dbname string) survana.Database {
 		panic("Invalid database name")
 	}
 
-	DB = survana.NewDatabase(dburl, dbname)
+	DB = perfect.NewDatabase(dburl, dbname)
 	if err != nil {
 		panic(err)
 	}

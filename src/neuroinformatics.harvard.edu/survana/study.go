@@ -3,6 +3,7 @@ package survana
 import (
 	_ "log"
 	"time"
+    "github.com/vpetrov/perfect"
 )
 
 const (
@@ -10,7 +11,7 @@ const (
 )
 
 type Study struct {
-    DBO                   `bson:",inline,omitempty" json:"-"`
+    perfect.DBO           `bson:",inline,omitempty" json:"-"`
 	Id          string    `bson:"id,omitempty" json:"id"`
 	Name        string    `bson:"name,omitempty" json:"name"`
 	Title       string    `bson:"title,omitempty" json:"title"`
@@ -29,7 +30,7 @@ type Study struct {
 
 func NewStudy() *Study {
 	return &Study{
-        DBO: DBO { Collection: STUDY_COLLECTION },
+        DBO: perfect.DBO { Collection: STUDY_COLLECTION },
         Html: make([][]byte, 0),
     }
 }
@@ -40,12 +41,12 @@ func (s *Study) RemoveInternalAttributes() {
     s.OwnerId = ""
 }
 
-func FindStudy(id string, db Database) (study *Study, err error) {
+func FindStudy(id string, db perfect.Database) (study *Study, err error) {
 	study = NewStudy()
 
 	err = db.FindId(id, study)
 	if err != nil {
-		if err == ErrNotFound {
+		if err == perfect.ErrNotFound {
 			err = nil
 		}
 
@@ -56,14 +57,14 @@ func FindStudy(id string, db Database) (study *Study, err error) {
 }
 
 //returns a list of studies.
-func ListStudies(db Database) (studies []Study, err error) {
+func ListStudies(db perfect.Database) (studies []Study, err error) {
 	studies = make([]Study, 0)
 
 	filter := []string{"id", "name", "title", "version", "created_on", "owner_id", "forms", "published"}
 
 	err = db.FilteredList(STUDY_COLLECTION, filter, &studies)
 	if err != nil {
-		if err == ErrNotFound {
+		if err == perfect.ErrNotFound {
 			err = nil
 		}
 	}
@@ -71,15 +72,15 @@ func ListStudies(db Database) (studies []Study, err error) {
 	return
 }
 
-func (s *Study) Delete(db Database) (err error) {
+func (s *Study) Delete(db perfect.Database) (err error) {
 	return db.Delete(s)
 }
 
-func (s *Study) Save(db Database) (err error) {
+func (s *Study) Save(db perfect.Database) (err error) {
 	return db.Save(s)
 }
 
-func (f *Study) GenerateId(db Database) (err error) {
+func (f *Study) GenerateId(db perfect.Database) (err error) {
 	var (
 		id     string
 		exists bool = true
@@ -87,7 +88,7 @@ func (f *Study) GenerateId(db Database) (err error) {
 
 	for exists {
 		//generate a random id
-		id = RandomId(nID)
+		id = perfect.RandomId(nID)
 		//check if it exists
 		exists, err = db.HasId(id, STUDY_COLLECTION)
 		if err != nil {

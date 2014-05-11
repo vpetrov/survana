@@ -33,6 +33,8 @@ all: ${TARGET}
 ${TARGET}:
 	GOPATH=${CURRENT_DIR} go get code.google.com/p/goauth2/oauth
 	GOPATH=${CURRENT_DIR} go get labix.org/v2/mgo
+	GOPATH=${CURRENT_DIR} go get github.com/vpetrov/perfect
+	GOPATH=${CURRENT_DIR} go get github.com/vpetrov/perfect/auth
 	GOPATH=${CURRENT_DIR} go install server
 
 test:

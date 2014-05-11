@@ -1,8 +1,8 @@
 package dashboard
 
 import (
-	"neuroinformatics.harvard.edu/survana"
-    "neuroinformatics.harvard.edu/survana/auth"
+	"github.com/vpetrov/perfect"
+    "github.com/vpetrov/perfect/auth"
 )
 
 const (
@@ -11,19 +11,19 @@ const (
 
 //The Admin component
 type Dashboard struct {
-	*survana.Module
-    Config *Config //dashboard.Config
-    Auth           auth.Strategy
+    *perfect.Module
+    Config  *Config //dashboard.Config
+    Auth    auth.Strategy
 }
 
 
 // creates a new Admin module
-func NewModule(path string, db survana.Database, config *Config, key *survana.PrivateKey) *Dashboard {
+func NewModule(path string, db perfect.Database, config *Config, key *perfect.PrivateKey) *Dashboard {
 
-	mux := survana.NewRESTMux()
+	mux := perfect.NewRESTMux()
 
 	m := &Dashboard{
-		Module: &survana.Module{
+		Module: &perfect.Module{
 			Name:   NAME,
 			Path:   path,
 			Db:     db,

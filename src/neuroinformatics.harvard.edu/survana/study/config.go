@@ -1,7 +1,7 @@
 package study
 
 import (
-        "neuroinformatics.harvard.edu/survana/auth"
+        "github.com/vpetrov/perfect/auth"
        )
 
 type Config struct {
