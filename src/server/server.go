@@ -174,6 +174,12 @@ func EnableModules(private_key *perfect.PrivateKey, config *Config) (err error) 
     log.Println("%#v", config);
 
 	//dashboard
+    if len(config.Modules.Dashboard.StoreUrl) == 0 {
+        config.Modules.Dashboard.StoreUrl = "/store/response"
+    }
+
+    log.Println("StoreURL", config.Modules.Dashboard.StoreUrl)
+
 	dashboard_module := dashboard.NewModule(config.WWW+"/dashboard",
                                             GetDB(config.DbUrl, "dashboard_test"),
                                             config.Modules.Dashboard,

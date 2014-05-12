@@ -48,6 +48,10 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
     now := time.Now()
 	study.CreatedOn = &now
 	study.OwnerId = session.UserId
+    //assign default StoreURL
+    if len(study.StoreUrl) == 0 {
+        study.StoreUrl = d.Config.StoreUrl
+    }
 
 	//generate a unique id
 	err = study.GenerateId(d.Db)

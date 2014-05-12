@@ -23,6 +23,7 @@ type Study struct {
 	Published   bool      `bson:"published" json:"published"`
     Subjects    map[string]bool `bson:"subjects,omitempty" json:"subjects"`
     AuthEnabled bool      `bson:"auth_enabled" json:"auth_enabled"`
+    StoreUrl    string    `bson:"store_url,omitempty" json:"store_url"`
 
 	//ACL
 	OwnerId string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`

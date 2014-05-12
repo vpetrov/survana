@@ -52,11 +52,13 @@
                     "form?s=" + study_id + "&f=<%js $i %>",
                 <%end%>
             ],
+            store_url = '<%js .StoreUrl %>',
             session = {
                 current:    null,
                 workflow:   null,
                 start:      null,
-                completed:  null
+                completed:  null,
+                'store-url': null
             };
 
         //create a scope for all storage access
@@ -82,6 +84,7 @@
                 session.workflow = workflow;
                 session.start = (new Date()).valueOf();
                 session.completed = false;
+                session['store-url'] = '<%js .StoreUrl %>';
             }
 
             //store any changes made
