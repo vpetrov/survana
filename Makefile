@@ -46,6 +46,22 @@ test:
 
 clean:
 	@rm -f ${TARGET}
+	GOPATH=${CURRENT_DIR} go clean -i neuroinformatics.harvard.edu/survana
+	GOPATH=${CURRENT_DIR} go clean -i neuroinformatics.harvard.edu/survana/dashboard
+	GOPATH=${CURRENT_DIR} go clean -i neuroinformatics.harvard.edu/survana/study
+	GOPATH=${CURRENT_DIR} go clean -i neuroinformatics.harvard.edu/survana/store
+
+distclean:
+	@rm -f ${TARGET}
+	GOPATH=${CURRENT_DIR} go clean -i neuroinformatics.harvard.edu/survana
+	GOPATH=${CURRENT_DIR} go clean -i neuroinformatics.harvard.edu/survana/dashboard
+	GOPATH=${CURRENT_DIR} go clean -i neuroinformatics.harvard.edu/survana/study
+	GOPATH=${CURRENT_DIR} go clean -i neuroinformatics.harvard.edu/survana/store
+	GOPATH=${CURRENT_DIR} go clean -i github.com/vpetrov/perfect
+	GOPATH=${CURRENT_DIR} go clean -i github.com/vpetrov/perfect/auth
+	GOPATH=${CURRENT_DIR} go clean -i labix.org/v2/mgo
+	GOPATH=${CURRENT_DIR} go clean -i labix.org/v2/mgo/bson
+	GOPATH=${CURRENT_DIR} go clean -i code.google.com/p/goauth2/oauth
 	
 osx: ${TARGET} ${OSX_TARGET}
 
