@@ -13,8 +13,6 @@ import (
     "github.com/vpetrov/perfect"
 	"os"
 	"os/user"
-	"strconv"
-	"syscall"
 )
 
 const (
@@ -55,14 +53,6 @@ func main() {
 	listener, err := Listen(config)
 	if err != nil {
 		panic(err)
-	}
-
-	//switch to unprivileged mode
-	if config.Username != cuser.Username {
-		err = DecreasePrivilegesTo(config.Username)
-		if err != nil {
-			panic(err)
-		}
 	}
 
     private_key, err := GetPrivateKey(config.Key)
@@ -111,38 +101,6 @@ func ReadConfiguration(path string) (config *Config, err error) {
 	return
 }
 
-func DecreasePrivilegesTo(username string) (err error) {
-
-	//lookup the new user
-	cuser, err := user.Lookup(username)
-
-	if err != nil {
-		return
-	}
-
-	//convert the new effective user id to an int
-	new_euid, err := strconv.Atoi(cuser.Uid)
-	if err != nil {
-		return
-	}
-
-	//convert the new effective group id to an int
-	new_egid, err := strconv.Atoi(cuser.Gid)
-
-	//set the group id first (if uid were set first, setgid would fail now)
-	err = syscall.Setgid(new_egid)
-	if err != nil {
-		return
-	}
-
-	//reduce the privileges of the process
-	err = syscall.Setuid(new_euid)
-	if err != nil {
-		return
-	}
-
-	return
-}
 
 // Starts a net.Listener on the specified address, using the specified SSL certificate and key
 func Listen(config *Config) (tlsListener net.Listener, err error) {
