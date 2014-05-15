@@ -16,6 +16,10 @@ endif
 
 COVERFILE := survana.coverage
 
+ifdef DEBUG
+	GO_FLAGS:=-gcflags "-N -l"
+endif
+
 #OSX
 OSX_PROJECT_NAME:=Survana
 OSX_TARGET:=bin/${OSX_PROJECT_NAME}.app
@@ -35,7 +39,7 @@ ${TARGET}:
 	GOPATH=${CURRENT_DIR} go get labix.org/v2/mgo
 	GOPATH=${CURRENT_DIR} go get github.com/vpetrov/perfect
 	GOPATH=${CURRENT_DIR} go get github.com/vpetrov/perfect/auth
-	GOPATH=${CURRENT_DIR} go install server
+	GOPATH=${CURRENT_DIR} go install ${GO_FLAGS} server
 
 test:
 	go test ${COVER} neuroinformatics.harvard.edu/survana
