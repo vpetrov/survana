@@ -52,7 +52,7 @@
                     "form?s=" + study_id + "&f=<%js $i %>",
                 <%end%>
             ],
-            store_url = '<%js .StoreUrl %>',
+            store_url = '<%js .StoreUrl %>?s=' + study_id,
             session = {
                 current:    null,
                 workflow:   null,
@@ -84,7 +84,7 @@
                 session.workflow = workflow;
                 session.start = (new Date()).valueOf();
                 session.completed = false;
-                session['store-url'] = '<%js .StoreUrl %>';
+                session['store-url'] = store_url;
             }
 
             //store any changes made

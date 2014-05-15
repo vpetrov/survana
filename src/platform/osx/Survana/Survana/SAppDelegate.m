@@ -110,6 +110,25 @@
     
     NSLog(@"Launching %@", serverBin);
     [server launch];
+    //wait for 3 seconds, then insert forms.json into the database
+    [self performSelector:@selector(importForms) withObject:nil afterDelay:5];
+}
+
+- (void) importForms {
+    NSString *serverDir = [NSString stringWithFormat:@"%@/%@", servicesPath, @"mongodb"];
+    NSString *mongoImportBin = [NSString stringWithFormat:@"%@/%@", serverDir, @"bin/mongoimport"];
+    NSString *formsJSON = [[NSBundle mainBundle] pathForResource:@"forms" ofType:@"json"];
+    
+    NSTask *mongoImport = [[NSTask alloc] init];
+    NSLog(@"ImportDir %@", serverDir);
+    NSLog(@"mongoIMportBin %@", mongoImportBin);
+    
+    [mongoImport setCurrentDirectoryPath:serverDir];
+    [mongoImport setLaunchPath:mongoImportBin];
+    [mongoImport setArguments:[NSArray arrayWithObjects:@"-d", @"dashboard_test", @"-c", @"forms", formsJSON, nil]];
+    
+    NSLog(@"Launching %@ %@", mongoImportBin, mongoImport.arguments);
+    [mongoImport launch];
 }
 
 - (IBAction)stop:(id)sender {

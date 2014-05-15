@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+    "neuroinformatics.harvard.edu/survana/store"
 	"neuroinformatics.harvard.edu/survana/dashboard"
 	"neuroinformatics.harvard.edu/survana/study"
     "github.com/vpetrov/perfect"
@@ -195,6 +196,13 @@ func EnableModules(private_key *perfect.PrivateKey, config *Config) (err error) 
                                     config.Modules.Study,
                                     private_key)
     perfect.Modules.Mount(study_module.Module, "/study")
+
+    //store
+    store_module := store.NewModule(config.WWW + "/store",
+                                    GetDB(config.DbUrl, "dashboard_test"),
+                                    config.Modules.Store,
+                                    private_key)
+    perfect.Modules.Mount(store_module.Module, "/store")
 
 	return nil
 }

@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"neuroinformatics.harvard.edu/survana/dashboard"
 	"neuroinformatics.harvard.edu/survana/study"
+    "neuroinformatics.harvard.edu/survana/store"
 )
 
 const (
@@ -35,6 +36,7 @@ type Config struct {
 type ModuleConfig struct {
     Dashboard   *dashboard.Config   `json:"dashboard,omitempty"`
     Study       *study.Config       `json:"study,omitempty"`
+    Store       *store.Config       `json:"store,omitempty"`
 }
 
 // Creates a new configuration object and sets empty values to default

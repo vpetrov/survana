@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		251A7ED018FA231B0052A49A /* install.sh in Resources */ = {isa = PBXBuildFile; fileRef = 251A7ECF18FA231B0052A49A /* install.sh */; };
+		25378D1C1921127000B47E06 /* forms.json in Resources */ = {isa = PBXBuildFile; fileRef = 25378D1B1921127000B47E06 /* forms.json */; };
 		571DEFD2188880D500FE2A0F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 571DEFD1188880D500FE2A0F /* Cocoa.framework */; };
 		571DEFDC188880D500FE2A0F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 571DEFDA188880D500FE2A0F /* InfoPlist.strings */; };
 		571DEFDE188880D500FE2A0F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DEFDD188880D500FE2A0F /* main.m */; };
@@ -40,6 +41,7 @@
 
 /* Begin PBXFileReference section */
 		251A7ECF18FA231B0052A49A /* install.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
+		25378D1B1921127000B47E06 /* forms.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = forms.json; sourceTree = "<group>"; };
 		570FA8271891D8E900B86330 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		570FA8291891D90C00B86330 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		571DEFCE188880D500FE2A0F /* Survana.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Survana.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,6 +153,7 @@
 		571DEFD8188880D500FE2A0F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				25378D1B1921127000B47E06 /* forms.json */,
 				575F48B3189F113C00590441 /* survana.json */,
 				575F48B1189F0FE600590441 /* services */,
 				571DF00B18888C0000FE2A0F /* survana-logo-bw-inverted.png */,
@@ -266,6 +269,7 @@
 				575F48B2189F0FE600590441 /* services in Resources */,
 				57A0DCE218948C18000087B0 /* SSettings.xib in Resources */,
 				571DEFDC188880D500FE2A0F /* InfoPlist.strings in Resources */,
+				25378D1C1921127000B47E06 /* forms.json in Resources */,
 				571DEFE2188880D500FE2A0F /* Credits.rtf in Resources */,
 				571DF00C18888C0000FE2A0F /* survana-logo-bw-inverted.png in Resources */,
 				251A7ED018FA231B0052A49A /* install.sh in Resources */,
