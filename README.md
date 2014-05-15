@@ -12,7 +12,7 @@ Prerequisites:
 
   * git, hg, bzr (for downloading Go libraries with `go get`)
   * make
-  * go 1.2+
+  * go 1.2.1+
 
 All binaries and apps will be placed in `bin`.
 
