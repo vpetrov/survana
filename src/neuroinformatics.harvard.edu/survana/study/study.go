@@ -3,6 +3,7 @@ package study
 import (
 	"github.com/vpetrov/perfect"
     "github.com/vpetrov/perfect/auth"
+    "log"
 )
 
 const (
@@ -39,7 +40,10 @@ func NewModule(path string, db perfect.Database, config *Config, key *perfect.Pr
     //by default, use the subject_id auth strategy
     m.Auth = NewSubjectIdStrategy(nil)
 
-	m.ParseTemplates()
+	err := m.ParseTemplates()
+    if err != nil {
+        log.Fatalln(err)
+    }
 
 	m.RegisterHandlers()
 

@@ -1,6 +1,7 @@
 package dashboard
 
 import (
+    "log"
 	"github.com/vpetrov/perfect"
     "github.com/vpetrov/perfect/auth"
 )
@@ -39,7 +40,11 @@ func NewModule(path string, db perfect.Database, config *Config, key *perfect.Pr
         m.Auth.Attach(m.Module)
     }
 
-	m.ParseTemplates()
+    //Parse all templates
+    err := m.ParseTemplates()
+    if err != nil {
+        log.Fatalln(err)
+    }
 
 	m.RegisterHandlers()
 

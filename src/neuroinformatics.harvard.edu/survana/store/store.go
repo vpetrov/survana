@@ -34,7 +34,11 @@ func NewModule(path string, db perfect.Database, config *Config, key *perfect.Pr
         Config: config,
 	}
 
-//	m.ParseTemplates()
+//	err := m.ParseTemplates()
+//  if err != nil {
+//      log.Fatalln(err)
+//  }
+
 	m.RegisterHandlers()
 
 	return m
