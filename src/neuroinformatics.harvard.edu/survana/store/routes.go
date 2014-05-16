@@ -15,14 +15,13 @@ func (s *Store) RegisterHandlers() {
     log.Println("REGISTERING STORE HANDLERS")
 
 	app.Post("/response", s.NewResponse)
+    app.Get("/download", s.Download)
 }
 
 func (s *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
-    log.Println("[store] handling", r.URL)
     var (
             err         error
             study_id    string
-            //subject_id  string
             result      map[string]bool
             response    *survana.Response
         )
@@ -32,7 +31,6 @@ func (s *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
     study_id = query.Get("s")
 
     log.Println("new store response request", study_id)
-    //subject_id = query.Get("id")
 
     if len(study_id) == 0 {
         perfect.BadRequest(w)
@@ -76,6 +74,9 @@ func (s *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
 
         log.Println("Saving " + r_id, response)
 
+        //update study_id
+        response.StudyId = study_id
+
         //save response
         //todo: parallelize this loop
         err = response.Save(r.Module.Db)
@@ -91,3 +92,41 @@ func (s *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
     perfect.JSONResult(w, true, result)
 }
 
+
+func (s *Store) Download(w http.ResponseWriter, r *perfect.Request) {
+    var (
+            err         error
+            study_id    string
+        )
+
+    query := r.URL.Query()
+    study_id = query.Get("s")
+
+    log.Println("new store download request", study_id)
+
+    if len(study_id) == 0 {
+        perfect.BadRequest(w)
+        return
+    }
+
+    //otherwise, fetch the study
+    study, err := survana.FindStudy(study_id, s.Db)
+    if err != nil {
+        perfect.Error(w, err)
+        return
+    }
+
+    if study == nil {
+        perfect.NotFound(w)
+        return
+    }
+
+    //fetch all responses for this study
+    responses, err := survana.FindResponsesByStudy(study_id, r.Module.Db)
+    if err != nil {
+        perfect.Error(w, err)
+        return
+    }
+
+    perfect.JSONResult(w, true, responses)
+}
