@@ -67,6 +67,7 @@
         <ol>
             <li><a href="#1-getting-started">Getting Started</a></li>
             <li><a href="#2-dashboard">Dashboard</a></li>
+            <li><a href="#2a-tools">Command Line Tools</a></li>
             <li><a href="#3-api">Developer API</a></li>
         </ol>
 
@@ -125,8 +126,7 @@
 
         <p>After a configuration change, restart the web service for the new changes to take effect.</p>
 
-        <h2>
-            <a name="2-dashboard" href="#2-dashboard"></a> 2. <a>Dashboard</a></h2>
+        <h2><a name="2-dashboard" href="#2-dashboard"></a> 2. <a>Dashboard</a></h2>
 
         <p>To access Survana's dashboard:</p>
         <ul>
@@ -186,9 +186,22 @@
 
         <br>
         <hr>
+
+        <h2><a name="2a-tools" href="#2a-tools"></a> 3. <a>Command Line Tools</a></h2>
+        <p>
+            To download responses collected by the study, use the command line tool <code>survana</code>, bundled with the downloaded package.
+            <ul>
+                <li><strong>Mac OS X:</strong> use <code>Terminal</code></li>
+                <li><strong>Windows:</strong> use <code>cmd.exe</code> (Command Prompt)</li>
+                <li><strong>Linux:</strong> use <code>bash</code></li>
+            </ul>
+        </p>
+        <pre>$ ./survana -store https://example.com/store/ -study XYZ</pre>
+
+        This will download all responses for the study with id <code>XYZ</code> from the specified Survana Store URL.
         <br>
         <h2>
-            <a name="3-api" href="#3-api"></a> 3. <a>API</a>
+            <a name="3-api" href="#3-api"></a> 4. <a>API</a>
         </h2>
 
         <p>To develop questionnaires in Survana you must have knowledge of the JSON data format. <br>When you've gained enough knowledge of Survana, visit the API page for an in-depth coverage of the questionnaire format: <br><br> <a href="api.html" class="btn btn-primary">Read the API Documentation</a></p>
