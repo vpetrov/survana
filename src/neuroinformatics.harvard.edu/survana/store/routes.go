@@ -3,6 +3,7 @@ package store
 import (
 	"log"
 	"net/http"
+    "encoding/json"
 	"neuroinformatics.harvard.edu/survana"
     "github.com/vpetrov/perfect"
 )
@@ -22,7 +23,8 @@ func (s *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
             err         error
             study_id    string
             //subject_id  string
-            result      []string
+            result      map[string]bool
+            response    *survana.Response
         )
 
     query := r.URL.Query()
@@ -49,17 +51,41 @@ func (s *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
         return
     }
 
-    response_queue := make(map[string]*survana.Response, 0)
+    response_queue := make(map[string]json.RawMessage, 0)
 
-    err = r.ParseJSON(response_queue)
+    err = r.ParseJSON(&response_queue)
     if err != nil {
-        perfect.Error(w, err)
+        //TODO: need a perfect.ServerError
+        log.Println(err)
+        perfect.BadRequest(w)
         return
     }
 
-    result = make([]string, 0)
+    result = map[string]bool{}
+
     for r_id, v := range response_queue {
-        log.Println("Saving " + r_id, v)
+        //unmarshal each response into a Response object
+        response = survana.NewResponse()
+
+        err = json.Unmarshal(v, response)
+        if err != nil {
+            log.Println(err)
+            result[r_id] = false
+            continue
+        }
+
+        log.Println("Saving " + r_id, response)
+
+        //save response
+        //todo: parallelize this loop
+        err = response.Save(r.Module.Db)
+        if err != nil {
+            result[r_id] = false
+            log.Println(err)
+            continue
+        }
+
+        result[r_id] = true
     }
 
     perfect.JSONResult(w, true, result)
