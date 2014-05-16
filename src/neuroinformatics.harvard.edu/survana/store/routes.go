@@ -13,7 +13,7 @@ func (s *Store) RegisterHandlers() {
 
     log.Println("REGISTERING STORE HANDLERS")
 
-	app.Get("/response", s.NewResponse)
+	app.Post("/response", s.NewResponse)
 }
 
 func (s *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
@@ -26,7 +26,6 @@ func (s *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
         )
 
     query := r.URL.Query()
-
 
     study_id = query.Get("s")
 
