@@ -4,6 +4,7 @@ SSL_DIR:=${BIN_DIR}/ssl
 BUILD_DIR:=build
 
 TARGET:=${BIN_DIR}/server
+SURVANA:=${BIN_DIR}/survana
 SERVER_CONF:=${BIN_DIR}/survana.json
 
 MAKEFILE_PATH:= $(abspath $(lastword $(MAKEFILE_LIST)))
@@ -32,7 +33,10 @@ OSX_PROJECT:=${OSX_PROJECT_ROOT}/${OSX_PROJECT_NAME}.xcodeproj
 
 XCODE:=xcodebuild
 
-all: ${TARGET}
+all: ${TARGET} ${SURVANA}
+
+${SURVANA}: src/survana/download.go
+	GOPATH=${CURRENT_DIR} go install ${GO_FLAGS} survana
 
 ${TARGET}:
 	GOPATH=${CURRENT_DIR} go get code.google.com/p/goauth2/oauth
