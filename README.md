@@ -3,9 +3,16 @@ survana [![Build Status](https://travis-ci.org/vpetrov/survana.png?branch=1.0)](
 
 An HTML5 application for administering questionnaires on tablets and mobile devices. Developed by the Neuroinformatics Research Group at Harvard University.
 
-Building
+Download
 ========
 
+To download pre-built binaries, go to https://github.com/vpetrov/survana/releases
+
+Building From Source
+====================
+
+`git submodule init`
+`git submodule update`
 `make` or `make osx`
 
 Prerequisites:
