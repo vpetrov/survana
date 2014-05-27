@@ -46,7 +46,7 @@ ${TARGET}:
 	GOPATH=${CURRENT_DIR} go install ${GO_FLAGS} server
 
 test:
-	go test ${COVER} neuroinformatics.harvard.edu/survana
+	GOPATH=${CURRENT_DIR} go test ${COVER} neuroinformatics.harvard.edu/survana
 
 clean:
 	@rm -f ${TARGET}
