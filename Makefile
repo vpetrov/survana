@@ -86,3 +86,6 @@ cover: ${TARGET}
 
 bench: ${TARGET}
 	GOPATH=${CURRENT_DIR} go test -bench . neuroinformatics.harvard.edu/survana
+
+format: ${TARGET}
+	GOPATH=${CURRENT_DIR} go fmt neuroinformatics.harvard.edu/survana
