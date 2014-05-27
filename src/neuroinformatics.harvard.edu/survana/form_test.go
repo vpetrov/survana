@@ -1,13 +1,13 @@
 package survana
 
 import (
+	"github.com/vpetrov/perfect"
 	"testing"
 	"time"
-    "github.com/vpetrov/perfect"
 )
 
 var mock_form *Form = &Form{
-    DBO: perfect.DBO { DBID:2, Collection: FORM_COLLECTION },
+	DBO:       perfect.DBO{DBID: 2, Collection: FORM_COLLECTION},
 	Id:        "FORM_ABCD",
 	Name:      "MockForm",
 	Title:     "Mock Form ABCD",
@@ -54,7 +54,7 @@ func TestListForms(t *testing.T) {
 		(*list)[0].Fields = nil
 	}
 
-    filter := []string{"id:"}
+	filter := []string{"id:"}
 
 	forms, err := ListForms(filter, db)
 

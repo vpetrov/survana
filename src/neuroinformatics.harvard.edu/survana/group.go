@@ -1,8 +1,8 @@
 package survana
 
 import (
+	"github.com/vpetrov/perfect"
 	_ "log"
-    "github.com/vpetrov/perfect"
 )
 
 const (
@@ -10,23 +10,23 @@ const (
 )
 
 type Group struct {
-    perfect.DBO         `bson:",inline,omitempty" json:"-"`
-	Id   string `bson:"id,omitempty" json:"id,omitempty"`
-	Name string `bson:"name,omitempty" json:"name,omitempty"`
+	perfect.DBO `bson:",inline,omitempty" json:"-"`
+	Id          string `bson:"id,omitempty" json:"id,omitempty"`
+	Name        string `bson:"name,omitempty" json:"name,omitempty"`
 }
 
 //creates a new group
 func NewGroup(name string) *Group {
 	return &Group{
-        DBO: perfect.DBO { Collection: GROUP_COLLECTION },
+		DBO:  perfect.DBO{Collection: GROUP_COLLECTION},
 		Name: name,
 	}
 }
 
 func EmptyGroup() *Group {
-    return &Group{
-        DBO: perfect.DBO { Collection: GROUP_COLLECTION },
-    }
+	return &Group{
+		DBO: perfect.DBO{Collection: GROUP_COLLECTION},
+	}
 }
 
 func FindGroup(id string, db perfect.Database) (group *Group, err error) {

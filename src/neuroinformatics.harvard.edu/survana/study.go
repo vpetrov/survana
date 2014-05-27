@@ -1,9 +1,9 @@
 package survana
 
 import (
+	"github.com/vpetrov/perfect"
 	_ "log"
 	"time"
-    "github.com/vpetrov/perfect"
 )
 
 const (
@@ -11,19 +11,19 @@ const (
 )
 
 type Study struct {
-    perfect.DBO           `bson:",inline,omitempty" json:"-"`
-	Id          string    `bson:"id,omitempty" json:"id"`
-	Name        string    `bson:"name,omitempty" json:"name"`
-	Title       string    `bson:"title,omitempty" json:"title"`
-	Description string    `bson:"description,omitempty" json:"description"`
-	Version     string    `bson:"version,omitempty" json:"version"`
-	CreatedOn   *time.Time `bson:"created_on,omitempty" json:"created_on"`
-	Forms       []Form    `bson:"forms,omitempty" json:"forms"`
-    Html        [][]byte  `bson:"html" json:"-"`
-	Published   bool      `bson:"published" json:"published"`
-    Subjects    map[string]bool `bson:"subjects,omitempty" json:"subjects"`
-    AuthEnabled bool      `bson:"auth_enabled" json:"auth_enabled"`
-    StoreUrl    string    `bson:"store_url,omitempty" json:"store_url"`
+	perfect.DBO `bson:",inline,omitempty" json:"-"`
+	Id          string          `bson:"id,omitempty" json:"id"`
+	Name        string          `bson:"name,omitempty" json:"name"`
+	Title       string          `bson:"title,omitempty" json:"title"`
+	Description string          `bson:"description,omitempty" json:"description"`
+	Version     string          `bson:"version,omitempty" json:"version"`
+	CreatedOn   *time.Time      `bson:"created_on,omitempty" json:"created_on"`
+	Forms       []Form          `bson:"forms,omitempty" json:"forms"`
+	Html        [][]byte        `bson:"html" json:"-"`
+	Published   bool            `bson:"published" json:"published"`
+	Subjects    map[string]bool `bson:"subjects,omitempty" json:"subjects"`
+	AuthEnabled bool            `bson:"auth_enabled" json:"auth_enabled"`
+	StoreUrl    string          `bson:"store_url,omitempty" json:"store_url"`
 
 	//ACL
 	OwnerId string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
@@ -31,15 +31,15 @@ type Study struct {
 
 func NewStudy() *Study {
 	return &Study{
-        DBO: perfect.DBO { Collection: STUDY_COLLECTION },
-        Html: make([][]byte, 0),
-    }
+		DBO:  perfect.DBO{Collection: STUDY_COLLECTION},
+		Html: make([][]byte, 0),
+	}
 }
 
 func (s *Study) RemoveInternalAttributes() {
-    s.Id = ""
-    s.CreatedOn = nil
-    s.OwnerId = ""
+	s.Id = ""
+	s.CreatedOn = nil
+	s.OwnerId = ""
 }
 
 func FindStudy(id string, db perfect.Database) (study *Study, err error) {
@@ -104,9 +104,9 @@ func (f *Study) GenerateId(db perfect.Database) (err error) {
 }
 
 func (s *Study) AddSubject(id string, enabled bool) {
-    if s.Subjects == nil {
-        s.Subjects = make(map[string]bool, 1)
-    }
+	if s.Subjects == nil {
+		s.Subjects = make(map[string]bool, 1)
+	}
 
-    s.Subjects[id] = enabled
+	s.Subjects[id] = enabled
 }
