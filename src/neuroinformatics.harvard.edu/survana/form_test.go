@@ -56,7 +56,7 @@ func TestListForms(t *testing.T) {
 
     filter := []string{"id:"}
 
-	forms, err := ListForms(filter,db)
+	forms, err := ListForms(filter, db)
 
 	if db.Calls["FilteredList"] != 1 {
 		t.Errorf("db.FilteredList() was called %v time(s), expected %v call(s)", db.Calls["FilteredList"], 1)
