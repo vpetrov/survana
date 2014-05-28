@@ -297,3 +297,8 @@
     display:inline-block;
     background: url('../images/virtualbox.png') no-repeat 0px 0px;
 }
+
+.license-body {
+    max-height: 250px;
+    overflow: scroll;
+}
