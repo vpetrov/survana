@@ -133,7 +133,7 @@
             return;
         }
         
-        NSLog(@"Wrote JSON to %@: %@", file, data);
+        NSLog(@"Wrote JSON configuration to %@" , file);
     } else {
         NSLog(@"No configuration data to save");
     }

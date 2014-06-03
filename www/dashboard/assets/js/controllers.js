@@ -1257,7 +1257,7 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                     return;
                 }
 
-                result = Survana.Questionnaire(ngModel.$viewValue);
+                result = Survana.Theme.Questionnaire(ngModel.$viewValue);
 
                 if (result) {
                     if (node.hasChildNodes()) {

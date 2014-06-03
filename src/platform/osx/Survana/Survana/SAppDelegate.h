@@ -15,6 +15,10 @@
     IBOutlet NSMenuItem *startMenu;
     IBOutlet NSMenuItem *stopMenu;
     
+    NSString        *environmentPath;
+    NSString        *serverConfig;
+    NSString        *dbDataPath;
+    
     NSString        *servicesPath;
     NSStatusItem    *statusItem;
     NSImage         *statusImage;

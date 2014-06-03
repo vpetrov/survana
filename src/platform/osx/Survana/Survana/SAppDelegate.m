@@ -30,13 +30,13 @@
     [statusItem setToolTip:@"Survana"];
     [statusItem setHighlightMode:YES];
     
+    //create all files and directories
+    if (![self initEnvironment]) {
+        [self quit:nil];
+    }
+
     //initialize the settings window
     settingsWindow = [[SSettings alloc] initWithWindowNibName:@"SSettings"];
-    
-    //get the path to the server configuration file
-    NSString *serverConfig = [bundle pathForResource:@"survana" ofType:@"json"];
-    
-    NSLog(@"server config path: %@", serverConfig);
     
     //set the path to the configuration file for the settings window
     [settingsWindow setFilePath:serverConfig];
@@ -63,10 +63,116 @@
     [settingsWindow showWindow:nil];
 }
 
+//creates all required folders and files
+- (BOOL)initEnvironment {
+    NSBundle *bundle = [NSBundle mainBundle];
+    
+    //create the environment path
+    environmentPath = [NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @".survana"];
+    if (![self createFolder:environmentPath withPermissions:0711]) {
+        return NO;
+    }
+    
+    //get the path to the bundled configuration file
+    NSString *bundledServerConfig = [bundle pathForResource:@"survana" ofType:@"json"];
+
+    //the actual configuration should be in the env folder
+    serverConfig = [NSString stringWithFormat:@"%@/%@", environmentPath, @"config.json"];
+    
+    if (![self createFile:serverConfig from:bundledServerConfig withPermissions:0600]) {
+        return NO;
+    }
+    
+    NSLog(@"server config path: %@", serverConfig);
+    
+    //create the database folder
+    dbDataPath = [NSString stringWithFormat:@"%@/%@", environmentPath, @"mongodb"];
+    
+    if (![self createFolder:dbDataPath withPermissions:0711]) {
+        return NO;
+    }
+
+    return YES;
+}
+
+- (BOOL)createFolder:(NSString*)folderPath {
+    NSFileManager *fs = [NSFileManager defaultManager];
+    BOOL isDir;
+    if (! [fs fileExistsAtPath:folderPath isDirectory:&isDir]) {
+        NSError *error;
+        if (! [fs createDirectoryAtPath:folderPath withIntermediateDirectories:YES attributes:nil error:&error]) {
+            NSString *message = [NSString stringWithFormat:@"Failed to create directory: %@", error];
+            NSLog(@"%@", message);
+            [self error:message andTitle:@"Error"];
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
+- (BOOL)createFolder:(NSString*)folderPath withPermissions:(int)octal {
+    if (![self createFolder:folderPath]) {
+        return NO;
+    }
+    
+    if (![self setPermissions:folderPath to:octal]) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (BOOL) createFile:(NSString*)destPath from:(NSString*)srcPath {
+    NSError *error;
+    NSFileManager *fs = [NSFileManager defaultManager];
+    //attempt to copy the file if it doesn't exist
+    if (! [fs fileExistsAtPath:destPath]) {
+        NSLog(@"Copying %@ to %@", srcPath, destPath);
+        if (![[NSFileManager defaultManager] copyItemAtPath:srcPath toPath:destPath error:&error]) {
+            NSString *message = [NSString stringWithFormat:@"Failed to copy file %@ from %@: %@", destPath, srcPath, error];
+            NSLog(@"%@", message);
+            [self error:message andTitle:@"Error"];
+            return NO;
+        }
+    }
+
+    return YES;
+}
+
+- (BOOL) createFile:(NSString*)destPath from:(NSString*)srcPath withPermissions:(int)octal {
+    
+    if (![self createFile:destPath from:srcPath]) {
+        return NO;
+    }
+    
+    if (![self setPermissions:destPath to:octal]) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (BOOL) setPermissions:(NSString*)destPath to:(int)octal {
+    NSFileManager *fs = [NSFileManager defaultManager];
+    NSMutableDictionary *perms = [[NSMutableDictionary alloc] init];
+    [perms setObject:[NSNumber numberWithInt:octal] forKey:NSFilePosixPermissions];
+    
+    NSError *error;
+    
+    if (![fs setAttributes:perms ofItemAtPath:destPath error:&error]) {
+        NSString *message = [NSString stringWithFormat:@"Failed to set permissions of %@ to %d: %@", destPath, octal, error];
+        NSLog(@"%@", message);
+        [self error:message andTitle:@"Error"];
+        return NO;
+    };
+
+    return YES;
+}
+
 - (void)startServer {
     NSString *serverDir = [NSString stringWithFormat:@"%@/%@", servicesPath, @"server"];
     NSString *serverBin = [NSString stringWithFormat:@"%@/%@", serverDir, @"server"];
-    NSString *serverConfig = [[NSBundle mainBundle] pathForResource:@"survana" ofType:@"json"];
     
     NSTask *server = [[NSTask alloc] init];
     NSLog(@"ServerDir %@", serverDir);
@@ -83,34 +189,20 @@
     
     NSString *serverDir = [NSString stringWithFormat:@"%@/%@", servicesPath, @"mongodb"];
     NSString *serverBin = [NSString stringWithFormat:@"%@/%@", serverDir, @"bin/mongod"];
-    NSString *serverData = [NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @".survana/mongodb"];
-    
-    //create serverData if it doesn't exist
-    NSFileManager *fs = [NSFileManager defaultManager];
-    BOOL isDir;
-    if (! [fs fileExistsAtPath:serverData isDirectory:&isDir]) {
-        NSError *error;
-        if (! [fs createDirectoryAtPath:serverData withIntermediateDirectories:YES attributes:nil error:&error]) {
-            NSString *message = [NSString stringWithFormat:@"Failed to create data directory: %@", error];
-            NSLog(@"%@", message);
-            [self error:message andTitle:@"Error"];
-            return;
-        }
-    }
 
-    NSArray *args = [[NSArray alloc] initWithObjects:@"--dbpath", serverData, nil];
+    NSArray *args = [[NSArray alloc] initWithObjects:@"--dbpath", dbDataPath, nil];
     NSTask *server = [[NSTask alloc] init];
     NSLog(@"ServerDir %@", serverDir);
     NSLog(@"ServerBin %@", serverBin);
-    NSLog(@"ServerBin %@", serverData);
+    NSLog(@"ServerData %@", dbDataPath);
     [server setCurrentDirectoryPath:serverDir];
     [server setLaunchPath:serverBin];
     [server setArguments:args];
     
-    
     NSLog(@"Launching %@", serverBin);
     [server launch];
-    //wait for 3 seconds, then insert forms.json into the database
+    
+    //wait for 5 seconds, then insert forms.json into the database
     [self performSelector:@selector(importForms) withObject:nil afterDelay:5];
 }
 
