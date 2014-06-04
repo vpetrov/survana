@@ -43,7 +43,7 @@ func TestListForms(t *testing.T) {
 		list, ok := result.(*[]Form)
 
 		if !ok {
-			t.Errorf("result variable is %#v, expected pointer")
+			t.Errorf("result variable is %#v, expected pointer", result)
 		}
 
 		if len(*list) > 0 {
