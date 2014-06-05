@@ -51,14 +51,26 @@
 
     <div class="lightgray">
         <div class="container">
-            <h3>Motivation</h3>
+            <h2>Motivation</h2>
             <p>Conducting large online studies that target a wide variety of devices and capture sensitive information in a secure manner poses significant challenges. While the recent deluge of portable, Internet-connected devices (e.g., smartphones and tablets) has opened new opportunities for reaching study participants, these devices also introduce serious risks and other impedances such as potential data loss, sporadic Internet connectivity, and theft. To facilitate the requirements of the user community, we sought to address the mobile, open-source and secure hosting use case.</p>
 
-            <h3>Overview</h3>
+            <h2>Overview</h2>
             <p>Survana has been designed from the ground up to be a secure, scalable, cross-platform solution, with a distributed and modular architecture. Users are able to create, share, and manage surveys via a modern HTML5 dashboard. Surveys are published to one or more Survana web-servers, which make use of the jQuery Mobile framework to ensure a consistent user experience across all devices. Survana mitigates the risk of survey delivery on untrusted clients by using public key cryptography and assigning each client a random key from a per-survey pool of 1024-bit RSA key pairs that are used to encrypt data locally on the client.</p>
 
-            <h3>Security</h3>
+            <h2>Security</h2>
             <p>With each page of the questionnaire, the client generates a random 32 character password used to encrypt responses with 256-bit AES symmetric encryption. The password itself is then encrypted using the previously assigned RSA key. The encrypted payload is stored on the device in HTML5 local storage and the participant is allowed to continue with subsequent questionnaires while responses are sent to a Survana database over an SSL-encrypted channel. If the server is unavailable, the responses will remain encrypted on the client until connectivity is restored. Each questionnaire can be configured to send responses to a different database server - a feature which may be useful under IRB restrictions whereby confidential information must be kept in separate locations. Only entities holding the survey’s private RSA keys can retrieve and decrypt data in order to gain access to a participant’s responses.</p>
+
+
+            <h2>License</h2>
+            Survana is licensed under the New BSD License. For more information, visit the <a href="license.html">License</a> page.
+
+            <h2>Acknowledgements</h2>
+
+            <p>
+                Survana is developed by the Neuroinformatics Research Group at Harvard University. We request that
+                you acknowledge the support of Survana in publications that utilize the software such as by "This
+                product includes Survana, developed by the Neuroinformatics Research Group at Harvard University."
+            </p>
         </div>
     </div>
 
