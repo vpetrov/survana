@@ -419,7 +419,7 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
-            Survana.SetTheme(newTheme,
+            Survana.Theme.SetTheme(newTheme,
                 function () {
                     fetchTemplate(newTheme, Survana.Version);
                     fetchStudy();
@@ -696,12 +696,12 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
-            Survana.SetTheme(newTheme,
+            Survana.Theme.SetTheme(newTheme,
                 function () {
                     fetchTemplate(newTheme, Survana.Version);
                 },
                 function () {
-                    console.error('Failed to load Survana Themes!');
+                    console.error('Failed to load Survana Theme!');
                 });
         });
 
@@ -1094,7 +1094,7 @@ dashboard.controller('FormViewCtrl', ['$scope', '$location', '$routeParams', '$h
 
         //when 'theme' changes, notify Survana
         $scope.$watch('theme', function (newTheme, oldTheme) {
-            Survana.SetTheme(newTheme,
+            Survana.Theme.SetTheme(newTheme,
                 function () {
                     fetchTemplate(newTheme, Survana.Version);
                     fetchForm();

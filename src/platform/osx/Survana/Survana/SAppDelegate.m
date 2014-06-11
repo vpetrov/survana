@@ -56,7 +56,7 @@
 
     //wait for 0.5 seconds, then update the menu
     [self performSelector:@selector(updateServiceStatus) withObject:nil afterDelay:0.5];
-}
+} 
 
 - (IBAction)settings:(id)sender {
     [NSApp activateIgnoringOtherApps:YES];
