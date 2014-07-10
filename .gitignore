@@ -12,6 +12,7 @@ lib-cov
 .session
 bin
 build
+dist
 pkg
 .DS_Store
 src/github.com
@@ -23,3 +24,4 @@ xcuserdata/
 *.test
 *.prof
 *.coverage
+src/platform/osx/Survana/Survana/services/
