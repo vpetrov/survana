@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"flag"
 	"github.com/vpetrov/perfect"
+	"github.com/vpetrov/perfect/orm"
 	"log"
 	"net"
 	"net/http"
@@ -25,7 +26,7 @@ const (
 
 var (
 	configFile string
-	DB         perfect.Database
+	DB         orm.Database
 )
 
 func main() {
@@ -163,7 +164,7 @@ func EnableModules(private_key *perfect.PrivateKey, config *Config) (err error) 
 	return nil
 }
 
-func GetDB(u string, dbname string) perfect.Database {
+func GetDB(u string, dbname string) orm.Database {
 	dburl, err := url.Parse(u)
 	if err != nil {
 		panic(err)
@@ -173,7 +174,7 @@ func GetDB(u string, dbname string) perfect.Database {
 		panic("Invalid database name")
 	}
 
-	DB = perfect.NewDatabase(dburl, dbname)
+	DB, err = orm.NewDatabase(dburl, dbname)
 	if err != nil {
 		panic(err)
 	}
