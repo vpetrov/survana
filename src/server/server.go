@@ -3,14 +3,15 @@ package main
 import (
 	"crypto/tls"
 	"flag"
+	"github.com/vpetrov/perfect"
 	"log"
 	"net"
 	"net/http"
+	_ "net/http/pprof"
 	"net/url"
-    "neuroinformatics.harvard.edu/survana/store"
 	"neuroinformatics.harvard.edu/survana/dashboard"
+	"neuroinformatics.harvard.edu/survana/store"
 	"neuroinformatics.harvard.edu/survana/study"
-    "github.com/vpetrov/perfect"
 	"os"
 	"os/user"
 )
@@ -55,12 +56,12 @@ func main() {
 		panic(err)
 	}
 
-    private_key, err := GetPrivateKey(config.Key)
-    if err != nil {
-        panic(err)
-    }
+	private_key, err := GetPrivateKey(config.Key)
+	if err != nil {
+		panic(err)
+	}
 
-    log.Println("Survana ID:", private_key.Id)
+	log.Println("Survana ID:", private_key.Id)
 
 	//Mount all modules
 	err = EnableModules(private_key, config)
@@ -101,7 +102,6 @@ func ReadConfiguration(path string) (config *Config, err error) {
 	return
 }
 
-
 // Starts a net.Listener on the specified address, using the specified SSL certificate and key
 func Listen(config *Config) (tlsListener net.Listener, err error) {
 	log.Printf("Reading SSL certificate (%s) and SSL key (%s)", config.SSLCert, config.SSLKey)
@@ -126,41 +126,39 @@ func Listen(config *Config) (tlsListener net.Listener, err error) {
 	return
 }
 
-
 //Create and mount all known modules
 func EnableModules(private_key *perfect.PrivateKey, config *Config) (err error) {
 
-    log.Println("%#v", config);
+	log.Println("%#v", config)
 
 	//dashboard
-    if len(config.Modules.Dashboard.StoreUrl) == 0 {
-        config.Modules.Dashboard.StoreUrl = "/store/response"
-    }
+	if len(config.Modules.Dashboard.StoreUrl) == 0 {
+		config.Modules.Dashboard.StoreUrl = "/store/response"
+	}
 
-    log.Println("StoreURL", config.Modules.Dashboard.StoreUrl)
+	log.Println("StoreURL", config.Modules.Dashboard.StoreUrl)
 
 	dashboard_module := dashboard.NewModule(config.WWW+"/dashboard",
-                                            GetDB(config.DbUrl, "dashboard_test"),
-                                            config.Modules.Dashboard,
-                                            private_key)
+		GetDB(config.DbUrl, "dashboard_test"),
+		config.Modules.Dashboard,
+		private_key)
 	perfect.Modules.Mount(dashboard_module.Module, "/dashboard")
 
+	//study
+	//TODO: figure out how the dashboard should share published studies with the study module
+	//for now, let them use the same database
+	study_module := study.NewModule(config.WWW+"/study",
+		GetDB(config.DbUrl, "dashboard_test"),
+		config.Modules.Study,
+		private_key)
+	perfect.Modules.Mount(study_module.Module, "/study")
 
-    //study
-    //TODO: figure out how the dashboard should share published studies with the study module
-    //for now, let them use the same database
-    study_module := study.NewModule(config.WWW + "/study",
-                                    GetDB(config.DbUrl, "dashboard_test"),
-                                    config.Modules.Study,
-                                    private_key)
-    perfect.Modules.Mount(study_module.Module, "/study")
-
-    //store
-    store_module := store.NewModule(config.WWW + "/store",
-                                    GetDB(config.DbUrl, "dashboard_test"),
-                                    config.Modules.Store,
-                                    private_key)
-    perfect.Modules.Mount(store_module.Module, "/store")
+	//store
+	store_module := store.NewModule(config.WWW+"/store",
+		GetDB(config.DbUrl, "dashboard_test"),
+		config.Modules.Store,
+		private_key)
+	perfect.Modules.Mount(store_module.Module, "/store")
 
 	return nil
 }
@@ -190,4 +188,3 @@ func GetDB(u string, dbname string) perfect.Database {
 
 	return DB
 }
-

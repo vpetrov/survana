@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"strconv"
 	"neuroinformatics.harvard.edu/survana/dashboard"
+	"neuroinformatics.harvard.edu/survana/store"
 	"neuroinformatics.harvard.edu/survana/study"
-    "neuroinformatics.harvard.edu/survana/store"
+	"strconv"
 )
 
 const (
 	DEFAULT_IP       = ""
 	DEFAULT_PORT     = 4443
-    DEFAULT_KEY      = "survana.key"
+	DEFAULT_KEY      = "survana.key"
 	DEFAULT_SSL_CERT = "ssl/cert.pem"
 	DEFAULT_SSL_KEY  = "ssl/key.pem"
 	DEFAULT_WWW      = "/www/survana"
@@ -21,22 +21,22 @@ const (
 )
 
 type Config struct {
-	IP         string	`json:"ip"`		//web
-	Port       string	`json:"-"`		//web
-	PortNumber int		`json:"port"`
-	Username   string	`json:"username"`	//general
-	WWW        string	`json:"www"`		//web
-    Key        string   `json:"key"`        //survana private key
-	SSLCert    string	`json:"sslcert"`	//web
-	SSLKey     string	`json:"sslkey"`		//web
-	DbUrl      string	`json:"db"`			//database
-    Modules    *ModuleConfig `json:"modules"`//modules
+	IP         string        `json:"ip"` //web
+	Port       string        `json:"-"`  //web
+	PortNumber int           `json:"port"`
+	Username   string        `json:"username"` //general
+	WWW        string        `json:"www"`      //web
+	Key        string        `json:"key"`      //survana private key
+	SSLCert    string        `json:"sslcert"`  //web
+	SSLKey     string        `json:"sslkey"`   //web
+	DbUrl      string        `json:"db"`       //database
+	Modules    *ModuleConfig `json:"modules"`  //modules
 }
 
 type ModuleConfig struct {
-    Dashboard   *dashboard.Config   `json:"dashboard,omitempty"`
-    Study       *study.Config       `json:"study,omitempty"`
-    Store       *store.Config       `json:"store,omitempty"`
+	Dashboard *dashboard.Config `json:"dashboard,omitempty"`
+	Study     *study.Config     `json:"study,omitempty"`
+	Store     *store.Config     `json:"store,omitempty"`
 }
 
 // Creates a new configuration object and sets empty values to default
@@ -75,9 +75,9 @@ func NewConfig(src io.Reader) (config *Config, err error) {
 		config.WWW = DEFAULT_WWW
 	}
 
-    if len(config.Key) == 0 {
-        config.Key = DEFAULT_KEY
-    }
+	if len(config.Key) == 0 {
+		config.Key = DEFAULT_KEY
+	}
 
 	if len(config.SSLCert) == 0 {
 		config.SSLCert = DEFAULT_SSL_CERT
