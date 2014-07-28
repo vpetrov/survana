@@ -31,5 +31,5 @@ func (d *Dashboard) Theme(w http.ResponseWriter, r *perfect.Request) {
 		template_name += "-study"
 	}
 
-	d.Module.RenderTemplate(w, "theme/"+theme_id+"/"+theme_version+"/"+template_name, nil)
+	d.Module.RenderTemplate(w, r, "theme/"+theme_id+"/"+theme_version+"/"+template_name, nil)
 }

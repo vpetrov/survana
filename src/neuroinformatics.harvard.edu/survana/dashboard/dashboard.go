@@ -3,6 +3,7 @@ package dashboard
 import (
 	"github.com/vpetrov/perfect"
 	"github.com/vpetrov/perfect/auth"
+	"github.com/vpetrov/perfect/orm"
 	"log"
 )
 
@@ -18,18 +19,15 @@ type Dashboard struct {
 }
 
 // creates a new Admin module
-func NewModule(path string, db perfect.Database, config *Config, key *perfect.PrivateKey) *Dashboard {
-
-	mux := perfect.NewRESTMux()
+func NewModule(path string, db orm.Database, config *Config, key *perfect.PrivateKey) *Dashboard {
 
 	m := &Dashboard{
 		Module: &perfect.Module{
-			Name:   NAME,
-			Path:   path,
-			Db:     db,
-			Router: mux,
-			Mux:    mux,
-			Log:    db.NewLogger("logs", NAME),
+			Mux:  perfect.NewMux(),
+			Name: NAME,
+			Path: path,
+			Db:   db,
+			Log:  log.New(db.NewLogger("logs", ""), NAME, log.LstdFlags),
 		},
 		Config: config,
 	}

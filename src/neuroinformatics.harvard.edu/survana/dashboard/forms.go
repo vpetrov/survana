@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"github.com/vpetrov/perfect"
+	"github.com/vpetrov/perfect/orm"
 	"log"
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
@@ -9,83 +10,94 @@ import (
 )
 
 func (d *Dashboard) FormListPage(w http.ResponseWriter, r *perfect.Request) {
-	d.RenderTemplate(w, "form/list", nil)
+	d.RenderTemplate(w, r, "form/list", nil)
 }
 
 func (d *Dashboard) FormList(w http.ResponseWriter, r *perfect.Request) {
+	var db = r.Module.Db
 
-	filter := []string{"id", "name", "title", "version", "created_on", "owner_id"}
+	//filter := []string{"id", "name", "title", "version", "created_on", "owner_id"}
 
 	query := r.URL.Query()
 	_ = query.Get("ids")
 
 	//decide whether the 'fields' property should be returned
-	fields := query.Get("fields")
+	/*fields := query.Get("fields")
 	if fields == "true" {
 		filter = append(filter, "fields")
-	}
+	}*/
 
-	forms, err := survana.ListForms(filter, d.Db)
+	forms := &[]survana.Form{}
+	search := &survana.Form{}
+	err := db.Query(search).All(forms)
 
-	if err != nil {
-		perfect.Error(w, err)
+	if err != nil && err != orm.ErrNotFound {
+		perfect.Error(w, r, err)
 		return
 	}
 
-	perfect.JSONResult(w, true, forms)
+	perfect.JSONResult(w, r, true, forms)
 }
 
 func (d *Dashboard) CreateFormPage(w http.ResponseWriter, r *perfect.Request) {
-	d.RenderTemplate(w, "form/create", nil)
+	d.RenderTemplate(w, r, "form/create", nil)
 }
 
 func (d *Dashboard) CreateForm(w http.ResponseWriter, r *perfect.Request) {
-	var err error
+	var (
+		err error
+		db  = r.Module.Db
+	)
 
 	//get the current session
 	session, err := r.Session()
 	if err != nil {
-		perfect.Error(w, err)
+		perfect.Error(w, r, err)
 	}
 
-	form := survana.NewForm()
+	form := &survana.Form{}
 
 	//parse input data
-	err = r.ParseJSON(&form)
+	err = r.ParseJSON(form)
 	if err != nil {
-		perfect.Error(w, err)
+		perfect.Error(w, r, err)
 		return
 	}
 
-	form.CreatedOn = time.Now()
-	form.OwnerId = session.UserId
+	now := time.Now()
+	form.CreatedOn = &now
+	form.OwnerId = session.ProfileId
 
 	//generate a unique id
-	err = form.GenerateId(d.Db)
+	err = form.GenerateId(db)
 	if err != nil {
-		perfect.Error(w, err)
+		perfect.Error(w, r, err)
 	}
 
 	//save the form
-	err = form.Save(d.Db)
+	err = db.Save(form)
 	if err != nil {
-		perfect.Error(w, err)
+		perfect.Error(w, r, err)
 		return
 	}
 
 	//result format is { id: "abcd" }
 	result := &struct {
-		Id string `json:"id"`
+		Id *string `json:"id"`
 	}{Id: form.Id}
 
-	perfect.JSONResult(w, true, result)
+	perfect.JSONResult(w, r, true, result)
 }
 
 func (d *Dashboard) ViewFormPage(w http.ResponseWriter, r *perfect.Request) {
-	d.RenderTemplate(w, "form/view", nil)
+	d.RenderTemplate(w, r, "form/view", nil)
 }
 
 func (d *Dashboard) GetForm(w http.ResponseWriter, r *perfect.Request) {
+	var (
+		err error
+		db  = r.Module.Db
+	)
 	query := r.URL.Query()
 	form_id := query.Get("id")
 
@@ -95,28 +107,30 @@ func (d *Dashboard) GetForm(w http.ResponseWriter, r *perfect.Request) {
 		return
 	}
 
-	form, err := survana.FindForm(form_id, d.Db)
+	form := &survana.Form{Id: &form_id}
+	err = db.Find(form)
 	if err != nil {
-		perfect.Error(w, err)
-		return
-	}
-
-	//not found?
-	if form == nil {
-		perfect.NotFound(w)
+		if err == orm.ErrNotFound {
+			perfect.NotFound(w)
+		} else {
+			perfect.Error(w, r, err)
+		}
 		return
 	}
 
 	//return the form as JSON
-	perfect.JSONResult(w, true, form)
+	perfect.JSONResult(w, r, true, form)
 }
 
 func (d *Dashboard) EditFormPage(w http.ResponseWriter, r *perfect.Request) {
-	d.RenderTemplate(w, "form/edit", nil)
+	d.RenderTemplate(w, r, "form/edit", nil)
 }
 
 func (d *Dashboard) EditForm(w http.ResponseWriter, r *perfect.Request) {
-	var err error
+	var (
+		err error
+		db  = r.Module.Db
+	)
 
 	//get the form id
 	query := r.URL.Query()
@@ -131,15 +145,14 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	//make sure the form exists
-	form, err := survana.FindForm(form_id, d.Db)
+	form := &survana.Form{Id: &form_id}
+	err = db.Find(form)
 	if err != nil {
-		perfect.Error(w, err)
-		return
-	}
-
-	//not found?
-	if form == nil {
-		perfect.NotFound(w)
+		if err == orm.ErrNotFound {
+			perfect.NotFound(w)
+		} else {
+			perfect.Error(w, r, err)
+		}
 		return
 	}
 
@@ -147,10 +160,10 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *perfect.Request) {
 	log.Println(form)
 
 	//parse new form data sent by the client
-	user_form := survana.NewForm()
+	user_form := &survana.Form{}
 	err = r.ParseJSON(user_form)
 	if err != nil {
-		perfect.Error(w, err)
+		perfect.Error(w, r, err)
 		return
 	}
 
@@ -158,16 +171,16 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *perfect.Request) {
 
 	log.Printf("%s: %#v\n", "JSON form submitted by the client", user_form)
 
-	//copy properties that should not be changed
-	user_form.DBID = form.DBID
-	user_form.Id = form.Id
-	user_form.CreatedOn = form.CreatedOn
-	user_form.OwnerId = form.OwnerId
+	//unset properties that should not be changed
+	user_form.Object = form.Object
+	user_form.Id = nil
+	user_form.CreatedOn = nil
+	user_form.OwnerId = nil
 
 	//update the form
-	err = user_form.Save(d.Db)
+	err = db.Save(user_form)
 	if err != nil {
-		perfect.Error(w, err)
+		perfect.Error(w, r, err)
 		return
 	}
 
@@ -176,7 +189,10 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *perfect.Request) {
 }
 
 func (d *Dashboard) DeleteForm(w http.ResponseWriter, r *perfect.Request) {
-	var err error
+	var (
+		err error
+		db  = r.Module.Db
+	)
 
 	//get the form id
 	query := r.URL.Query()
@@ -191,24 +207,23 @@ func (d *Dashboard) DeleteForm(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	//make sure the form exists
-	form, err := survana.FindForm(form_id, d.Db)
+	form := &survana.Form{Id: &form_id}
+	err = db.Find(form)
 	if err != nil {
-		perfect.Error(w, err)
-		return
-	}
-
-	//not found?
-	if form == nil {
-		perfect.NotFound(w)
+		if err == orm.ErrNotFound {
+			perfect.NotFound(w)
+		} else {
+			perfect.Error(w, r, err)
+		}
 		return
 	}
 
 	log.Printf("form=%#v", form)
 
-	err = form.Delete(d.Db)
+	err = db.Remove(form)
 
 	if err != nil {
-		perfect.Error(w, err)
+		perfect.Error(w, r, err)
 		return
 	}
 
