@@ -2,6 +2,8 @@ package store
 
 import (
 	"github.com/vpetrov/perfect"
+	"github.com/vpetrov/perfect/orm"
+	"log"
 )
 
 const (
@@ -11,33 +13,32 @@ const (
 //The Store component
 type Store struct {
 	*perfect.Module
-    Config *Config
+	Config *Config
+	Key    *perfect.PrivateKey
 }
 
 // creates a new Admin module
-func NewModule(path string, db perfect.Database, config *Config, key *perfect.PrivateKey) *Store {
-	mux := perfect.NewRESTMux()
-
-    if config == nil {
-        config = &Config{}
-    }
+func NewModule(path string, db orm.Database, config *Config, key *perfect.PrivateKey) *Store {
+	if config == nil {
+		config = &Config{}
+	}
 
 	m := &Store{
 		Module: &perfect.Module{
-			Name:   NAME,
-			Path:   path,
-			Db:     db,
-			Router: mux,
-            Mux: mux,
-			Log:    db.NewLogger("logs", NAME),
+			Mux:  perfect.NewMux(),
+			Name: NAME,
+			Path: path,
+			Db:   db,
+			Log:  log.New(db.NewLogger("logs", ""), NAME, log.LstdFlags|log.Lmicroseconds),
 		},
-        Config: config,
+		Config: config,
+		Key:    key,
 	}
 
-//	err := m.ParseTemplates()
-//  if err != nil {
-//      log.Fatalln(err)
-//  }
+	//	err := m.ParseTemplates()
+	//  if err != nil {
+	//      log.Fatalln(err)
+	//  }
 
 	m.RegisterHandlers()
 
