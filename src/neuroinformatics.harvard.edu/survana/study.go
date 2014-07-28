@@ -2,70 +2,45 @@ package survana
 
 import (
 	"github.com/vpetrov/perfect"
-	_ "log"
+	"github.com/vpetrov/perfect/orm"
 	"time"
 )
 
-const (
-	STUDY_COLLECTION = "studies"
-)
-
 type Study struct {
-	perfect.DBO `bson:",inline,omitempty" json:"-"`
-	Id          string          `bson:"id,omitempty" json:"id"`
-	Name        string          `bson:"name,omitempty" json:"name"`
-	Title       string          `bson:"title,omitempty" json:"title"`
-	Description string          `bson:"description,omitempty" json:"description"`
-	Version     string          `bson:"version,omitempty" json:"version"`
-	CreatedOn   *time.Time      `bson:"created_on,omitempty" json:"created_on"`
-	Forms       []Form          `bson:"forms,omitempty" json:"forms"`
-	Html        [][]byte        `bson:"html" json:"-"`
-	Published   bool            `bson:"published" json:"published"`
-	Subjects    map[string]bool `bson:"subjects,omitempty" json:"subjects"`
-	AuthEnabled bool            `bson:"auth_enabled" json:"auth_enabled"`
-	StoreUrl    string          `bson:"store_url,omitempty" json:"store_url"`
+	orm.Object  `bson:",inline,omitempty" json:"-"`
+	Id          *string          `bson:"id,omitempty" json:"id,omitempty"`
+	Name        *string          `bson:"name,omitempty" json:"name,omitempty"`
+	Title       *string          `bson:"title,omitempty" json:"title,omitempty"`
+	Description *string          `bson:"description,omitempty" json:"description,omitempty"`
+	Version     *string          `bson:"version,omitempty" json:"version,omitempty"`
+	CreatedOn   *time.Time       `bson:"created_on,omitempty" json:"created_on,omitempty"`
+	Forms       *[]Form          `bson:"forms,omitempty" json:"forms,omitempty"`
+	Html        *[][]byte        `bson:"html" json:"-"`
+	Published   *bool            `bson:"published" json:"published,omitempty"`
+	Subjects    *map[string]bool `bson:"subjects,omitempty" json:"subjects,omitempty"`
+	AuthEnabled *bool            `bson:"auth_enabled" json:"auth_enabled,omitempty"`
+	StoreUrl    *string          `bson:"store_url,omitempty" json:"store_url,omitempty"`
 
 	//ACL
-	OwnerId string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
-}
-
-func NewStudy() *Study {
-	return &Study{
-		DBO:  perfect.DBO{Collection: STUDY_COLLECTION},
-		Html: make([][]byte, 0),
-	}
+	OwnerId *string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
 }
 
 func (s *Study) RemoveInternalAttributes() {
-	s.Id = ""
+	s.Id = nil
 	s.CreatedOn = nil
-	s.OwnerId = ""
-}
-
-func FindStudy(id string, db perfect.Database) (study *Study, err error) {
-	study = NewStudy()
-
-	err = db.FindId(id, study)
-	if err != nil {
-		if err == perfect.ErrNotFound {
-			err = nil
-		}
-
-		return nil, err
-	}
-
-	return
+	s.OwnerId = nil
 }
 
 //returns a list of studies.
-func ListStudies(db perfect.Database) (studies []Study, err error) {
+func ListStudies(db orm.Database) (studies []Study, err error) {
 	studies = make([]Study, 0)
+	study := &Study{}
 
-	filter := []string{"id", "name", "title", "version", "created_on", "owner_id", "forms", "published"}
+	//filter := []string{"id", "name", "title", "version", "created_on", "owner_id", "forms", "published"}
 
-	err = db.FilteredList(STUDY_COLLECTION, filter, &studies)
+	err = db.Query(study).All(studies)
 	if err != nil {
-		if err == perfect.ErrNotFound {
+		if err == orm.ErrNotFound {
 			err = nil
 		}
 	}
@@ -73,40 +48,37 @@ func ListStudies(db perfect.Database) (studies []Study, err error) {
 	return
 }
 
-func (s *Study) Delete(db perfect.Database) (err error) {
-	return db.Delete(s)
-}
-
-func (s *Study) Save(db perfect.Database) (err error) {
-	return db.Save(s)
-}
-
-func (f *Study) GenerateId(db perfect.Database) (err error) {
+//TODO: this method has a race condition on Id. In addition, it's exactly the same as Form.GenerateId()
+func (f *Study) GenerateId(db orm.Database) (err error) {
 	var (
-		id     string
-		exists bool = true
+		exists bool   = true
+		search *Study = &Study{}
 	)
 
 	for exists {
 		//generate a random id
-		id = perfect.RandomId(nID)
+		search.Id = orm.String(perfect.RandomId(nID))
 		//check if it exists
-		exists, err = db.HasId(id, STUDY_COLLECTION)
+		err = db.Find(search)
 		if err != nil {
-			return
+			if err != orm.ErrNotFound {
+				return
+			}
+
+			break
 		}
 	}
 
 	//if a unique id was found, assign it to this object's Id
-	f.Id = id
+	f.Id = search.Id
 
 	return
 }
 
 func (s *Study) AddSubject(id string, enabled bool) {
 	if s.Subjects == nil {
-		s.Subjects = make(map[string]bool, 1)
+		s.Subjects = &map[string]bool{}
 	}
 
-	s.Subjects[id] = enabled
+	(*s.Subjects)[id] = enabled
 }

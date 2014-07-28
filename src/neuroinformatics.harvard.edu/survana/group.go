@@ -1,40 +1,28 @@
 package survana
 
 import (
-	"github.com/vpetrov/perfect"
-	_ "log"
-)
-
-const (
-	GROUP_COLLECTION = "groups"
+	"github.com/vpetrov/perfect/orm"
 )
 
 type Group struct {
-	perfect.DBO `bson:",inline,omitempty" json:"-"`
-	Id          string `bson:"id,omitempty" json:"id,omitempty"`
-	Name        string `bson:"name,omitempty" json:"name,omitempty"`
+	orm.Object `bson:",inline,omitempty" json:"-"`
+	Id         *string `bson:"id,omitempty" json:"id,omitempty"`
+	Name       *string `bson:"name,omitempty" json:"name,omitempty"`
 }
 
 //creates a new group
 func NewGroup(name string) *Group {
 	return &Group{
-		DBO:  perfect.DBO{Collection: GROUP_COLLECTION},
-		Name: name,
+		Name: &name,
 	}
 }
 
-func EmptyGroup() *Group {
-	return &Group{
-		DBO: perfect.DBO{Collection: GROUP_COLLECTION},
-	}
-}
-
-func FindGroup(id string, db perfect.Database) (group *Group, err error) {
-	group = EmptyGroup()
-	err = db.FindId(id, group)
+func FindGroup(id string, db orm.Database) (group *Group, err error) {
+	group = &Group{Id: &id}
+	err = db.Find(group)
 
 	if err != nil {
-		if err == perfect.ErrNotFound {
+		if err == orm.ErrNotFound {
 			err = nil
 		}
 

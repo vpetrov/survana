@@ -2,91 +2,55 @@ package survana
 
 import (
 	"github.com/vpetrov/perfect"
-	_ "log"
+	"github.com/vpetrov/perfect/orm"
 	"time"
 )
 
 const (
-	nID             = 6 //length of a form ID
-	FORM_COLLECTION = "forms"
+	nID = 6 //length of a form ID
 )
 
 type Form struct {
-	perfect.DBO `bson:",inline,omitempty" json:"-"`
-	Id          string    `bson:"id,omitempty" json:"id"`
-	Name        string    `bson:"name,omitempty" json:"name"`
-	Title       string    `bson:"title,omitempty" json:"title"`
-	Description string    `bson:"description,omitempty" json:"description"`
-	Version     string    `bson:"version,omitempty" json:"version"`
-	CreatedOn   time.Time `bson:"created_on,omitempty" json:"created_on"`
-	Fields      []Field   `bson:"fields,omitempty" json:"fields"`
+	orm.Object  `bson:",inline,omitempty" json:"-"`
+	Id          *string    `bson:"id,omitempty" json:"id,omitempty"`
+	Name        *string    `bson:"name,omitempty" json:"name,omitempty"`
+	Title       *string    `bson:"title,omitempty" json:"title,omitempty"`
+	Description *string    `bson:"description,omitempty" json:"description,omitempty"`
+	Version     *string    `bson:"version,omitempty" json:"version,omitempty"`
+	CreatedOn   *time.Time `bson:"created_on,omitempty" json:"created_on,omitempty"`
+	Fields      *[]Field   `bson:"fields,omitempty" json:"fields,omitempty"`
 
 	//ACL
-	OwnerId string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
+	OwnerId *string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
 }
 
 func NewForm() *Form {
-	return &Form{
-		DBO:    perfect.DBO{Collection: FORM_COLLECTION},
-		Fields: make([]Field, 0),
-	}
+	return &Form{}
 }
 
-//returns a list of forms. if no forms are found, the 'forms' slice will be empty
-func ListForms(filter []string, db perfect.Database) (forms []Form, err error) {
-	forms = make([]Form, 0)
-
-	err = db.FilteredList(FORM_COLLECTION, filter, &forms)
-	if err != nil {
-		if err == perfect.ErrNotFound {
-			err = nil
-		}
-	}
-
-	return
-}
-
-func FindForm(id string, db perfect.Database) (form *Form, err error) {
-	form = NewForm()
-
-	err = db.FindId(id, form)
-	if err != nil {
-		if err == perfect.ErrNotFound {
-			err = nil
-		}
-
-		return nil, err
-	}
-
-	return
-}
-
-func (f *Form) GenerateId(db perfect.Database) (err error) {
+//TODO: this is vulnerable to a race condition. It would be better to
+//set a unique constraint on the Id property and attempt to write to the db
+func (f *Form) GenerateId(db orm.Database) (err error) {
 	var (
-		id     string
-		exists bool = true
+		exists bool  = true
+		search *Form = &Form{}
 	)
 
 	for exists {
 		//generate a random id
-		id = perfect.RandomId(nID)
+		search.Id = orm.String(perfect.RandomId(nID))
 		//check if it exists
-		exists, err = db.HasId(id, FORM_COLLECTION)
+		err = db.Find(search)
 		if err != nil {
-			return
+			if err != orm.ErrNotFound {
+				return
+			}
+			break
 		}
 	}
 
 	//if a unique id was found, assign it to this object's Id
-	f.Id = id
+	f.Id = search.Id
 
 	return
-}
-
-func (f *Form) Delete(db perfect.Database) (err error) {
-	return db.Delete(f)
-}
-
-func (f *Form) Save(db perfect.Database) (err error) {
-	return db.Save(f)
 }
