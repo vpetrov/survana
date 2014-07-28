@@ -64,6 +64,7 @@ func (f *Study) GenerateId(db orm.Database) (err error) {
 			if err != orm.ErrNotFound {
 				return
 			}
+			err = nil
 
 			break
 		}
