@@ -17,11 +17,3 @@ var mock_form *Form = &Form{
 	CreatedOn: &now,
 	Fields:    &[]Field{},
 }
-
-func TestNewForm(t *testing.T) {
-	form := NewForm()
-
-	if len(*form.Id) != 0 {
-		t.Errorf("len(*form.Id) = %v ('%v'), want %v", len(*form.Id), *form.Id, 0)
-	}
-}
