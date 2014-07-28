@@ -1,8 +1,8 @@
 package dashboard
 
 import (
-	"net/http"
 	"github.com/vpetrov/perfect"
+	"net/http"
 )
 
 func (d *Dashboard) Theme(w http.ResponseWriter, r *perfect.Request) {

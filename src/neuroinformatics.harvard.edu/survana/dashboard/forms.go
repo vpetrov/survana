@@ -1,10 +1,10 @@
 package dashboard
 
 import (
+	"github.com/vpetrov/perfect"
 	"log"
 	"net/http"
-	"github.com/vpetrov/perfect"
-    "neuroinformatics.harvard.edu/survana"
+	"neuroinformatics.harvard.edu/survana"
 	"time"
 )
 
@@ -190,7 +190,6 @@ func (d *Dashboard) DeleteForm(w http.ResponseWriter, r *perfect.Request) {
 		return
 	}
 
-
 	//make sure the form exists
 	form, err := survana.FindForm(form_id, d.Db)
 	if err != nil {
@@ -204,7 +203,7 @@ func (d *Dashboard) DeleteForm(w http.ResponseWriter, r *perfect.Request) {
 		return
 	}
 
-    log.Printf("form=%#v", form)
+	log.Printf("form=%#v", form)
 
 	err = form.Delete(d.Db)
 

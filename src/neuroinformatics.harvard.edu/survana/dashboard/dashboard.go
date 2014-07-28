@@ -1,9 +1,9 @@
 package dashboard
 
 import (
-    "log"
 	"github.com/vpetrov/perfect"
-    "github.com/vpetrov/perfect/auth"
+	"github.com/vpetrov/perfect/auth"
+	"log"
 )
 
 const (
@@ -12,11 +12,10 @@ const (
 
 //The Admin component
 type Dashboard struct {
-    *perfect.Module
-    Config  *Config //dashboard.Config
-    Auth    auth.Strategy
+	*perfect.Module
+	Config *Config //dashboard.Config
+	Auth   auth.Strategy
 }
-
 
 // creates a new Admin module
 func NewModule(path string, db perfect.Database, config *Config, key *perfect.PrivateKey) *Dashboard {
@@ -29,22 +28,22 @@ func NewModule(path string, db perfect.Database, config *Config, key *perfect.Pr
 			Path:   path,
 			Db:     db,
 			Router: mux,
-            Mux:    mux,
+			Mux:    mux,
 			Log:    db.NewLogger("logs", NAME),
 		},
-        Config: config,
+		Config: config,
 	}
 
-    if config.Authentication != nil {
-        m.Auth = auth.New(config.Authentication)
-        m.Auth.Attach(m.Module)
-    }
+	if config.Authentication != nil {
+		m.Auth = auth.New(config.Authentication)
+		m.Auth.Attach(m.Module)
+	}
 
-    //Parse all templates
-    err := m.ParseTemplates()
-    if err != nil {
-        log.Fatalln(err)
-    }
+	//Parse all templates
+	err := m.ParseTemplates()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	m.RegisterHandlers()
 

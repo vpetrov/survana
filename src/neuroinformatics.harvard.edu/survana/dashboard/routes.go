@@ -1,10 +1,10 @@
 package dashboard
 
 import (
-	"net/http"
-    "errors"
+	"errors"
 	"github.com/vpetrov/perfect"
-    "github.com/vpetrov/perfect/auth"
+	"github.com/vpetrov/perfect/auth"
+	"net/http"
 )
 
 // registers all route handlers
@@ -21,7 +21,7 @@ func (d *Dashboard) RegisterHandlers() {
 	/*app.Get("/login/google", d.LoginWithGoogle)
 	app.Get("/login/google/response", d.GoogleResponse)
 	app.Get("/register", d.Register)
-    */
+	*/
 
 	//LOGOUT
 	app.Get("/logout", d.Auth.Logout)
@@ -52,31 +52,31 @@ func (d *Dashboard) RegisterHandlers() {
 	app.Delete("/study", auth.Protect(d.DeleteStudy))
 	app.Get("/studies/publish", auth.Protect(d.PublishStudyPage))
 	app.Post("/studies/publish", auth.Protect(d.PublishStudyForm))
-    app.Get("/studies/subjects", auth.Protect(d.StudySubjectsPage))
-    app.Put("/studies/subjects", auth.Protect(d.AddStudySubjects))
+	app.Get("/studies/subjects", auth.Protect(d.StudySubjectsPage))
+	app.Put("/studies/subjects", auth.Protect(d.AddStudySubjects))
 }
 
 // sends the app skeleton to the client
 func (d *Dashboard) Index(w http.ResponseWriter, r *perfect.Request) {
-    user, err := r.User()
-    if err != nil {
-        perfect.Error(w, err)
-        return
-    }
+	user, err := r.User()
+	if err != nil {
+		perfect.Error(w, err)
+		return
+	}
 
-    //profile not found?
-    if user == nil {
-        perfect.Error(w, errors.New("User profile not found"))
-        return
-    }
+	//profile not found?
+	if user == nil {
+		perfect.Error(w, errors.New("User profile not found"))
+		return
+	}
 
-    data := &struct {
-                Module *perfect.Module
-                User *perfect.User
-            }{
-                Module: d.Module,
-                User:user,
-            }
+	data := &struct {
+		Module *perfect.Module
+		User   *perfect.User
+	}{
+		Module: d.Module,
+		User:   user,
+	}
 
 	d.RenderTemplate(w, "index", data)
 }
