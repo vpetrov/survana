@@ -2,8 +2,9 @@ package study
 
 import (
 	"github.com/vpetrov/perfect"
-    "github.com/vpetrov/perfect/auth"
-    "log"
+	"github.com/vpetrov/perfect/auth"
+	"github.com/vpetrov/perfect/orm"
+	"log"
 )
 
 const (
@@ -13,37 +14,34 @@ const (
 //The Admin component
 type Study struct {
 	*perfect.Module
-    Config *Config
-    Auth auth.Strategy
+	Config *Config
+	Auth   auth.Strategy
 }
 
 // creates a new Admin module
-func NewModule(path string, db perfect.Database, config *Config, key *perfect.PrivateKey) *Study {
-	mux := perfect.NewRESTMux()
-
-    if config == nil {
-        config = &Config{}
-    }
+func NewModule(path string, db orm.Database, config *Config, key *perfect.PrivateKey) *Study {
+	if config == nil {
+		config = &Config{}
+	}
 
 	m := &Study{
 		Module: &perfect.Module{
-			Name:   NAME,
-			Path:   path,
-			Db:     db,
-			Router: mux,
-            Mux: mux,
-			Log:    db.NewLogger("logs", NAME),
+			Mux:  perfect.NewMux(),
+			Name: NAME,
+			Path: path,
+			Db:   db,
+			Log:  log.New(db.NewLogger("logs", ""), NAME, log.LstdFlags),
 		},
-        Config: config,
+		Config: config,
 	}
 
-    //by default, use the subject_id auth strategy
-    m.Auth = NewSubjectIdStrategy(nil)
+	//by default, use the subject_id auth strategy
+	m.Auth = NewSubjectIdStrategy(nil)
 
 	err := m.ParseTemplates()
-    if err != nil {
-        log.Fatalln(err)
-    }
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	m.RegisterHandlers()
 
