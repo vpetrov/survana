@@ -46,6 +46,7 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
 	session, err := r.Session()
 	if err != nil {
 		perfect.Error(w, r, err)
+		return
 	}
 
 	study := &survana.Study{}
@@ -60,7 +61,7 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
 	study.CreatedOn = &now
 	study.OwnerId = session.ProfileId
 	//assign default StoreURL
-	if len(*study.StoreUrl) == 0 {
+	if study.StoreUrl == nil {
 		study.StoreUrl = orm.String(d.Config.StoreUrl)
 	}
 
@@ -68,6 +69,7 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
 	err = study.GenerateId(d.Db)
 	if err != nil {
 		perfect.Error(w, r, err)
+		return
 	}
 
 	//save the study
