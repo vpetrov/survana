@@ -7,6 +7,8 @@
 //
 
 #import "SSettings.h"
+#import "Alert.h"
+
 
 @interface SSettings ()
 
@@ -16,8 +18,11 @@
 
 //Dashboard Tab
 @synthesize cbAuthentication;
+@synthesize txtDashEmail;
+@synthesize txtDashName;
 @synthesize txtDashUsername;
 @synthesize txtDashPassword;
+@synthesize btnDashAllowRegistrations;
 
 //Web Server Tab
 @synthesize txtIP;
@@ -83,8 +88,13 @@
     
     //Dashboard tab
     [cbAuthentication selectItemWithObjectValue:dashboardConfiguration[@"authentication"][@"type"]];
+    [self updateStringField:txtDashEmail with:dashboardConfiguration[@"authentication"][@"email"]];
+    [self updateStringField:txtDashName with:dashboardConfiguration[@"authentication"][@"name"]];
     [self updateStringField:txtDashUsername with:dashboardConfiguration[@"authentication"][@"username"]];
     [self updateStringField:txtDashPassword with:dashboardConfiguration[@"authentication"][@"password"]];
+    [self updateCheckboxField:btnDashAllowRegistrations with:dashboardConfiguration[@"authentication"][@"allow_registration"]];
+
+    
     
     //Web Server tab
     [self updateStringField:txtIP with:configuration[@"ip"]];
@@ -113,7 +123,6 @@
    
     NSLog(@"Loaded JSON: %@", configuration);
 }
-
 
 - (void) saveConfiguration:(NSString*)file {
     
@@ -154,8 +163,18 @@
     [field setStringValue:value];
 }
 
+- (void)updateCheckboxField: (NSButton*)field with:(NSNumber*)value {
+    if ([value boolValue] == YES) {
+        [field setState:NSOnState];
+    } else {
+        [field setState:NSOffState];
+    }
+}
+
 -(IBAction)saveSettings:(id)sender {
     NSLog(@"Saving settings");
+    
+    NSString* alertTitle = @"Dashboard Settings";
     
     /* Dashboard tab */
     
@@ -164,8 +183,30 @@
     NSMutableDictionary *dashboardAuthentication = dashboardConfiguration[@"authentication"];
     
     dashboardAuthentication[@"type"] = [[cbAuthentication stringValue] lowercaseString];
+    dashboardAuthentication[@"email"] = [[txtDashEmail stringValue] lowercaseString];
+    dashboardAuthentication[@"name"] = [txtDashName stringValue];
     dashboardAuthentication[@"username"] = [txtDashUsername stringValue];
     dashboardAuthentication[@"password"] = [txtDashPassword stringValue];
+    if ([btnDashAllowRegistrations state] == NSOnState) {
+        dashboardAuthentication[@"allow_registration"] = @YES;
+    } else {
+        dashboardAuthentication[@"allow_registration"] = @NO;
+    }
+    //e-mail is required for all authentication types
+    if ([dashboardAuthentication[@"email"] length] == 0) {
+        [Alert warning:@"E-mail is required" andTitle:alertTitle];
+        return;
+    }
+    
+    //check built-in fields
+    if ([dashboardAuthentication[@"type"] isEqual:@"built-in"]) {
+        if (([dashboardAuthentication[@"name"] length] == 0) ||
+            ([dashboardAuthentication[@"username"] length] == 0) ||
+            ([dashboardAuthentication[@"password"] length] == 0)) {
+            [Alert error:@"Please complete all fields before saving." andTitle:alertTitle];
+            return;
+        }
+    }
     
     //Web Server tab
     configuration[@"ip"] = [txtIP stringValue];
@@ -226,6 +267,13 @@
         NSString *path = [[dialog URL] path];
         NSLog(@"Dir: %@", path);
         [field setStringValue:path];
+    }
+}
+
+- (IBAction)cbAuthenticationChanged:(id)sender {
+    if (![[cbAuthentication stringValue] isEqual:@"built-in"]) {
+        [Alert info:@"Currently, only the built-in authentication method is supported." andTitle:@"Dashboard Module"];
+        [cbAuthentication selectItemWithObjectValue:@"built-in"];
     }
 }
 

@@ -103,7 +103,7 @@
         if (! [fs createDirectoryAtPath:folderPath withIntermediateDirectories:YES attributes:nil error:&error]) {
             NSString *message = [NSString stringWithFormat:@"Failed to create directory: %@", error];
             NSLog(@"%@", message);
-            [self error:message andTitle:@"Error"];
+            [Alert error:message andTitle:@"Error"];
             return NO;
         }
     }
@@ -132,7 +132,7 @@
         if (![[NSFileManager defaultManager] copyItemAtPath:srcPath toPath:destPath error:&error]) {
             NSString *message = [NSString stringWithFormat:@"Failed to copy file %@ from %@: %@", destPath, srcPath, error];
             NSLog(@"%@", message);
-            [self error:message andTitle:@"Error"];
+            [Alert error:message andTitle:@"Error"];
             return NO;
         }
     }
@@ -163,7 +163,7 @@
     if (![fs setAttributes:perms ofItemAtPath:destPath error:&error]) {
         NSString *message = [NSString stringWithFormat:@"Failed to set permissions of %@ to %d: %@", destPath, octal, error];
         NSLog(@"%@", message);
-        [self error:message andTitle:@"Error"];
+        [Alert error:message andTitle:@"Error"];
         return NO;
     };
 
@@ -257,41 +257,9 @@
 
 //About menu action: displays version information and copyright notice
 - (IBAction)about :(id)sender {
-    [self info:@"Survana v.1.0\n\n(c) 2014 The Neuroinformatics Research Group at Harvard University" andTitle:@"About Survana"];
+    [Alert info:@"Survana v.1.0\n\n(c) 2014 The Neuroinformatics Research Group at Harvard University" andTitle:@"About Survana"];
 }
 
-/* ALERTS */
-
-//displays a warning window
-- (BOOL)warning:(NSString*)message andTitle:(NSString*)title
-{
-    return [self alert:message andTitle:title andStyle:NSCriticalAlertStyle];
-}
-
-//displays an error window
-- (BOOL)error:(NSString*)message andTitle:(NSString*)title
-{
-    return [self alert:message andTitle:title andStyle:NSCriticalAlertStyle];
-}
-
-//displays an informational window
-- (BOOL)info:(NSString*)message andTitle:(NSString*)title
-{
-    return [self alert:message andTitle:title andStyle:NSInformationalAlertStyle];
-}
-
-//generic alert window with customizable style
-- (BOOL)alert:(NSString*)message andTitle:(NSString*)title andStyle:(NSAlertStyle)style
-{
-    NSAlert *alert = [[NSAlert alloc] init];
-    [alert addButtonWithTitle:@"OK"];
-    [alert setMessageText:title];
-    [alert setInformativeText:message];
-    [alert setAlertStyle:style];
-    [alert runModal];
-    
-    return YES;
-}
 
 - (BOOL)killProcess:(NSNumber*)pid_number {
     pid_t pid = [pid_number intValue];

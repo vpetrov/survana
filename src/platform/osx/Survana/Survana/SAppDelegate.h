@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "SSettings.h"
+#import "Alert.h"
 
 @interface SAppDelegate : NSObject <NSApplicationDelegate> {
     IBOutlet NSMenu *statusMenu;
@@ -36,12 +37,4 @@
 - (IBAction)settings:(id)sender;
 - (IBAction)quit:(id)sender;
 
-//displays a warning window
-- (BOOL)warning:(NSString*)message andTitle:(NSString*)title;
-//displays an error window
-- (BOOL)error:(NSString*)message andTitle:(NSString*)title;
-//displays an informational window
-- (BOOL)info:(NSString*)message andTitle:(NSString*)title;
-//generic alert window with customizable style
-- (BOOL)alert:(NSString*)message andTitle:(NSString*)title andStyle:(NSAlertStyle)style;
 @end

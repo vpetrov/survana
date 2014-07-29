@@ -17,8 +17,11 @@
 
 //Dashboard Tab
 @property (strong, nonatomic) IBOutlet NSComboBox *cbAuthentication;
+@property (strong, nonatomic) IBOutlet NSTextField *txtDashEmail;
+@property (strong, nonatomic) IBOutlet NSTextField *txtDashName;
 @property (strong, nonatomic) IBOutlet NSTextField *txtDashUsername;
 @property (strong, nonatomic) IBOutlet NSTextField *txtDashPassword;
+@property (strong, nonatomic) IBOutlet NSButton    *btnDashAllowRegistrations;
 
 
 //Web Server Tab
@@ -44,5 +47,6 @@
 -(IBAction)saveSettings:(id)sender;
 -(IBAction)browseForSSLCertificate:(id)sender;
 -(IBAction)browseForSSLKey:(id)sender;
+-(IBAction)cbAuthenticationChanged:(id)sender;
 
 @end

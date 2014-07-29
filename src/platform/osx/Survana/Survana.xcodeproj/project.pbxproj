@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		251A7ED018FA231B0052A49A /* install.sh in Resources */ = {isa = PBXBuildFile; fileRef = 251A7ECF18FA231B0052A49A /* install.sh */; };
 		25378D1C1921127000B47E06 /* forms.json in Resources */ = {isa = PBXBuildFile; fileRef = 25378D1B1921127000B47E06 /* forms.json */; };
+		254A4C141988248500BF0B1C /* Alert.m in Sources */ = {isa = PBXBuildFile; fileRef = 254A4C131988248500BF0B1C /* Alert.m */; };
 		571DEFD2188880D500FE2A0F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 571DEFD1188880D500FE2A0F /* Cocoa.framework */; };
 		571DEFDC188880D500FE2A0F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 571DEFDA188880D500FE2A0F /* InfoPlist.strings */; };
 		571DEFDE188880D500FE2A0F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DEFDD188880D500FE2A0F /* main.m */; };
@@ -42,6 +43,8 @@
 /* Begin PBXFileReference section */
 		251A7ECF18FA231B0052A49A /* install.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
 		25378D1B1921127000B47E06 /* forms.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = forms.json; sourceTree = "<group>"; };
+		254A4C121988248500BF0B1C /* Alert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alert.h; sourceTree = "<group>"; };
+		254A4C131988248500BF0B1C /* Alert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Alert.m; sourceTree = "<group>"; };
 		570FA8271891D8E900B86330 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		570FA8291891D90C00B86330 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		571DEFCE188880D500FE2A0F /* Survana.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Survana.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,6 +141,8 @@
 		571DEFD7188880D500FE2A0F /* Survana */ = {
 			isa = PBXGroup;
 			children = (
+				254A4C121988248500BF0B1C /* Alert.h */,
+				254A4C131988248500BF0B1C /* Alert.m */,
 				57A0DCE918949A20000087B0 /* SSettings.h */,
 				57A0DCEA18949A20000087B0 /* SSettings.m */,
 				571DEFE3188880D500FE2A0F /* SAppDelegate.h */,
@@ -296,6 +301,7 @@
 			files = (
 				571DEFE5188880D500FE2A0F /* SAppDelegate.m in Sources */,
 				57A0DCEC18949A20000087B0 /* SSettings.m in Sources */,
+				254A4C141988248500BF0B1C /* Alert.m in Sources */,
 				571DEFDE188880D500FE2A0F /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
