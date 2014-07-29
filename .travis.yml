@@ -2,6 +2,8 @@ language: go
 
 go:
   - 1.1
+  - 1.2
+  - 1.3
   - tip
 
 install: GOPATH=$HOME/gopath/src/github.com/vpetrov/survana make
