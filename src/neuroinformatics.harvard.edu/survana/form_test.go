@@ -2,7 +2,6 @@ package survana
 
 import (
 	"github.com/vpetrov/perfect/orm"
-	"testing"
 	"time"
 )
 
