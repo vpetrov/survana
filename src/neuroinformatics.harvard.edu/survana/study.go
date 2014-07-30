@@ -15,10 +15,10 @@ type Study struct {
 	Version     *string          `bson:"version,omitempty" json:"version,omitempty"`
 	CreatedOn   *time.Time       `bson:"created_on,omitempty" json:"created_on,omitempty"`
 	Forms       *[]Form          `bson:"forms,omitempty" json:"forms,omitempty"`
-	Html        *[][]byte        `bson:"html" json:"-"`
-	Published   *bool            `bson:"published" json:"published,omitempty"`
+	Html        *[][]byte        `bson:"html,omitempty" json:"-"`
+	Published   *bool            `bson:"published,omitempty" json:"published,omitempty"`
 	Subjects    *map[string]bool `bson:"subjects,omitempty" json:"subjects,omitempty"`
-	AuthEnabled *bool            `bson:"auth_enabled" json:"auth_enabled,omitempty"`
+	AuthEnabled *bool            `bson:"auth_enabled,omitempty" json:"auth_enabled,omitempty"`
 	StoreUrl    *string          `bson:"store_url,omitempty" json:"store_url,omitempty"`
 
 	//ACL
