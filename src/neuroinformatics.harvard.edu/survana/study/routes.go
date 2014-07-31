@@ -58,7 +58,7 @@ func (s *Study) NewIndex(w http.ResponseWriter, r *perfect.Request) {
 	log.Printf("auth_enabled=%v subjects=%#v", study.AuthEnabled, study.Subjects)
 
 	//no auth? just render the study index page
-	if !*study.AuthEnabled {
+	if !orm.Is(study.AuthEnabled) {
 		s.RenderTemplate(w, r, "study/index", study)
 		return
 	}
@@ -72,7 +72,7 @@ func (s *Study) NewIndex(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	//if the session has been authorized, render the login screen
-	if *session.Authenticated {
+	if orm.Is(session.Authenticated) {
 		s.RenderTemplate(w, r, "study/index", study)
 		return
 	}
