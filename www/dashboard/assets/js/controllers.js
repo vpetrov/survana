@@ -470,7 +470,7 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
         $scope.unpublishStudy = function () {
             $scope.message = "";
 
-            $http.put('studies/edit', {published:false, foo:{bar:true, haha: {no:"yes"}}}, {params: $routeParams}).
+            $http.put('studies/edit', {published:false}, {params: $routeParams}).
                 success(function (response, code, request) {
                     //we're done.
                     if (code === 204) {
