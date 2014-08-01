@@ -340,6 +340,10 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *perfect.Request) 
 
 	var id string
 
+	if study.Subjects == nil {
+		study.Subjects = &map[string]bool{}
+	}
+
 	//save and enable all IDs
 	for i := 0; i < nids; i++ {
 		id = ids[i]
