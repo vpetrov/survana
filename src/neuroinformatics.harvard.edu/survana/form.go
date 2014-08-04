@@ -24,10 +24,6 @@ type Form struct {
 	OwnerId *string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
 }
 
-func NewForm() *Form {
-	return &Form{}
-}
-
 //TODO: this is vulnerable to a race condition. It would be better to
 //set a unique constraint on the Id property and attempt to write to the db
 func (f *Form) GenerateId(db orm.Database) (err error) {
