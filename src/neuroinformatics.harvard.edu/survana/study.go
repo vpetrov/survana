@@ -25,12 +25,6 @@ type Study struct {
 	OwnerId *string `bson:"owner_id,omitempty" json:"owner_id,omitempty,readonly"`
 }
 
-func (s *Study) RemoveInternalAttributes() {
-	s.Id = nil
-	s.CreatedOn = nil
-	s.OwnerId = nil
-}
-
 //returns a list of studies.
 func ListStudies(db orm.Database) (studies []Study, err error) {
 	studies = make([]Study, 0)

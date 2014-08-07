@@ -157,9 +157,6 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *perfect.Request) {
 		return
 	}
 
-	//restore read-only attributes
-	study.RemoveInternalAttributes()
-
 	log.Printf("%s: %#v\n", "JSON study submitted by the client", study)
 
 	//make sure 'Html' stays in sync with 'published'
