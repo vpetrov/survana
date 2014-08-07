@@ -17,7 +17,7 @@ type Form struct {
 	Title       *string    `bson:"title,omitempty" json:"title,omitempty"`
 	Description *string    `bson:"description,omitempty" json:"description,omitempty"`
 	Version     *string    `bson:"version,omitempty" json:"version,omitempty"`
-	CreatedOn   *time.Time `bson:"created_on,omitempty" json:"created_on,omitempty"`
+	CreatedOn   *time.Time `bson:"created_on,omitempty" json:"created_on,omitempty,readonly"`
 	Fields      *[]Field   `bson:"fields,omitempty" json:"fields,omitempty"`
 
 	//ACL
