@@ -45,9 +45,7 @@ var test_cases = []testCase{
 }
 
 func TestReadOnlyStudyFields(t *testing.T) {
-	var (
-		err error
-	)
+	var err error
 
 	for i, tc := range test_cases {
 		err = json.Unmarshal([]byte(tc.json), actual)
