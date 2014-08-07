@@ -25,23 +25,6 @@ type Study struct {
 	OwnerId *string `bson:"owner_id,omitempty" json:"owner_id,omitempty,readonly"`
 }
 
-//returns a list of studies.
-func ListStudies(db orm.Database) (studies []Study, err error) {
-	studies = make([]Study, 0)
-	study := &Study{}
-
-	//filter := []string{"id", "name", "title", "version", "created_on", "owner_id", "forms", "published"}
-
-	err = db.Query(study).All(studies)
-	if err != nil {
-		if err == orm.ErrNotFound {
-			err = nil
-		}
-	}
-
-	return
-}
-
 //TODO: this method has a race condition on Id. In addition, it's exactly the same as Form.GenerateId()
 func (f *Study) GenerateId(db orm.Database) (err error) {
 	var (
