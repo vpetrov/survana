@@ -135,7 +135,7 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *perfect.Request) {
 
 	//make sure the form exists
 	study := &survana.Study{Id: &study_id}
-	err = db.Find(study)
+	err = db.Peek(study)
 	if err != nil {
 		if err == orm.ErrNotFound {
 			perfect.NotFound(w)
@@ -146,10 +146,7 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	//parse new form data sent by the client into the original 'study' returned
-	//by the database. This has the potential of letting the user overwrite
-	//any fields. We're relying on a future call to study.RemoveInternalAttributes()
-	//to set all internal attributes to their zero value, so that the database
-	//will ignore them (assuming the fields are declared as ',omitempty'
+	//by the database.
 	err = r.ParseJSON(study)
 	if err != nil {
 		perfect.Error(w, r, err)
@@ -158,18 +155,7 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *perfect.Request) {
 
 	log.Printf("%s: %#v\n", "JSON study submitted by the client", study)
 
-	//make sure 'Html' stays in sync with 'published'
-	if study.Published == nil || !*study.Published {
-		study.Html = &[][]byte{}
-	}
-
-	//update the study. This needs to be refactored, because it's now sending back
-	//the ENTIRE study, when, really, we just need to somehow send only the updates.
-	//This would be possible by using map[string]interface{}, but it's not trivial
-	//to validate that only the fields that are allowed to be changed, are going to
-	//be changed, especially since the names of the fields involved in serialization
-	//are specified as struct tags (so we either use 'reflect', or come up with some
-	//other system). I'm leaving this issue for another refactoring session.
+	//update the study.
 	err = db.Save(study)
 	if err != nil {
 		perfect.Error(w, r, err)

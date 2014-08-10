@@ -8,7 +8,7 @@ import (
 
 type Study struct {
 	orm.Object  `bson:",inline,omitempty" json:"-"`
-	Id          *string          `bson:"id,omitempty" json:"id,omitempty,readonly"`
+	Id          *string          `bson:"id,omitempty" json:"id,omitempty"`
 	Name        *string          `bson:"name,omitempty" json:"name,omitempty"`
 	Title       *string          `bson:"title,omitempty" json:"title,omitempty"`
 	Description *string          `bson:"description,omitempty" json:"description,omitempty"`

@@ -16,7 +16,7 @@ func (d *Dashboard) FormListPage(w http.ResponseWriter, r *perfect.Request) {
 func (d *Dashboard) FormList(w http.ResponseWriter, r *perfect.Request) {
 	var db = r.Module.Db
 
-	filter := []string{"id", "name", "title", "version", "created_on", "owner_id", "published", "auth_enabled", "store_url"}
+	filter := []string{"id", "name", "title", "version", "created_on", "owner_id"}
 
 	query := r.URL.Query()
 	_ = query.Get("ids")
