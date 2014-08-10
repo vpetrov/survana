@@ -50,7 +50,10 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
 		return
 	}
 
-	study := &survana.Study{}
+	study := &survana.Study{
+		CreatedOn: orm.Time(time.Now()),
+		OwnerId:   session.ProfileId,
+	}
 
 	//parse input data
 	err = r.ParseJSON(&study)
@@ -58,9 +61,6 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
 		perfect.Error(w, r, err)
 		return
 	}
-	now := time.Now()
-	study.CreatedOn = &now
-	study.OwnerId = session.ProfileId
 	//assign default StoreURL
 	if study.StoreUrl == nil {
 		study.StoreUrl = orm.String(d.Config.StoreUrl)
@@ -81,9 +81,7 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	//result format is { id: "abcd" }
-	result := &struct {
-		Id *string `json:"id"`
-	}{Id: study.Id}
+	result := &map[string]string{"id": *study.Id}
 
 	perfect.JSONResult(w, r, true, result)
 }
