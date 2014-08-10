@@ -64,14 +64,14 @@ func (d *Dashboard) CreateForm(w http.ResponseWriter, r *perfect.Request) {
 		return
 	}
 
-	now := time.Now()
-	form.CreatedOn = &now
+	form.CreatedOn = orm.Time(time.Now())
 	form.OwnerId = session.ProfileId
 
 	//generate a unique id
 	err = form.GenerateId(db)
 	if err != nil {
 		perfect.Error(w, r, err)
+		return
 	}
 
 	//save the form
@@ -82,9 +82,7 @@ func (d *Dashboard) CreateForm(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	//result format is { id: "abcd" }
-	result := &struct {
-		Id *string `json:"id"`
-	}{Id: form.Id}
+	result := &map[string]string{"id": *form.Id}
 
 	perfect.JSONResult(w, r, true, result)
 }
