@@ -52,11 +52,3 @@ func (f *Study) GenerateId(db orm.Database) (err error) {
 
 	return
 }
-
-func (s *Study) AddSubject(id string, enabled bool) {
-	if s.Subjects == nil {
-		s.Subjects = &map[string]bool{}
-	}
-
-	(*s.Subjects)[id] = enabled
-}

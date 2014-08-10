@@ -236,33 +236,45 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *perfect.Request) 
 	}
 
 	study := &survana.Study{Id: &study_id}
-	err = db.Find(study)
+	err = db.Query(study).Select("html", "forms").One(study)
 	if err != nil {
-		perfect.Error(w, r, err)
+		if err == orm.ErrNotFound {
+			perfect.NotFound(w)
+		} else {
+			perfect.Error(w, r, err)
+		}
 		return
 	}
 
 	//count the total number of forms in the study
-	nforms := len(*study.Forms)
+	var nforms int = 0
+	if study.Forms != nil {
+		nforms = len(*study.Forms)
+	}
 
 	log.Println("study=", study, "form_index", form_index, "study.Forms.length=", nforms)
 
-	if study == nil || form_index >= nforms {
-		perfect.NotFound(w)
+	if nforms == 0 || form_index >= nforms {
+		perfect.BadRequest(w)
 		return
 	}
 
 	//make the Html array have the same number of elements as study.Forms
-	if len(*study.Html) != nforms {
+	if study.Html == nil || len(*study.Html) != nforms {
 		html := make([][]byte, nforms, nforms)
 		//preserve any existing elements
-		copy(html, *study.Html)
+		if study.Html != nil {
+			copy(html, *study.Html)
+		}
 		//switch the pointer to the new array
 		study.Html = &html
 	}
 
 	//assign the html
 	(*study.Html)[form_index] = html
+
+	//avoid re-sending the Forms array to the DB
+	study.Forms = nil
 
 	//save the study
 	err = db.Save(study)
@@ -296,7 +308,7 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *perfect.Request) 
 
 	//make sure the form exists
 	study := &survana.Study{Id: &study_id}
-	err = db.Find(study)
+	err = db.Query(study).Select("subjects", "auth_enabled").One(study)
 	if err != nil {
 		if err == orm.ErrNotFound {
 			perfect.NotFound(w)
@@ -332,7 +344,7 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *perfect.Request) 
 		_, exists := (*study.Subjects)[id]
 
 		if !exists {
-			study.AddSubject(id, true)
+			(*study.Subjects)[id] = true
 		}
 	}
 
