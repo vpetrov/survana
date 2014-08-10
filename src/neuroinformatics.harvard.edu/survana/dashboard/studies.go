@@ -184,7 +184,7 @@ func (d *Dashboard) DeleteStudy(w http.ResponseWriter, r *perfect.Request) {
 
 	//make sure the form exists
 	study := &survana.Study{Id: &study_id}
-	err = db.Find(study)
+	err = db.Peek(study)
 	if err != nil {
 		if err == orm.ErrNotFound {
 			perfect.NotFound(w)
