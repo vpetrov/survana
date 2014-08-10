@@ -55,7 +55,10 @@ func (d *Dashboard) CreateForm(w http.ResponseWriter, r *perfect.Request) {
 		perfect.Error(w, r, err)
 	}
 
-	form := &survana.Form{}
+	form := &survana.Form{
+		CreatedOn: orm.Time(time.Now()),
+		OwnerId:   session.ProfileId,
+	}
 
 	//parse input data
 	err = r.ParseJSON(form)
@@ -63,9 +66,6 @@ func (d *Dashboard) CreateForm(w http.ResponseWriter, r *perfect.Request) {
 		perfect.Error(w, r, err)
 		return
 	}
-
-	form.CreatedOn = orm.Time(time.Now())
-	form.OwnerId = session.ProfileId
 
 	//generate a unique id
 	err = form.GenerateId(db)
