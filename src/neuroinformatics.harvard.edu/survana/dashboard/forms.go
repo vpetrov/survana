@@ -16,20 +16,20 @@ func (d *Dashboard) FormListPage(w http.ResponseWriter, r *perfect.Request) {
 func (d *Dashboard) FormList(w http.ResponseWriter, r *perfect.Request) {
 	var db = r.Module.Db
 
-	//filter := []string{"id", "name", "title", "version", "created_on", "owner_id"}
+	filter := []string{"id", "name", "title", "version", "created_on", "owner_id"}
 
 	query := r.URL.Query()
 	_ = query.Get("ids")
 
 	//decide whether the 'fields' property should be returned
-	/*fields := query.Get("fields")
+	fields := query.Get("fields")
 	if fields == "true" {
 		filter = append(filter, "fields")
-	}*/
+	}
 
 	forms := &[]survana.Form{}
 	search := &survana.Form{}
-	err := db.Query(search).All(forms)
+	err := db.Query(search).Select(filter...).All(forms)
 
 	if err != nil && err != orm.ErrNotFound {
 		perfect.Error(w, r, err)
