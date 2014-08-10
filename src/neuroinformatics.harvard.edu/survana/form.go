@@ -12,7 +12,7 @@ const (
 
 type Form struct {
 	orm.Object  `bson:",inline,omitempty" json:"-"`
-	Id          *string    `bson:"id,omitempty" json:"id,omitempty"`
+	Id          *string    `bson:"id,omitempty" json:"id,omitempty,readonly"`
 	Name        *string    `bson:"name,omitempty" json:"name,omitempty"`
 	Title       *string    `bson:"title,omitempty" json:"title,omitempty"`
 	Description *string    `bson:"description,omitempty" json:"description,omitempty"`
@@ -21,7 +21,7 @@ type Form struct {
 	Fields      *[]Field   `bson:"fields,omitempty" json:"fields,omitempty"`
 
 	//ACL
-	OwnerId *string `bson:"owner_id,omitempty" json:"owner_id,omitempty"`
+	OwnerId *string `bson:"owner_id,omitempty" json:"owner_id,omitempty,readonly"`
 }
 
 //TODO: this is vulnerable to a race condition. It would be better to

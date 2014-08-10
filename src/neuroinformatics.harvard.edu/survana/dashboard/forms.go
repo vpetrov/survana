@@ -144,7 +144,7 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *perfect.Request) {
 
 	//make sure the form exists
 	form := &survana.Form{Id: &form_id}
-	err = db.Find(form)
+	err = db.Peek(form)
 	if err != nil {
 		if err == orm.ErrNotFound {
 			perfect.NotFound(w)
@@ -158,8 +158,7 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *perfect.Request) {
 	log.Println(form)
 
 	//parse new form data sent by the client
-	user_form := &survana.Form{}
-	err = r.ParseJSON(user_form)
+	err = r.ParseJSON(form)
 	if err != nil {
 		perfect.Error(w, r, err)
 		return
@@ -167,16 +166,10 @@ func (d *Dashboard) EditForm(w http.ResponseWriter, r *perfect.Request) {
 
 	//TODO?: validate form fields? validate using a schema?
 
-	log.Printf("%s: %#v\n", "JSON form submitted by the client", user_form)
-
-	//unset properties that should not be changed
-	user_form.Object = form.Object
-	user_form.Id = nil
-	user_form.CreatedOn = nil
-	user_form.OwnerId = nil
+	log.Printf("%s: %#v\n", "JSON form submitted by the client", form)
 
 	//update the form
-	err = db.Save(user_form)
+	err = db.Save(form)
 	if err != nil {
 		perfect.Error(w, r, err)
 		return
