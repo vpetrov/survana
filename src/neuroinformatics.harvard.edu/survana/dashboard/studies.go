@@ -16,13 +16,14 @@ func (d *Dashboard) StudyListPage(w http.ResponseWriter, r *perfect.Request) {
 
 func (d *Dashboard) StudyList(w http.ResponseWriter, r *perfect.Request) {
 	var (
-		err error
-		db  = r.Module.Db
+		err    error
+		db     = r.Module.Db
+		filter = []string{"id", "name", "title", "description", "version", "created_on", "owner_id", "published", "auth_enabled", "store_url"}
 	)
 
 	studies := &[]survana.Study{}
 	search := &survana.Study{}
-	err = db.Query(search).All(studies)
+	err = db.Query(search).Select(filter...).All(studies)
 
 	if err != nil {
 		perfect.Error(w, r, err)
