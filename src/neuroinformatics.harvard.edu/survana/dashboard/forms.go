@@ -199,7 +199,7 @@ func (d *Dashboard) DeleteForm(w http.ResponseWriter, r *perfect.Request) {
 
 	//make sure the form exists
 	form := &survana.Form{Id: &form_id}
-	err = db.Find(form)
+	err = db.Peek(form)
 	if err != nil {
 		if err == orm.ErrNotFound {
 			perfect.NotFound(w)
