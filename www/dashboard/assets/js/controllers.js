@@ -1186,6 +1186,33 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                 ngModel.$render();
             }
 
+            function extract_schemata(form_fields) {
+                var schemata = {},
+                    field,
+                    id,
+                    i;
+
+                if (!form_fields) {
+                    return schemata;
+                }
+
+                for (i = 0; i < form_fields.length; ++i) {
+                    id = form_fields[i].id;
+                    if (!id) {
+                        //user forgot to supply id
+                        //todo: show error to the user
+                        console.warn("No ID set for question #" + id);
+                    }
+                    schemata[id] = {
+                        "id": id,
+                        "type": form_fields[i].type,
+                        "index": i
+                    }
+                }
+
+                return schemata;
+            }
+
             //quick hack to pass this value form the scope to the iframe
             $window.study_id = function () {
                 if (scope.study) {
@@ -1245,8 +1272,10 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                 var frame = elem[0],
                     doc = frame.contentDocument || frame.contentWindow.document,
                     node = doc.getElementById('content'),
+                    schemata_node = doc.getElementById('schemata'),
                     validation_node = doc.getElementById('validation'),
                     result,
+                    schemata,
                     validation;
 
 
@@ -1264,6 +1293,13 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
 
                     //append the form
                     node.appendChild(result);
+
+                    //form schemata
+                    schemata = extract_schemata(scope.current.form.fields);
+
+                    if (schemata_node && schemata) {
+                        schemata_node.innerHTML = JSON.stringify(schemata);
+                    }
 
                     //validation configuration
                     validation = Survana.Validation.ExtractConfiguration(ngModel.$viewValue);

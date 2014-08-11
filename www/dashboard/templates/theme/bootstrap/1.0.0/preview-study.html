@@ -39,6 +39,9 @@
 
         <div id="content" class="container" style="margin-top:25px;"></div>
 
+        <!-- form schemata -->
+        <script id="schemata" type="text/schemata"></script>
+
         <!-- validation configuration -->
         <script id="validation" type="text/validation"></script>
 
@@ -53,6 +56,24 @@
 
 
         <script type="text/javascript">
+            var schemata = {};
+
+            function readSchemata() {
+                var el = document.getElementById('schemata');
+
+                if (!el || !el.innerHTML) {
+                    return;
+                }
+
+                try {
+                    schemata = JSON.parse(el.innerHTML);
+                    console.log('form schemata', schemata);
+                } catch (e) {
+                    console.error("Invalid Form Schemata:", el.innerHTML, e);
+                }
+            }
+
+            readSchemata();
             window.startValidation = function () {
                 var validation_el = document.getElementById('validation'),
                         validation_config;
