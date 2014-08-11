@@ -10,7 +10,7 @@
     <a href="#/studies/subjects/{{ study.id }}" class="btn btn-default"><i class="glyphicon glyphicon-user"></i> Participants</a>
 
     <div ng-show="publishing || error" ng-class="{'active':publishing}" class="progress progress-striped btn-group" style="width:200px; display:inline-block; margin-bottom:3px; margin-left:5px">
-        <div class="progress-bar" ng-class="{'progress-bar-success':!error, 'progress-bar-danger':error}" role="progressbar" style="width: {{ ((current.index-0) / study.forms.length) * 100 }}%;"></div>
+        <div class="progress-bar" ng-class="{'progress-bar-success':!error, 'progress-bar-danger':error}" role="progressbar" style="width: {{ ((current.index-0) / study_forms.length) * 100 }}%;"></div>
     </div>
 </div>
 
@@ -28,7 +28,7 @@
     <div class="row">
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
             <ul class="nav nav-pills nav-stacked">
-                <li ng-repeat="form in study.forms track by $index" ng-class="{'active':isCurrent($index)}">
+                <li ng-repeat="form in study_forms track by $index" ng-class="{'active':isCurrent($index)}">
                     <a href="">
                         <span class="label label-primary" style="position:relative; left:-10px;">{{ $index + 1}}</span>
                         {{ form.name }}

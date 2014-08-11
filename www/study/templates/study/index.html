@@ -48,7 +48,7 @@
 
         var study_id = '<%js .Id %>',
             workflow = [
-                <%range $i, $form := .Forms %>
+                <%range $i, $form := .FormIds %>
                     "form?s=" + study_id + "&f=<%js $i %>",
                 <%end%>
             ],

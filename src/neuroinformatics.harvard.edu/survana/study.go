@@ -8,13 +8,13 @@ import (
 
 type Study struct {
 	orm.Object  `bson:",inline,omitempty" json:"-"`
-	Id          *string          `bson:"id,omitempty" json:"id,omitempty"`
+	Id          *string          `bson:"id,omitempty" json:"id,omitempty,readonly"`
 	Name        *string          `bson:"name,omitempty" json:"name,omitempty"`
 	Title       *string          `bson:"title,omitempty" json:"title,omitempty"`
 	Description *string          `bson:"description,omitempty" json:"description,omitempty"`
 	Version     *string          `bson:"version,omitempty" json:"version,omitempty"`
 	CreatedOn   *time.Time       `bson:"created_on,omitempty" json:"created_on,omitempty,readonly"`
-	Forms       *[]Form          `bson:"forms,omitempty" json:"forms,omitempty"`
+	FormIds     *[]string        `bson:"form_ids,omitempty" json:"form_ids,omitempty"`
 	Html        *[][]byte        `bson:"html,omitempty" json:"-"`
 	Published   *bool            `bson:"published,omitempty" json:"published,omitempty"`
 	Subjects    *map[string]bool `bson:"subjects,omitempty" json:"subjects,omitempty"`

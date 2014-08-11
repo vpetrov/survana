@@ -9,7 +9,7 @@
     <span ng-if="forms.length">
         <span class="text">&nbsp;</span>
         <select class="form-control" data-ng-model="current.index">
-            <option ng-repeat="f in study.forms track by $index" value="{{ $index }}">{{ $index + 1}}. {{ f.title || f.name || f.id }}</option>
+            <option ng-repeat="f in study_forms track by $index" value="{{ $index }}">{{ $index + 1}}. {{ f.title || f.name || f.id }}</option>
         </select>
     </span>
 

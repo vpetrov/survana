@@ -30,15 +30,15 @@
     <form class="form-inline">
         <div class="form-group">
             <label>Name</label>
-            <input type="text" class="form-control" data-ng-model="study.name">
+            <input type="text" class="form-control" data-ng-model="study.name" data-ng-change="changed=true">
         </div>
         <div class="form-group">
             <label>Title</label>
-            <input type="text" class="form-control" data-ng-model="study.title">
+            <input type="text" class="form-control" data-ng-model="study.title" data-ng-change="changed=true">
         </div>
         <div class="form-group">
             <label>Description</label>
-            <input type="text" class="form-control" data-ng-model="study.description">
+            <input type="text" class="form-control" data-ng-model="study.description" data-ng-change="changed=true">
         </div>
     </form>
 
@@ -47,10 +47,10 @@
     <div class="row">
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
             <ul class="nav nav-pills nav-stacked study-forms">
-                <li class="study-form-placeholder" ng-hide="study.forms.length">
-                    <a href="" class="text-center"><i class="glyphicon glyphicon-info-sign"></i> Choose a form</a>
+                <li class="study-form-placeholder" ng-hide="study.form_ids.length">
+                    <a href="" class="text-center"><i class="glyphicon glyphicon-info-sign"></i> Choose a form now</a>
                 </li>
-                <li ng-repeat="form in study.forms track by $index" class="hover" draggable="true" data-list-index="{{ $index }}" data-ng-model="study.forms">
+                <li ng-repeat="form in study_forms track by $index" class="hover" draggable="true" data-list-index="{{ $index }}" data-ng-model="study_forms">
                     <a href="">
                         <span class="label label-primary" style="position:relative; left:-10px;">{{ $index + 1}}</span>{{ form.name }}
                         <span class="badge badge-success">{{ form.version }}</span>
@@ -58,7 +58,6 @@
                         <span class="pull-right text-danger hover-hidden remove-form" ng-click="removeForm($index); stopEvent($event);">
                             <i class="glyphicon glyphicon-remove"></i>
                         </span>
-
                     </a>
                 </li>
             </ul>

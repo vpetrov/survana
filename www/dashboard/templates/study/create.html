@@ -41,7 +41,7 @@
                 <li class="study-form-placeholder" ng-hide="study.forms.length">
                     <a href="" class="text-center"><i class="glyphicon glyphicon-info-sign"></i> Choose a form</a>
                 </li>
-                <li ng-repeat="form in study.forms track by $index" class="hover" draggable="true" data-list-index="{{ $index }}" data-ng-model="study.forms">
+                <li ng-repeat="form in study_forms track by $index" class="hover" draggable="true" data-list-index="{{ $index }}" data-ng-model="study.forms">
                     <a href="">
                         <span class="label label-primary" style="position:relative; left:-10px;">{{ $index + 1}}</span>{{ form.name }}
                         <span class="badge badge-success">{{ form.version }}</span>

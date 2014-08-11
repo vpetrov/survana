@@ -12,7 +12,7 @@ const (
 
 type Form struct {
 	orm.Object  `bson:",inline,omitempty" json:"-"`
-	Id          *string    `bson:"id,omitempty" json:"id,omitempty"`
+	Id          *string    `bson:"id,omitempty" json:"id,omitempty,readonly"`
 	Name        *string    `bson:"name,omitempty" json:"name,omitempty"`
 	Title       *string    `bson:"title,omitempty" json:"title,omitempty"`
 	Description *string    `bson:"description,omitempty" json:"description,omitempty"`

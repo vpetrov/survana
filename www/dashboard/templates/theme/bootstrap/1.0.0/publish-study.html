@@ -1,6 +1,7 @@
 <!-- Study Publish Template
     Variables:
-        study: survana.Study with resolved study.forms
+        study: survana.Study
+        study_forms: an array of this study's form json
         current_form: index pointing to the currently visible form in the study.
 -->
 <!DOCTYPE html>
@@ -25,16 +26,16 @@
         <div class="navbar navbar-default navbar-static-top">
             <div class="container">
                 <div class="progress progress-striped s-progress pull-left">
-                    <div class="progress-bar progress-bar-info" style="width: {{ (((current.index - 0) + 1) / study.forms.length)*100}}%"></div>
+                    <div class="progress-bar progress-bar-info" style="width: {{ (((current.index - 0) + 1) / study_forms.length)*100}}%"></div>
                     <div class="progress-text">
                         <span class="glyphicon glyphicon-check" style="color:white"></span>
-                        <span>{{ (current.index - 0) + 1 }} of {{ study.forms.length }}</span>
+                        <span>{{ (current.index - 0) + 1 }} of {{ study_forms.length }}</span>
                     </div>
                 </div>
                 <p class="navbar-text hidden-xs hidden-sm pull-left">{{ form.title }}</p>
                 <span >
-                <button id="btnNext" ng-class="{'hidden':current.index==(study.forms.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="Survana.Workflow.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
-                <button id="btnFinish" ng-class="{'hidden':current.index<(study.forms.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="Survana.Workflow.FinishSurvey(this)">Finish <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+                <button id="btnNext" ng-class="{'hidden':current.index==(study_forms.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="Survana.Workflow.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+                <button id="btnFinish" ng-class="{'hidden':current.index<(study_forms.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="Survana.Workflow.FinishSurvey(this)">Finish <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
             </div>
         </div>
 

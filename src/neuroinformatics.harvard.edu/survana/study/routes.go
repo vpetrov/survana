@@ -237,8 +237,8 @@ func (s *Study) Form(w http.ResponseWriter, r *perfect.Request) {
 		return
 	}
 
-	study := &survana.Study{}
-	err = db.Find(study)
+	study := &survana.Study{Id: &study_id}
+	err = db.Query(study).Select("published", "html").One(study)
 	if err != nil {
 		if err == orm.ErrNotFound {
 			perfect.NotFound(w)
@@ -249,7 +249,7 @@ func (s *Study) Form(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	//make sure the study has been published
-	if !*study.Published || form_index >= len(*study.Html) {
+	if study.Published == nil || study.Html == nil || !*study.Published || form_index >= len(*study.Html) {
 		perfect.NotFound(w)
 		return
 	}

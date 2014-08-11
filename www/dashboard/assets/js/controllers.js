@@ -128,7 +128,7 @@ dashboard.controller('StudyEditCtrl', ['$scope', '$http', '$window', '$location'
             title: "",
             description: "",
             version: "",
-            forms: []
+            form_ids: []
         };
 
         $scope.create = ($routeParams.id === undefined);
@@ -136,13 +136,16 @@ dashboard.controller('StudyEditCtrl', ['$scope', '$http', '$window', '$location'
         $scope.loading = false;
         $scope.message = "";
 
+        $scope.changed = false;
+        $scope.study_forms = [];
+
         //get all forms
         $http.get('forms/list').success(function (response, code, request) {
             if (response.success) {
                 $scope.forms = response.message;
 
                 //update the list of forms in the study, if the study info has been downloaded already
-                if ($scope.study.forms.length) {
+                if ($scope.study.form_ids.length) {
                     resolveStudyForms();
                 }
             } else {
@@ -152,7 +155,7 @@ dashboard.controller('StudyEditCtrl', ['$scope', '$http', '$window', '$location'
                 console.log("Error fetching", $location.path())
             });
 
-        //if we're editing a form, 'id' will be set
+        //if we're editing a form, the 'id' route param will be set
         if (!$scope.create) {
             //fetch the form JSON and store it in $scope.form
             $http.get('study', {params: $routeParams}).success(function (response, code, request) {
@@ -174,25 +177,25 @@ dashboard.controller('StudyEditCtrl', ['$scope', '$http', '$window', '$location'
         //by default, the backend will store just pointers to the forms ({'id':form_id}).
         //this will dereference all pointers using $scope.forms.
         function resolveStudyForms() {
-            var form, form_proxy, i;
+            var form, form_id, i;
 
-            if (!$scope.study || !$scope.study.forms) {
-                return;
+            if ($scope.study.form_ids == undefined) {
+                $scope.study.form_ids = [];
             }
 
             //replace form stubs with actual forms, if they're present
-            for (i = 0; i < $scope.study.forms.length; i++) {
-                form_proxy = $scope.study.forms[i];
+            for (i = 0; i < $scope.study.form_ids.length; i++) {
+                form_id = $scope.study.form_ids[i];
 
                 //skip invalid entries
-                if (!form_proxy || !form_proxy.id) {
+                if (!form_id) {
                     continue;
                 }
 
-                form = findForm(form_proxy.id);
+                form = findForm(form_id);
 
                 if (form) {
-                    $scope.study.forms[i] = form;
+                    $scope.study_forms[i] = form;
                 }
             }
         }
@@ -213,26 +216,34 @@ dashboard.controller('StudyEditCtrl', ['$scope', '$http', '$window', '$location'
 
             var form = findForm(form_id);
 
-            if (form) {
-                if (!$scope.study.forms) {
-                    $scope.study.forms = [form];
-                } else {
-                    $scope.study.forms.push(form);
-                }
+            if (!form) {
+                return
             }
+
+            if (!$scope.study.form_ids) {
+                $scope.study.form_ids = [];
+            }
+
+            $scope.study.form_ids.push(form_id);
+            $scope.study_forms.push(form);
+            $scope.changed = true;
         };
 
         $scope.removeForm = function (index) {
             try {
-                $scope.study.forms.splice(index,1);
+                $scope.study.form_ids.splice(index,1);
+                $scope.study_forms.splice(index,1);
             } catch (e) {
                 console.log('error', e);
             }
+
+            $scope.changed = true;
         };
 
         //if the save operation was successful
         function onSaveSuccess(response, code, request) {
             $scope.loading = false;
+            $scope.changed = false;
 
             var id;
 
@@ -271,23 +282,7 @@ dashboard.controller('StudyEditCtrl', ['$scope', '$http', '$window', '$location'
                     success(onSaveSuccess).
                     error(onSaveError);
             } else {
-
-                //create a copy of $scope.study, and replace all forms with stubs
-                var study = {
-                        name: $scope.study.name,
-                        title: $scope.study.title,
-                        description: $scope.study.description,
-                        forms: []
-                    },
-                    i;
-
-                //extract form IDs, since we don't actually want to send copies of the forms, just the form IDs
-                for (i in $scope.study.forms) {
-                    //replace each form with a form-proxy object, which just contains the form id
-                    study.forms[i] = { 'id': $scope.study.forms[i].id };
-                }
-
-                $http.put('studies/edit', study, {params: $routeParams}).
+                $http.put('studies/edit', $scope.study, {params: $routeParams}).
                     success(onSaveSuccess).
                     error(onSaveError);
             }
@@ -312,6 +307,8 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
         $scope.size = 'M';
         $scope.template = null;
         $scope.theme = 'bootstrap';
+
+        $scope.study_forms = [];
 
         function fetchTemplate(theme_id, theme_version) {
             var url = 'theme?id=' + theme_id + '&version=' + theme_version + '&preview=true&study=true',
@@ -338,8 +335,8 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
                     $scope.study = response.message;
 
                     //fetch form definitions for all the forms
-                    if ($scope.study.forms.length) {
-                        fetchForms($scope.study.forms);
+                    if ($scope.study.form_ids.length) {
+                        fetchForms($scope.study.form_ids);
                     }
                 } else {
                     console.log('Error message', response.message);
@@ -360,7 +357,7 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
                     $scope.forms = response.message;
 
                     //update the list of forms in the study, if the study info has been downloaded already
-                    if ($scope.study.forms.length) {
+                    if ($scope.study.form_ids.length) {
                         resolveStudyForms();
                     }
                 } else {
@@ -374,27 +371,27 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
         //by default, the backend will store just pointers to the forms ({'id':form_id}).
         //this will dereference all pointers using $scope.forms.
         function resolveStudyForms() {
-            var form, form_proxy, i;
+            var form, form_id, i;
 
             //replace form stubs with actual forms, if they're present
-            for (i = 0; i < $scope.study.forms.length; i++) {
-                form_proxy = $scope.study.forms[i];
+            for (i = 0; i < $scope.study.form_ids.length; i++) {
+                form_id = $scope.study.form_ids[i];
 
                 //skip invalid entries
-                if (!form_proxy || !form_proxy.id) {
+                if (!form_id) {
                     continue;
                 }
 
-                form = findForm(form_proxy.id);
+                form = findForm(form_id);
 
                 if (form) {
-                    $scope.study.forms[i] = form;
+                    $scope.study_forms[i] = form;
                 }
             }
 
             //as soon as the study forms are resolved, we can render the current form
             //if we update current.form, the watch will trigger the update
-            $scope.current.form = $scope.study.forms[$scope.current.index];
+            $scope.current.form = $scope.study_forms[$scope.current.index];
         }
 
         function findForm(form_id) {
@@ -431,8 +428,8 @@ dashboard.controller('StudyViewCtrl', ['$scope', '$window', '$location', '$route
 
         //when the current index changes, change the current form
         $scope.$watch('current.index', function (newIndex, oldIndex) {
-            if ($scope.study && $scope.study.forms && $scope.study.forms.length) {
-                $scope.current.form = $scope.study.forms[newIndex];
+            if ($scope.study && $scope.study_forms && $scope.study_forms.length) {
+                $scope.current.form = $scope.study_forms[newIndex];
             }
         });
     }
@@ -443,6 +440,7 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
         $scope.study = null;
         $scope.study_url = null;
         $scope.forms = null;
+        $scope.study_forms = [];
         $scope.current = {
             index: -1,
             form: null,
@@ -464,7 +462,7 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
             $scope.current.index = 0;
             $scope.error = false;
             $scope.message = null;
-            $scope.current.form = $scope.study.forms[0];
+            $scope.current.form = $scope.study_forms[0];
         };
 
         $scope.unpublishStudy = function () {
@@ -499,9 +497,9 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
 
         function nextForm() {
             //if there are forms left
-            if (($scope.current.index + 1) < $scope.study.forms.length) {
+            if (($scope.current.index + 1) < $scope.study_forms.length) {
                 $scope.current.index++;
-                $scope.current.form = $scope.study.forms[$scope.current.index];
+                $scope.current.form = $scope.study_forms[$scope.current.index];
             } else {
                 //otherwise, we need to mark the study object as 'published' and save it
                 $scope.study.published = true;
@@ -582,14 +580,14 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
                     description: $scope.study.description,
                     published: $scope.study.published,
                     version: $scope.study.version,
-                    forms: []
+                    form_ids: []
                 },
                 i;
 
             //extract form IDs, since we don't actually want to send copies of the forms, just the form IDs
-            for (i in $scope.study.forms) {
+            for (i in $scope.study.form_ids) {
                 //replace each form with a form-proxy object, which just contains the form id
-                study.forms[i] = { 'id': $scope.study.forms[i].id };
+                study.form_ids[i] = { 'id': $scope.study.form_ids[i].id };
             }
 
             return study;
@@ -618,14 +616,14 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
 
 
         function fetchStudy() {
-            //fetch the form JSON and store it in $scope.form
+            //fetch the study JSON and store it in $scope.study
             $http.get('study', {params: $routeParams}).success(function (response, code, request) {
                 if (response.success) {
                     $scope.study = response.message;
 
                     //fetch form definitions for all the forms
-                    if ($scope.study.forms.length) {
-                        fetchForms($scope.study.forms);
+                    if ($scope.study.form_ids.length) {
+                        fetchForms($scope.study.form_ids);
                     }
 
                     //update study_url
@@ -649,7 +647,7 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
                     $scope.forms = response.message;
 
                     //update the list of forms in the study, if the study info has been downloaded already
-                    if ($scope.study.forms.length) {
+                    if ($scope.study.form_ids.length) {
                         resolveStudyForms();
                     }
                 } else {
@@ -663,21 +661,21 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
         //by default, the backend will store just pointers to the forms ({'id':form_id}).
         //this will dereference all pointers using $scope.forms.
         function resolveStudyForms() {
-            var form, form_proxy, i;
+            var form, form_id, i;
 
             //replace form stubs with actual forms, if they're present
-            for (i = 0; i < $scope.study.forms.length; i++) {
-                form_proxy = $scope.study.forms[i];
+            for (i = 0; i < $scope.study.form_ids.length; i++) {
+                form_id = $scope.study.form_ids[i];
 
                 //skip invalid entries
-                if (!form_proxy || !form_proxy.id) {
+                if (!form_id) {
                     continue;
                 }
 
-                form = findForm(form_proxy.id);
+                form = findForm(form_id);
 
                 if (form) {
-                    $scope.study.forms[i] = form;
+                    $scope.study_forms[i] = form;
                 }
             }
         }
@@ -710,7 +708,7 @@ dashboard.controller('StudyPublishCtrl', ['$scope', '$window', '$location', '$ro
 ]);
 
 dashboard.controller('StudySubjectsCtrl', ['$scope', '$http', '$window', '$location', '$routeParams',
-    function StudyEditCtrl($scope, $http, $window, $location, $routeParams) {
+    function StudySubjectsCtrl($scope, $http, $window, $location, $routeParams) {
 
         //create a file upload field
         var fileUploader = document.createElement('input');
@@ -1200,7 +1198,7 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
             //register a NextPage() function that can be called within the questionnaire preview iframe
             $window.NextPage = function () {
                 $timeout(function () {
-                    if ((scope.current.index + 1) < scope.study.forms.length) {
+                    if ((scope.current.index + 1) < scope.study.form_ids.length) {
                         scope.current.index++;
                     }
                 });

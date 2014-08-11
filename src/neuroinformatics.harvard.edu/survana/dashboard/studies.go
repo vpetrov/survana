@@ -236,7 +236,7 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *perfect.Request) 
 	}
 
 	study := &survana.Study{Id: &study_id}
-	err = db.Query(study).Select("html", "forms").One(study)
+	err = db.Query(study).Select("html", "form_ids").One(study)
 	if err != nil {
 		if err == orm.ErrNotFound {
 			perfect.NotFound(w)
@@ -248,8 +248,8 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *perfect.Request) 
 
 	//count the total number of forms in the study
 	var nforms int = 0
-	if study.Forms != nil {
-		nforms = len(*study.Forms)
+	if study.FormIds != nil {
+		nforms = len(*study.FormIds)
 	}
 
 	log.Println("study=", study, "form_index", form_index, "study.Forms.length=", nforms)
@@ -273,10 +273,10 @@ func (d *Dashboard) PublishStudyForm(w http.ResponseWriter, r *perfect.Request) 
 	//assign the html
 	(*study.Html)[form_index] = html
 
-	//avoid re-sending the Forms array to the DB
-	study.Forms = nil
+	//avoid re-sending the FormIds array to the DB
+	study.FormIds = nil
 
-	//save the study
+	//save the Html array
 	err = db.Save(study)
 	if err != nil {
 		perfect.Error(w, r, err)
