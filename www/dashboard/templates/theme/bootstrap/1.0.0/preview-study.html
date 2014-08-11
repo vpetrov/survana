@@ -33,7 +33,7 @@
                 </div>
                 <p class="navbar-text hidden-xs hidden-sm pull-left">{{ form.title }}</p>
                 <button ng-class="{'hidden':current.index==(study.form_ids.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="window.parent.NextPage()">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
-                <button ng-class="{'hidden':current.index<(study.form_ids.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="window.parent.FinishSurvey()"><span class="glyphicon glyphicon-ok"></span> Finish</button>
+                <button ng-class="{'hidden':current.index<(study.form_ids.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="window.parent.NextPage()"><span class="glyphicon glyphicon-ok"></span> Finish</button>
             </div>
         </div>
 

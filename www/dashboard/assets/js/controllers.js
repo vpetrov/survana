@@ -1227,13 +1227,9 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                 $timeout(function () {
                     if ((scope.current.index + 1) < scope.study.form_ids.length) {
                         scope.current.index++;
+                    } else {
+                        scope.current.index = 0;
                     }
-                });
-            };
-
-            $window.FinishSurvey = function () {
-                $timeout(function () {
-                    scope.current.index = 0;
                 });
             };
 
