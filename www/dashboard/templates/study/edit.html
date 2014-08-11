@@ -1,11 +1,14 @@
 <div class="toolbar">
     <div class="btn-group">
-        <button type="button" class="btn btn-warning" ng-click="saveStudy()" data-loading="loading"><i class="glyphicon glyphicon-eye-open"></i></button>
-        <button type="button" class="btn btn-warning active"><i class="glyphicon glyphicon-edit"></i></button>
+        <a href="#/studies/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-eye-open" title="View"></i></a>
+        <a href="#/studies/edit/{{ study.id }}" class="btn btn-warning active"><i class="glyphicon glyphicon-edit" title="Edit"></i></a>
         <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-globe" title="Publish"></i></a>
     </div>
 
-    <button type="button" class="btn btn-default" ng-click="discardStudy()"><i class="glyphicon glyphicon-remove-circle"></i> Cancel</button>
+    <span ng-show="changed">
+        <button type="button" class="btn btn-success" ng-click="saveStudy()"><i class="glyphicon glyphicon-ok"></i> Save</button>
+        <button type="button" class="btn btn-default" ng-click="discardStudy()"><i class="glyphicon glyphicon-remove-circle"></i> Cancel</button>
+    </span>
 
     <!-- Search -->
     <div class="input-group col-lg-2 col-md-3 col-sm-3 col-xs-4 pull-right" style="display:inline-table">
