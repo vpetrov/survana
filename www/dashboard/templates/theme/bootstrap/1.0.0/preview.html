@@ -34,6 +34,7 @@
 
         <script type="text/javascript">
             function readSchemata(form) {
+                console.log("reading schemata for", form);
                 if (!form || !Survana) {
                     return;
                 }
@@ -44,6 +45,7 @@
                     return;
                 }
 
+                console.log("trying to parse schemata");
                 try {
                     Survana.Schema[form.id] = JSON.parse(el.innerHTML);
                     console.log('form', form.id, ' schemata', Survana.Schema[form.id]);
@@ -75,9 +77,12 @@
             };
 
             window.validateForm = function () {
+                console.log("validateForm() called!");
                 var form_id = document.forms[0].id;
+                console.log("form_id = ", form_id);
 
                 if (document.forms && document.forms[0] && Survana !== undefined) {
+                    console.log("Survana.Schema[form_id]=", Survana.Schema[form_id]);
                     Survana.Validation.Validate(document.forms[0], Survana.Schema[form_id]);
                 }
             };

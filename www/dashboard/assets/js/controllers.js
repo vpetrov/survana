@@ -1291,7 +1291,7 @@ dashboard.directive("questionnaire", ['$window', '$compile', '$timeout', functio
                     node.appendChild(result);
 
                     //form schemata
-                    schemata = extract_schemata(scope.current.form.fields);
+                    schemata = extract_schemata(ngModel.$viewValue.fields);
 
                     if (schemata_node && schemata) {
                         schemata_node.innerHTML = JSON.stringify(schemata);
