@@ -47,7 +47,7 @@ func (store *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
 		return
 	}
 
-	response_queue := map[string]json.RawMessage{}
+	response_queue := &map[string]json.RawMessage{}
 
 	err = r.ParseJSON(response_queue)
 	if err != nil {
@@ -62,7 +62,7 @@ func (store *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
 		result   = map[string]bool{}
 	)
 
-	for r_id, v := range response_queue {
+	for r_id, v := range *response_queue {
 		//unmarshal each response into a Response object
 		response = &survana.Response{}
 
