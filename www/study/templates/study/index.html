@@ -23,6 +23,7 @@
 
             //returns false if any of the following conditions are not satisfied, otherwise it returns true
             return  !isNaN(current_form)                    &&  //current form must be a valid integer
+                    session.workflow !== null               &&  //workflow must not be null
                     typeof session.workflow === "object"    &&  //workflow must be an object
                     current_form < session.workflow.length  &&  //current must point to a valid entry in workflow
                     session.start;                              //start time must be defined

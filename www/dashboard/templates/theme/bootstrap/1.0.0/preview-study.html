@@ -56,27 +56,31 @@
 
 
         <script type="text/javascript">
-            var schemata = {};
+            function readSchemata(form) {
+                if (!form || Survana === undefined) {
+                    return;
+                }
 
-            function readSchemata() {
                 var el = document.getElementById('schemata');
 
-                if (!el || !el.innerHTML) {
+                if (!el || !el.innerHTML || !form.id) {
                     return;
                 }
 
                 try {
-                    schemata = JSON.parse(el.innerHTML);
-                    console.log('form schemata', schemata);
+                    Survana.Schema[form.id] = JSON.parse(el.innerHTML);
+                    console.log('form', form.id, ' schemata', Survana.Schema[form.id]);
                 } catch (e) {
                     console.error("Invalid Form Schemata:", el.innerHTML, e);
                 }
             }
 
-            readSchemata();
-            window.startValidation = function () {
+            window.startValidation = function (form) {
+                if (!form || Survana === undefined) {
+                    return;
+                }
                 var validation_el = document.getElementById('validation'),
-                        validation_config;
+                    validation_config;
 
                 if (!validation_el.innerHTML) {
                     return;
@@ -91,19 +95,19 @@
                 }
 
                 //register validation configuration
-                if (document.forms && document.forms[0] && Survana !== undefined) {
-                    Survana.Validation.SetConfiguration(document.forms[0], validation_config);
-                }
+                Survana.Validation.SetConfiguration(form, validation_config);
             };
 
 
             window.validateForm = function () {
                 if (document.forms && document.forms[0] && Survana !== undefined) {
-                    Survana.Validation.Validate(document.forms[0]);
+                    var form_id = document.forms[0].id;
+                    Survana.Validation.Validate(document.forms[0], Survana.Schema[form_id]);
                 }
             };
 
-            startValidation();
+            readSchemata(document.forms[0]);
+            startValidation(document.forms[0]);
         </script>
     </body>
 </html>
