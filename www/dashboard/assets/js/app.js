@@ -1,160 +1,161 @@
-"use strict";
+(function () {
+    "use strict";
+    var app = angular.module('dashboardApp', [
+        'ngRoute',
+        'dashboard'
+    ]);
 
-var app = angular.module('dashboardApp', [
-    'ngRoute',
-    'dashboard'
-]);
+    app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $controllerProvider) {
+        $routeProvider.
+            when("/", {
+                templateUrl: 'home',
+                controller: 'HomeCtrl'
+            }).
+            when("/forms", {
+                templateUrl: 'forms',
+                controller: 'FormListCtrl'
+            }).
+            when("/forms/create", {
+                templateUrl: 'forms/create',
+                controller: 'FormEditCtrl'
+            }).
+            when("/forms/:id", {
+                templateUrl: 'forms/view',
+                controller: 'FormViewCtrl'
+            }).
+            when("/forms/edit/:id", {
+                templateUrl: 'forms/edit',
+                controller: 'FormEditCtrl'
+            }).
+            when("/studies", {
+                templateUrl: 'studies',
+                controller: 'StudyListCtrl'
+            }).
+            when("/studies/create", {
+                templateUrl: 'studies/create',
+                controller: 'StudyEditCtrl'
+            }).
+            when("/studies/:id", {
+                templateUrl: 'studies/view',
+                controller: 'StudyViewCtrl'
+            }).
+            when("/studies/edit/:id", {
+                templateUrl: 'studies/edit',
+                controller: 'StudyEditCtrl'
+            }).
+            when("/studies/publish/:id", {
+                templateUrl: 'studies/publish',
+                controller: 'StudyPublishCtrl'
+            }).
+            when("/studies/subjects/:id", {
+                templateUrl: 'studies/subjects',
+                controller: 'StudySubjectsCtrl'
+            }).
+            otherwise({
+                redirectTo: "/"
+            });
 
-app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $controllerProvider) {
-    $routeProvider.
-        when("/", {
-            templateUrl: 'home',
-            controller: 'HomeCtrl'
-        }).
-        when("/forms", {
-            templateUrl: 'forms',
-            controller: 'FormListCtrl'
-        }).
-        when("/forms/create", {
-            templateUrl: 'forms/create',
-            controller: 'FormEditCtrl'
-        }).
-        when("/forms/:id", {
-            templateUrl: 'forms/view',
-            controller: 'FormViewCtrl'
-        }).
-        when("/forms/edit/:id", {
-            templateUrl: 'forms/edit',
-            controller: 'FormEditCtrl'
-        }).
-        when("/studies", {
-            templateUrl: 'studies',
-            controller: 'StudyListCtrl'
-        }).
-        when("/studies/create", {
-            templateUrl: 'studies/create',
-            controller: 'StudyEditCtrl'
-        }).
-        when("/studies/:id", {
-            templateUrl: 'studies/view',
-            controller: 'StudyViewCtrl'
-        }).
-        when("/studies/edit/:id", {
-            templateUrl: 'studies/edit',
-            controller: 'StudyEditCtrl'
-        }).
-        when("/studies/publish/:id", {
-            templateUrl: 'studies/publish',
-            controller: 'StudyPublishCtrl'
-        }).
-        when("/studies/subjects/:id", {
-            templateUrl: 'studies/subjects',
-            controller: 'StudySubjectsCtrl'
-        }).
-        otherwise({
-            redirectTo: "/"
-        });
-
-    app.controller = $controllerProvider.register;
-}]);
+        app.controller = $controllerProvider.register;
+    }]);
 
 // register the http interceptor which controls the spinner
 // based on httpInterceptor code from http://docs.angularjs.org/api/ng.$http and
 // http://stackoverflow.com/questions/18238227/delay-an-angular-js-http-service
-app.config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.interceptors.push(['$q', '$timeout', function ($q, $timeout) {
+    app.config(['$httpProvider', function ($httpProvider) {
+        $httpProvider.interceptors.push(['$q', '$timeout', function ($q, $timeout) {
 
-        var show = 0,
-            waitBeforeShow = 1000, // ms
-            spinner = angular.element('.navbar-spinner');
+            var show = 0,
+                waitBeforeShow = 1000, // ms
+                spinner = angular.element('.navbar-spinner');
 
-        //shows the spinning element, but only if a request is still outstanding
-        function showSpinner() {
-            if (show > 0) {
-                spinner.removeClass('invisible');
-            }
-        }
-
-        // hides the spinning element
-        function hideSpinner() {
-            if (show > 0) {
-                //decrement the number of requests that need spinning
-                show--;
-
-                if (show === 0) {
-                    spinner.addClass('invisible');
+            //shows the spinning element, but only if a request is still outstanding
+            function showSpinner() {
+                if (show > 0) {
+                    spinner.removeClass('invisible');
                 }
             }
-        }
 
-        return {
-            //turns on the spinner when a request is about to be made
-            "request": function (config) {
-                //increment the number of requests made
-                show++;
-                $timeout(showSpinner, waitBeforeShow, false);
+            // hides the spinning element
+            function hideSpinner() {
+                if (show > 0) {
+                    //decrement the number of requests that need spinning
+                    show--;
 
-                return config || $q.when(config);
-            },
-
-            "requestError": function (rejection) {
-                hideSpinner();
-                return $q.reject(rejection);
-            },
-
-            // turns off the spinner when a response has been received
-            "response": function (response) {
-                hideSpinner();
-                return response || $q.when(response);
-            },
-
-            "responseError": function (rejection) {
-                hideSpinner();
-                return $q.reject(rejection);
+                    if (show === 0) {
+                        spinner.addClass('invisible');
+                    }
+                }
             }
-        }
+
+            return {
+                //turns on the spinner when a request is about to be made
+                "request": function (config) {
+                    //increment the number of requests made
+                    show++;
+                    $timeout(showSpinner, waitBeforeShow, false);
+
+                    return config || $q.when(config);
+                },
+
+                "requestError": function (rejection) {
+                    hideSpinner();
+                    return $q.reject(rejection);
+                },
+
+                // turns off the spinner when a response has been received
+                "response": function (response) {
+                    hideSpinner();
+                    return response || $q.when(response);
+                },
+
+                "responseError": function (rejection) {
+                    hideSpinner();
+                    return $q.reject(rejection);
+                }
+            }
+        }]);
     }]);
-}]);
 
 //register an http interceptor that adds 'X-Requested-With': 'XMLHttpRequest' to all XHR requests
-app.config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.interceptors.push(['$q', function ($q) {
-        return {
-            "request": function (config) {
-                console.log('Setting X-Requested-With to', config.url);
-                config.headers['X-Requested-With'] = 'XMLHttpRequest';
+    app.config(['$httpProvider', function ($httpProvider) {
+        $httpProvider.interceptors.push(['$q', function ($q) {
+            return {
+                "request": function (config) {
+                    console.log('Setting X-Requested-With to', config.url);
+                    config.headers['X-Requested-With'] = 'XMLHttpRequest';
 
-                return config || $q.when(config);
+                    return config || $q.when(config);
+                }
             }
-        }
+        }]);
     }]);
-}]);
 
 //checks for an 'X-Session-Expired' header in http responses and alerts the user that their sessions had expired.
 //A better UX would be nice, perhaps a small login screen that allows the user to log back in, without refreshing.
-app.config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.interceptors.push(['$q', function ($q) {
-        return {
-            "response": function (response) {
-                var headers = response.headers();
+    app.config(['$httpProvider', function ($httpProvider) {
+        $httpProvider.interceptors.push(['$q', function ($q) {
+            return {
+                "response": function (response) {
+                    var headers = response.headers();
 
-                if (headers['x-session-expired'] !== undefined) {
-                    alert('Your session has expired. Please refresh this page. Note that any unsaved changes will be lost.');
+                    if (headers['x-session-expired'] !== undefined) {
+                        alert('Your session has expired. Please refresh this page. Note that any unsaved changes will be lost.');
+                    }
+
+                    return response || $q.when(response);
                 }
-
-                return response || $q.when(response);
             }
-        }
+        }]);
     }]);
-}]);
 
-app.run(function($rootScope /*, $location */) {
-    console.log('app run');
-    $rootScope.$on('$routeChangeError', function (nge, current, previous, rejection) {
-        //when unauthorized, redirect to /login
-        /*if (rejection !== undefined && rejection.status === 401) {
-            $location.path("/login");
-        }*/
-        console.log('Route change error', rejection);
+    app.run(function ($rootScope /*, $location */) {
+        console.log('app run');
+        $rootScope.$on('$routeChangeError', function (nge, current, previous, rejection) {
+            //when unauthorized, redirect to /login
+            /*if (rejection !== undefined && rejection.status === 401) {
+             $location.path("/login");
+             }*/
+            console.log('Route change error', rejection);
+        });
     });
-});
+})();
