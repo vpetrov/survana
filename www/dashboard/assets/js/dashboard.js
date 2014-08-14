@@ -53,71 +53,120 @@
         }
     }]);
 
-    dashboard.directive("draggable", ['$window', function ($window) {
+    dashboard.directive('draggable', [function () {
+        return {
+            restrict: 'A',
+            link: function ($scope, element) {
+                $scope.$emit('draggable-element', element);
+            }
+        }
+    }]);
+
+    dashboard.directive('draggableList', ['$window', function (window) {
         return {
             restrict: 'A',
             require: '?ngModel',
-            scope: false,
             link: function (scope, elem, attrs, ngModel) {
-                var node = elem[0];
+
+                var inside = null,
+                    window_handler = null,
+                    drag_item = null;
 
                 if (ngModel === undefined) {
                     console.error('draggable must have a scope model', elem);
                 }
 
+                function onDragOut(e) {
+                    if (inside) {
+                        drag_item.classList.add('dragremove');
+                        inside = null;
+                    }
+                }
+
+                function onDragRemove(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var src_index = drag_item.getAttribute('data-list-index') | 0;
+
+                    scope.$apply(function () {
+                        ngModel.$viewValue.splice(src_index, 1);
+                    });
+
+                    return false;
+                }
+
+                function onWindowDragOver(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+
+                function onWindowDragEnd(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+
                 function onDragStart(e) {
+                    if (!window_handler) {
+                        window.addEventListener('dragenter', onDragOut);
+                        window.addEventListener('drop', onDragRemove);
+                        window.addEventListener('dragover', onWindowDragOver);
+                        window.addEventListener('dragend', onWindowDragEnd);
+                        window_handler = true;
+                    }
+
                     var src = angular.element(e.currentTarget);
 
-
-                    if (e.originalEvent && (e.originalEvent.dataTransfer !== undefined)) {
+                    if (e.originalEvent && e.originalEvent.dataTransfer) {
                         e.originalEvent.dataTransfer.effectAllowed = 'move';
                         e.originalEvent.dataTransfer.setData('text/plain', src.attr('data-list-index'));
                         e.originalEvent.dataTransfer.setDragImage(e.currentTarget, 0, 0);
                     }
 
-                    e.currentTarget.style.opacity = '0.5'; //decrease opacity
+                    drag_item = e.currentTarget;
+                    drag_item.classList.add('dragstart');
                 }
 
-                var dd = 0;
-
-                //add 'dragover' class
                 function onDragEnter(e) {
-                    e.currentTarget.classList.add('dragover');
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    if (e.currentTarget !== e.target || inside === e.currentTarget) {
+                        return false;
+                    }
+
+                    if (e.originalEvent && e.originalEvent.dataTransfer) {
+                        e.originalEvent.dataTransfer.dropEffect = 'move';
+                    }
+
+                    inside = e.currentTarget;
+                    inside.classList.add('dragover');
+                    drag_item.classList.remove('dragremove');
+
+                    return false;
                 }
 
                 function onDragOver(e) {
-
-                    if (!e.currentTarget.classList.contains('dragover')) {
-                        e.currentTarget.classList.add('dragover');
-                    }
-
-                    stopEvent(e);
-
-                    if (e.originalEvent.dataTransfer) {
-                        e.originalEvent.dataTransfer.dropEffect = 'move';
-                    }
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
                 }
 
-                //remove 'dragover' class
                 function onDragLeave(e) {
-                    e.currentTarget.classList.remove('dragover');
-                }
+                    if (inside === e.currentTarget) {
+                        return;
+                    }
 
-                function onDragEnd(e) {
-                    e.currentTarget.style.opacity = '1.0';
+                    e.currentTarget.classList.remove('dragover');
                 }
 
                 function onDragDrop(e) {
-
-                    stopEvent(e);
-
                     var src_index = e.originalEvent.dataTransfer.getData('text/plain') | 0,
-                        dest_index = elem.attr('data-list-index') | 0;
-
-                    e.currentTarget.classList.remove('dragover');
+                        dest_index = inside.getAttribute('data-list-index') | 0;
 
                     scope.$apply(function () {
-
                         var delta = 0,
                             temp = ngModel.$viewValue[src_index];
 
@@ -132,36 +181,35 @@
                         ngModel.$viewValue.splice(src_index, 1);
                     });
 
-
+                    e.preventDefault();
                     return false;
                 }
 
-                //attach events
-                elem.on('dragstart', onDragStart);
-                elem.on('dragenter', onDragEnter);
-                elem.on('dragover', onDragOver);
-                elem.on('dragleave', onDragLeave);
-                elem.on('dragend', onDragEnd);
-                elem.on('drop', onDragDrop);
+                function onDragEnd(e) {
+                    window.removeEventListener('dragenter', onDragOut);
+                    window.removeEventListener('dragover', onWindowDragOver);
+                    window.removeEventListener('dragend', onWindowDragEnd);
+                    window.removeEventListener('drop', onDragRemove);
 
-                elem.parent().addClass('draggable-container');
+                    if (inside) {
+                        inside.classList.remove('dragover', 'dragstart', 'dragremove');
+                    }
+
+                    drag_item.classList.remove('dragover', 'dragstart', 'dragremove');
+                    drag_item = null;
+                    window_handler = false;
+                }
+
+                scope.$on('draggable-element', function (e, child) {
+                    child.on('dragstart', onDragStart);
+                    child.on('dragenter', onDragEnter);
+                    child.on('dragover', onDragOver);
+                    child.on('dragleave', onDragLeave);
+                    child.on('drop', onDragDrop);
+                    child.on('dragend', onDragEnd);
+                });
             }
         }
     }]);
-
-
-//TODO: provide this as a service
-    function stopEvent($e) {
-        if ($e.stopPropagation) {
-            $e.stopPropagation();
-        }
-
-        if ($e.preventDefault) {
-            $e.preventDefault();
-        }
-
-        $e.cancelBubble = true;
-        $e.returnValue = false;
-    }
 
 })();
