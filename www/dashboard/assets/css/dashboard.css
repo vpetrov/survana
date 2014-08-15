@@ -1,9 +1,9 @@
 .table .small {
-    width:20px;
+    width: 20px;
 }
 
 .table .medium {
-    width:70px;
+    width: 70px;
 }
 
 .table .large {
@@ -15,30 +15,30 @@
 }
 
 .hover .hover-hidden {
-    visibility:hidden;
+    display: none;
 }
 
 .hover:hover .hover-hidden {
-    visibility: visible;
+    display: inherit;
 }
 
 .thumbnail:hover {
-    border:1px solid #aaa;
+    border: 1px solid #aaa;
 }
 
 .message {
-    margin:0px 0px 5px 0px;
+    margin: 0px 0px 5px 0px;
 }
 
 .btn-dismiss {
-    position:relative;
-    top:-2px;
+    position: relative;
+    top: -2px;
 }
 
 /* FORM LIST */
 
 .form-list .thumbnail {
-    position:relative;
+    position: relative;
     cursor: pointer;
 }
 
@@ -53,66 +53,76 @@
 }
 
 .form-list .form-list-title {
-    border-bottom:1px solid lightgray;
+    border-bottom: 1px solid lightgray;
 }
 
 .form-list p,
 .form-list .lead {
     color: #3a3a3a !important;
 }
-.form-list .form-list-buttons
-{
-    position:absolute;
+
+.form-list .form-list-buttons {
+    position: absolute;
     top: 0px;
-    right:1px;
-    padding:8px 8px 8px 8px;
+    right: 1px;
+    padding: 8px 8px 8px 8px;
     background-color: #3a3a3a;
-    border:4px solid #fff;
+    border: 4px solid #fff;
     border-bottom-left-radius: 8px;
+}
+
+[draggable] {
+    cursor: pointer;
 }
 
 .study-forms .remove-form {
     position: absolute;
-    top:10px;
-    right:10px;
+    top: 10px;
+    right: -12px;
 }
 
-.study-form-placeholder {
-    background-color: inherit;
+.badge-warning {
+    background-color: #d9534f;
 }
 
-.study-form-placeholder a {
-    border:2px dashed #eee;
-    color: #aaa;
-    cursor: default !important;
-}
-
-.study-form-placeholder a:hover {
-    border:2px dashed #eee;
-    pointer: default;
-    background-color: inherit !important;
-
-}
-
-.dragabble-container > li {
+.draggable-container > li {
     border: 1px solid transparent;
 }
 
+.dragstart {
+    opacity: 0.5;
+}
+
+.dragstart .label {
+    background-color: gray;
+}
+
 .dragover {
-    border: 1px dashed #aaa;
+    z-index: 100;
+    box-shadow: 0px 0px 4px #999;
+    border: 1px dashed #555;
+}
+
+.dragremove {
+    text-decoration: line-through;
+    color: red;
+}
+
+.dragremove .label {
+    background-color: red;
 }
 
 .questionnaire, .study {
-    border-radius:3px;
+    border-radius: 3px;
     border: 1px solid #aaa;
-    -webkit-box-shadow:1px 1px 1px 1px #aaa;
-    box-shadow:1px 1px 1px 1px #aaa;
+    -webkit-box-shadow: 1px 1px 1px 1px #aaa;
+    box-shadow: 1px 1px 1px 1px #aaa;
 }
 
 .size-L {
     width: 100%;
     min-width: 1222px;
-    height:1024px;
+    height: 1024px;
 }
 
 .size-M {

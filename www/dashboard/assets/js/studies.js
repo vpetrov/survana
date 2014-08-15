@@ -102,6 +102,10 @@
             $scope.changed = false;
             $scope.study_forms = [];
 
+            $scope.ready = false;
+
+            var downloading = true;
+
             //get all forms
             $http.get('forms/list').success(function (response, code, request) {
                 if (response.success) {
@@ -109,6 +113,7 @@
 
                     //update the list of forms in the study, if the study info has been downloaded already
                     if ($scope.study.form_ids.length) {
+                        console.log('after forms are downloaded', $scope.study.form_ids.length);
                         resolveStudyForms();
                     }
                 } else {
@@ -125,8 +130,8 @@
                     if (response.success) {
                         $scope.study = response.message;
 
-                        //update the list of forms in the study, if the form datastore is available
                         if ($scope.forms.length) {
+                            console.log('after study is downloaded', $scope.study.form_ids.length);
                             resolveStudyForms();
                         }
                     } else {
@@ -142,9 +147,9 @@
             function resolveStudyForms() {
                 var form, form_id, i;
 
-                if ($scope.study.form_ids == undefined) {
-                    $scope.study.form_ids = [];
-                }
+                console.log('resolveStudyForms');
+
+                $scope.study_forms = [];
 
                 //replace form stubs with actual forms, if they're present
                 for (i = 0; i < $scope.study.form_ids.length; i++) {
@@ -158,9 +163,11 @@
                     form = findForm(form_id);
 
                     if (form) {
-                        $scope.study_forms[i] = form;
+                        $scope.study_forms.push(form);
                     }
                 }
+
+                $scope.ready = true;
             }
 
             function findForm(form_id) {
@@ -255,7 +262,34 @@
                 $window.history.back();
             };
 
-            $scope.stopEvent = stopEvent;
+            var remove_ready_watch = $scope.$watch('ready', function (val) {
+                if (val) {
+                    console.log('remove ready watch');
+                    remove_ready_watch();
+
+                    $scope.$watchCollection('study.form_ids', function (new_ids, old_ids) {
+                        if (downloading) {
+                            downloading = false;
+                            return;
+                        }
+                        console.log('form_ids have changed! new=', new_ids, 'old=', old_ids);
+                        resolveStudyForms();
+                        $scope.changed = true;
+                    });
+                }
+            });
+
+            /* $scope.$watchCollection('study_forms', function (newforms, oldforms) {
+             console.log('newforms.length',newforms.length, 'oldforms.length', oldforms.length)
+             console.log('study forms changed!', newforms, oldforms);
+             //update study.form_ids
+             $scope.study.form_ids = [];
+             for (var i = 0; i < newforms.length; i++) {
+             $scope.study.form_ids.push(newforms[i].id);
+             }
+             $scope.changed = true;
+             console.log('new study.form_ids:', $scope.study.form_ids);
+             });*/
         }
     ]);
 
@@ -696,7 +730,6 @@
             $scope.loading = false;
             $scope.message = "";
 
-            $scope.stopEvent = stopEvent;
             $scope.search = "";
 
             function fetchStudy() {

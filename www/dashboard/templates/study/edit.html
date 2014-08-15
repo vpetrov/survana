@@ -1,13 +1,19 @@
 <div class="toolbar">
     <div class="btn-group">
-        <a href="#/studies/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-eye-open" title="View"></i></a>
-        <a href="#/studies/edit/{{ study.id }}" class="btn btn-warning active"><i class="glyphicon glyphicon-edit" title="Edit"></i></a>
-        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-globe" title="Publish"></i></a>
+        <a href="#/studies/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-eye-open"
+                                                                      title="View"></i></a>
+        <a href="#/studies/edit/{{ study.id }}" class="btn btn-warning active"><i class="glyphicon glyphicon-edit"
+                                                                                  title="Edit"></i></a>
+        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-globe"
+                                                                              title="Publish"></i></a>
     </div>
 
     <span ng-show="changed">
-        <button type="button" class="btn btn-success" ng-click="saveStudy()"><i class="glyphicon glyphicon-ok"></i> Save</button>
-        <button type="button" class="btn btn-default" ng-click="discardStudy()"><i class="glyphicon glyphicon-remove-circle"></i> Cancel</button>
+        <button type="button" class="btn btn-success" ng-click="saveStudy()"><i class="glyphicon glyphicon-ok"></i> Save
+        </button>
+        <button type="button" class="btn btn-default" ng-click="discardStudy()"><i
+                class="glyphicon glyphicon-remove-circle"></i> Cancel
+        </button>
     </span>
 
     <!-- Search -->
@@ -22,7 +28,8 @@
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <p class="lead">
         Edit Study
-        <span class="alert alert-sm alert-dismissable" data-ng-class="{'hidden':!message.length, 'alert-danger':message.length}">
+        <span class="alert alert-sm alert-dismissable"
+              data-ng-class="{'hidden':!message.length, 'alert-danger':message.length}">
             <i class="glyphicon glyphicon-minus-sign"></i> {{ message }}
         </span>
     </p>
@@ -46,19 +53,20 @@
 
     <div class="row">
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
-            <ul class="nav nav-pills nav-stacked study-forms">
-                <li class="study-form-placeholder" ng-hide="study.form_ids.length">
-                    <a href="" class="text-center"><i class="glyphicon glyphicon-info-sign"></i> Choose a form now</a>
-                </li>
-                <li ng-repeat="form in study_forms track by $index" class="hover" draggable="true" data-list-index="{{ $index }}" data-ng-model="study_forms">
-                    <a href="">
-                        <span class="label label-primary" style="position:relative; left:-10px;">{{ $index + 1}}</span>{{ form.name }}
-                        <span class="badge badge-success">{{ form.version }}</span>
-                        <!-- stopEvent() is called to prevent location change due to click bubbling -->
-                        <span class="pull-right text-danger hover-hidden remove-form" ng-click="removeForm($index); stopEvent($event);">
-                            <i class="glyphicon glyphicon-remove"></i>
-                        </span>
-                    </a>
+
+            <div class="alert alert-warning text-center" ng-hide="study.form_ids.length" role="alert">
+                <i class="glyphicon glyphicon-info-sign"></i> Pick a form, any form.
+            </div>
+
+            <ul class="list-group study-forms" draggable-list data-ng-model="study.form_ids">
+                <li ng-repeat="form in study_forms track by $index" class="list-group-item hover"
+                    data-list-index="{{ $index }}" draggable="true">
+                    <span class="label label-primary form-index">{{ $index + 1}}</span>
+                    <span>{{ form.name | limitTo:25 }}</span>
+                    <span class="badge form-version">{{ form.version | limitTo:10 }}</span>
+                    <span class="label label-danger hover-hidden remove-form" ng-click="removeForm($index)">
+                        <i class="glyphicon glyphicon-remove"></i>
+                    </span>
                 </li>
             </ul>
             <hr class="visible-xs">
@@ -68,7 +76,8 @@
             <div class="row">
                 <div style="margin-top:15px" ng-hide="forms.length">
                     <span class="alert alert-warning">
-                        <span class="glyphicon glyphicon-exclamation-sign"></span> There are no forms to display. <a href="#/forms/create" class="alert-link">Create a new form.</a>
+                        <span class="glyphicon glyphicon-exclamation-sign"></span> There are no forms to display. <a
+                            href="#/forms/create" class="alert-link">Create a new form.</a>
                     </span>
                 </div>
                 <div class="form-list col-lg-4 col-md-6 col-sm-12 col-xs-12" ng-repeat="form in forms | filter:search">
