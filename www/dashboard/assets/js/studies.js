@@ -113,7 +113,6 @@
 
                     //update the list of forms in the study, if the study info has been downloaded already
                     if ($scope.study.form_ids.length) {
-                        console.log('after forms are downloaded', $scope.study.form_ids.length);
                         resolveStudyForms();
                     }
                 } else {
@@ -131,7 +130,6 @@
                         $scope.study = response.message;
 
                         if ($scope.forms.length) {
-                            console.log('after study is downloaded', $scope.study.form_ids.length);
                             resolveStudyForms();
                         }
                     } else {
@@ -146,8 +144,6 @@
             //this will dereference all pointers using $scope.forms.
             function resolveStudyForms() {
                 var form, form_id, i;
-
-                console.log('resolveStudyForms');
 
                 $scope.study_forms = [];
 
@@ -264,7 +260,6 @@
 
             var remove_ready_watch = $scope.$watch('ready', function (val) {
                 if (val) {
-                    console.log('remove ready watch');
                     remove_ready_watch();
 
                     $scope.$watchCollection('study.form_ids', function (new_ids, old_ids) {
@@ -278,18 +273,6 @@
                     });
                 }
             });
-
-            /* $scope.$watchCollection('study_forms', function (newforms, oldforms) {
-             console.log('newforms.length',newforms.length, 'oldforms.length', oldforms.length)
-             console.log('study forms changed!', newforms, oldforms);
-             //update study.form_ids
-             $scope.study.form_ids = [];
-             for (var i = 0; i < newforms.length; i++) {
-             $scope.study.form_ids.push(newforms[i].id);
-             }
-             $scope.changed = true;
-             console.log('new study.form_ids:', $scope.study.form_ids);
-             });*/
         }
     ]);
 
@@ -297,15 +280,18 @@
         function ($scope, $window, $location, $routeParams, $http, $templateCache) {
             $scope.study = {};
             $scope.forms = [];
-            $scope.current = {
-                index: 0,
-                form: {}
-            };
             $scope.size = 'M';
             $scope.template = null;
             $scope.theme = 'bootstrap';
+            $scope.current = {
+                index: 0,
+                form: {},
+                html: ""
+            };
 
             $scope.study_forms = [];
+
+            $scope.validate = false;
 
             function fetchTemplate(theme_id, theme_version) {
                 var url = 'theme?id=' + theme_id + '&version=' + theme_version + '&preview=true&study=true',
@@ -386,9 +372,10 @@
                     }
                 }
 
-                //as soon as the study forms are resolved, we can render the current form
-                //if we update current.form, the watch will trigger the update
-                $scope.current.form = $scope.study_forms[$scope.current.index];
+                //update the current form
+                if ($scope.current.index !== null) {
+                    $scope.current.form = $scope.study_forms[$scope.current.index];
+                }
             }
 
             function findForm(form_id) {
@@ -423,10 +410,22 @@
                     });
             });
 
+            $scope.$on('study:form:changed', function (e, data) {
+                console.log('form changed');
+            });
+
             //when the current index changes, change the current form
             $scope.$watch('current.index', function (newIndex, oldIndex) {
+                console.log('watch:current.index has changed from', oldIndex, 'to', newIndex);
                 if ($scope.study && $scope.study_forms && $scope.study_forms.length) {
                     $scope.current.form = $scope.study_forms[newIndex];
+                }
+            });
+
+            $scope.$watch('validate', function (val) {
+                console.log('watch:validate =', val);
+                if (val && typeof $scope[validateFunc] === 'function') {
+                    $scope[validateFunc]();
                 }
             });
         }

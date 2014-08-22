@@ -32,8 +32,6 @@
                         <span>{{ (current.index - 0) + 1 }} of {{ study_forms.length }}</span>
                     </div>
                 </div>
-                <p class="navbar-text hidden-xs hidden-sm pull-left">{{ form.title }}</p>
-                <span >
                 <button id="btnNext" ng-class="{'hidden':current.index==(study_forms.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="Survana.Workflow.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
                 <button id="btnFinish" ng-class="{'hidden':current.index<(study_forms.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="Survana.Workflow.NextPage(this)">Finish <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
             </div>

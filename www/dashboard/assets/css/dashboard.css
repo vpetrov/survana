@@ -112,7 +112,7 @@
     background-color: red;
 }
 
-.questionnaire, .study {
+.questionnaire {
     border-radius: 3px;
     border: 1px solid #aaa;
     -webkit-box-shadow: 1px 1px 1px 1px #aaa;

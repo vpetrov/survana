@@ -1,34 +1,49 @@
 <!-- Toolbar -->
 <div class="toolbar">
     <div class="btn-group">
-        <button type="button" class="btn btn-warning active"><i class="glyphicon glyphicon-eye-open" title="Preview"></i></button>
-        <a href="#/studies/edit/{{ study.id }}" ng-hide="study.published" class="btn btn-warning"><i class="glyphicon glyphicon-edit" title="Edit"></i></a>
-        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-globe" title="Publish"></i></a>
+        <button type="button" class="btn btn-warning active"><i class="glyphicon glyphicon-eye-open"
+                                                                title="Preview"></i></button>
+        <a href="#/studies/edit/{{ study.id }}" ng-hide="study.published" class="btn btn-warning"><i
+                class="glyphicon glyphicon-edit" title="Edit"></i></a>
+        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-globe"
+                                                                              title="Publish"></i></a>
     </div>
 
     <span ng-if="forms.length">
         <span class="text">&nbsp;</span>
         <select class="form-control" data-ng-model="current.index">
-            <option ng-repeat="f in study_forms track by $index" value="{{ $index }}">{{ $index + 1}}. {{ f.title || f.name || f.id }}</option>
+            <option ng-repeat="f in study_forms track by $index" value="{{ $index }}">{{ $index + 1}}. {{ f.title ||
+                f.name || f.id }}
+            </option>
         </select>
     </span>
 
     <span class="text">&nbsp;</span>
 
     <div class="btn-group">
-        <button type="button" class="btn btn-info" ng-click="resize('L')" ng-class="{active: size == 'L'}" title="Desktop">
+        <button type="button" class="btn btn-info" ng-click="resize('L')" ng-class="{active: size == 'L'}"
+                title="Desktop">
             <i class="fa fa-desktop"></i>
         </button>
-        <button type="button" class="btn btn-info" ng-click="resize('M')" ng-class="{active: size == 'M'}" title="Laptop">
+        <button type="button" class="btn btn-info" ng-click="resize('M')" ng-class="{active: size == 'M'}"
+                title="Laptop">
             <i class="fa fa-laptop"></i>
         </button>
-        <button type="button" class="btn btn-info" ng-click="resize('S')" ng-class="{active: size == 'S'}" title="Tablet">
+        <button type="button" class="btn btn-info" ng-click="resize('S')" ng-class="{active: size == 'S'}"
+                title="Tablet">
             <i class="fa fa-tablet"></i>
         </button>
-        <button type="button" class="btn btn-info" ng-click="resize('XS')" ng-class="{active: size == 'XS'}" title="Smartphone">
+        <button type="button" class="btn btn-info" ng-click="resize('XS')" ng-class="{active: size == 'XS'}"
+                title="Smartphone">
             <i class="fa fa-mobile-phone"></i>
         </button>
     </div>
+
+    <span class="text">&nbsp;</span>
+
+    <label class="checkbox-inline">
+            <input type="checkbox" ng-model="validate"> Check responses
+        </label>
 </div>
 
 <!-- Content -->
@@ -39,5 +54,5 @@
     </div>
 
     <!-- space to render the form's as HTML -->
-    <iframe data-questionnaire="survana" data-ng-model="current.form" class="study size-{{ size }}"></iframe>
+    <form-preview ng-model="current.form" size="{{ size }}" template="{{ template }}"></form-preview>
 </div>

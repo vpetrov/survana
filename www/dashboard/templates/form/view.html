@@ -23,7 +23,7 @@
 
     <span class="text">&nbsp;</span>
 
-    <button type="button" class="btn btn-default" ng-click="verifyForm()"><i class="glyphicon glyphicon-ok"></i> Verify</button>
+    <button type="button" class="btn btn-default" ng-click="validateForm()"><i class="glyphicon glyphicon-ok"></i> Verify</button>
 </div>
 
 <!-- Content -->
@@ -34,5 +34,5 @@
     </div>
 
     <!-- space to render the form's as HTML -->
-    <iframe data-questionnaire="survana" data-ng-model="form" class="questionnaire size-{{ size }}"></iframe>
+    <form-preview ng-model="form" size="{{ size }}" template="{{ template }}"></form-preview>
 </div>

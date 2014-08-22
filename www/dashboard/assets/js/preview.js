@@ -3,14 +3,23 @@
 
     var app = angular.module("preview", []);
 
-    app.directive("questionnaire", ['$window', '$compile', '$timeout', function ($window, $compile, $timeout) {
+    //in: size, template
+    //out: verify(), render()
+    app.directive("formPreview", ['$compile', function ($compile) {
         return {
-            restrict: 'A',
+            restrict: 'E',
+            template: '<iframe class="questionnaire size-{{ size }}""></iframe>',
             require: '?ngModel',
-            scope: false,
+            scope: {
+                size: '@',
+                template: '@'
+            },
             link: function (scope, elem, attrs, ngModel) {
-
                 function updateTemplate() {
+                    if (!scope.template) {
+                        return;
+                    }
+
                     $compile(elem.contents())(scope);
 
                     //re-render the model
@@ -44,46 +53,34 @@
                     return schemata;
                 }
 
-                //quick hack to pass this value form the scope to the iframe
-                $window.study_id = function () {
-                    if (scope.study) {
-                        return scope.study.id;
+                scope.$on('validate', function () {
+                    console.log('VALIDATE!');
+                    if (!elem || !elem[0] || !elem[0].firstChild) {
+                        return;
                     }
 
-                    return null;
-                };
-
-                //register a NextPage() function that can be called within the questionnaire preview iframe
-                $window.NextPage = function () {
-                    $timeout(function () {
-                        if ((scope.current.index + 1) < scope.study.form_ids.length) {
-                            scope.current.index++;
-                        } else {
-                            scope.current.index = 0;
-                        }
-                    });
-                };
-
-                scope.verifyForm = function () {
-                    if (!elem || !elem[0] || !elem[0].contentWindow || !elem[0].contentWindow.validateForm) {
-                        return
+                    var iframe = elem[0].firstChild;
+                    if (!elem[0].firstChild.contentWindow || !elem[0].firstChild.contentWindow.Survana) {
+                        return;
                     }
 
-                    elem[0].contentWindow.validateForm();
-                };
+                    var previewSurvana = iframe.contentWindow.Survana,
+                        doc = iframe.contentDocument,
+                        schemata = extract_schemata(ngModel.$viewValue.fields),
+                        validation_config = previewSurvana.Validation.ExtractConfiguration(ngModel.$viewValue);
 
-                //when current_form changes, update the template
-                scope.$watch('current.index', updateTemplate);
+
+                    previewSurvana.Validation.Validate(doc.forms[0], schemata, validation_config);
+                });
 
                 scope.$watch('template', function (val) {
-
                     //nothing to do?
                     if (!val) {
                         return
                     }
 
-                    var frame = elem[0],
-                        doc = frame.contentDocument || frame.contentWindow.document;
+                    var iframe = elem[0].firstChild,
+                        doc = iframe.contentDocument || iframe.contentWindow.document;
 
                     //document.write() is the fastest way to update the contents.
                     doc.open();
@@ -95,19 +92,13 @@
 
                 //update the view
                 ngModel.$render = function () {
-
-                    var frame = elem[0],
-                        doc = frame.contentDocument || frame.contentWindow.document,
+                    var iframe = elem[0].firstChild,
+                        doc = iframe.contentDocument || iframe.contentWindow.document,
                         node = doc.getElementById('content'),
-                        schemata_node = doc.getElementById('schemata'),
-                        validation_node = doc.getElementById('validation'),
-                        result,
-                        schemata,
-                        validation;
-
+                        result;
 
                     //make sure a theme, a template and a rendering node are available
-                    if (!Survana.Theme || !scope.template || !node) {
+                    if (!Survana.Theme || !node) {
                         return;
                     }
 
@@ -121,35 +112,8 @@
                         //append the form
                         node.appendChild(result);
 
-                        //form schemata
-                        schemata = extract_schemata(ngModel.$viewValue.fields);
-
-                        if (schemata_node && schemata) {
-                            schemata_node.innerHTML = JSON.stringify(schemata);
-                        }
-
-                        //validation configuration
-                        validation = Survana.Validation.ExtractConfiguration(ngModel.$viewValue);
-
-                        if (validation_node && validation) {
-                            validation_node.innerHTML = validation;
-                            //rely on the fact that template will include a 'startValidation()' function
-                            if (frame.contentWindow.startValidation) {
-                                frame.contentWindow.startValidation();
-                            }
-                        }
-
-                        //if we're supposed to save rendered data
-                        if (attrs['render']) {
-                            //skip a digest cycle to let the updateTemplate() digest to finish,
-                            //otherwise, innerHTML is still the old html, before any watches are updated by the new changes
-                            $timeout(function () {
-                                //store the HTML data into the variable pointed to by data-render
-                                scope[attrs['render']] = "<!DOCTYPE html><html>" + doc.documentElement.innerHTML + "</html>";
-                                //update the currently rendered form index
-                                scope.current.rendered = scope.current.index;
-                            });
-                        }
+                        //send rendered HTML to parent scopes
+                        scope.$emit('form:rendered', "<!DOCTYPE html><html>" + doc.documentElement.innerHTML + "</html>")
                     }
                 }
             }

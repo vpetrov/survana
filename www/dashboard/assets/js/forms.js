@@ -208,11 +208,6 @@
             $scope.theme = 'bootstrap';
             $scope.template = null;
 
-            //expect the iframe to replace this function. TODO: figure out a better way of telling the iframe to call
-            //window.validateForm()
-            $scope.verifyForm = function () {
-            }
-
             $scope.resize = function (size) {
                 $scope.size = size;
             };
@@ -250,6 +245,10 @@
 
             $scope.getFormDate = function () {
                 return (new Date($scope.form.created_on)).toLocaleDateString();
+            };
+
+            $scope.validateForm = function () {
+                $scope.$broadcast('validate');
             };
 
             //when 'theme' changes, notify Survana

@@ -25,25 +25,17 @@
         <div class="navbar navbar-default navbar-static-top">
             <div class="container">
                 <div class="progress progress-striped s-progress pull-left">
-                    <div class="progress-bar progress-bar-info" style="width: {{ (((current.index - 0) + 1) / study.form_ids.length)*100}}%"></div>
+                    <div class="progress-bar progress-bar-info"></div>
                     <div class="progress-text">
                         <span class="glyphicon glyphicon-check" style="color:white"></span>
-                        <span>{{ (current.index - 0) + 1 }} of {{ study.form_ids.length }}</span>
+                        <span id="current-progress">0 of 0</span>
                     </div>
                 </div>
-                <p class="navbar-text hidden-xs hidden-sm pull-left">{{ form.title }}</p>
-                <button ng-class="{'hidden':current.index==(study.form_ids.length-1)}" class="btn btn-danger navbar-btn pull-right" onclick="window.parent.NextPage()">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
-                <button ng-class="{'hidden':current.index<(study.form_ids.length-1)}" class="btn btn-success navbar-btn pull-right" onclick="window.parent.NextPage()"><span class="glyphicon glyphicon-ok"></span> Finish</button>
+                <button id='btnNext' class="btn btn-danger navbar-btn pull-right" onclick="Survana.Workflow.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
             </div>
         </div>
 
         <div id="content" class="container" style="margin-top:25px;"></div>
-
-        <!-- form schemata -->
-        <script id="schemata" type="text/schemata"></script>
-
-        <!-- validation configuration -->
-        <script id="validation" type="text/validation"></script>
 
         <!-- scripts must in the <body>, otherwise they cause the frame document to delay DOM parsing -->
         <script type="text/javascript" src="assets/lib/survana/1.0.0/theme/bootstrap/js/jquery.min.js"></script>
@@ -54,61 +46,5 @@
         <script type="text/javascript" src="assets/lib/survana/1.0.0/survana-storage.js"></script>
         <script type="text/javascript" src="assets/lib/survana/1.0.0/survana-workflow.js"></script>
         <script type="text/javascript" src="assets/lib/survana/1.0.0/survana-validation.js"></script>
-
-
-        <script type="text/javascript">
-            function readSchemata(form) {
-                if (!form || Survana === undefined) {
-                    return;
-                }
-
-                var el = document.getElementById('schemata');
-
-                if (!el || !el.innerHTML || !form.id) {
-                    return;
-                }
-
-                try {
-                    Survana.Schema[form.id] = JSON.parse(el.innerHTML);
-                    console.log('form', form.id, ' schemata', Survana.Schema[form.id]);
-                } catch (e) {
-                    console.error("Invalid Form Schemata:", el.innerHTML, e);
-                }
-            }
-
-            window.startValidation = function (form) {
-                if (!form || Survana === undefined) {
-                    return;
-                }
-                var validation_el = document.getElementById('validation'),
-                    validation_config;
-
-                if (!validation_el.innerHTML) {
-                    return;
-                }
-
-                //load validation config
-                try {
-                    validation_config = JSON.parse(validation_el.innerHTML);
-                } catch (e) {
-                    console.error(e);
-                    return;
-                }
-
-                //register validation configuration
-                Survana.Validation.SetConfiguration(form, validation_config);
-            };
-
-
-            window.validateForm = function () {
-                if (document.forms && document.forms[0] && Survana !== undefined) {
-                    var form_id = document.forms[0].id;
-                    Survana.Validation.Validate(document.forms[0], Survana.Schema[form_id]);
-                }
-            };
-
-            readSchemata(document.forms[0]);
-            startValidation(document.forms[0]);
-        </script>
     </body>
 </html>
