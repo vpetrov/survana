@@ -282,18 +282,19 @@
             $scope.forms = [];
             $scope.size = 'M';
             $scope.template = null;
-            $scope.theme = 'bootstrap';
+            $scope.theme = null;
             $scope.current = {
                 index: 0,
-                form: {},
+                form: null,
                 html: ""
             };
 
             $scope.study_forms = [];
 
-            $scope.validate = false;
+            var previewWindow = null;
 
             function fetchTemplate(theme_id, theme_version) {
+                console.log('fetch template', theme_id, theme_version);
                 var url = 'theme?id=' + theme_id + '&version=' + theme_version + '&preview=true&study=true',
                     cachedTemplate = $templateCache.get(url);
 
@@ -312,6 +313,7 @@
             }
 
             function fetchStudy() {
+                console.log('fetchStudy');
                 //fetch the form JSON and store it in $scope.form
                 $http.get('study', {params: $routeParams}).success(function (response, code, request) {
                     if (response.success) {
@@ -321,11 +323,13 @@
                         if ($scope.study.form_ids.length) {
                             fetchForms($scope.study.form_ids);
                         }
+
+                        $scope.theme = 'bootstrap';
                     } else {
                         console.log('Error message', response.message);
                     }
-                }).error(function () {
-                    console.log("Error fetching", url)
+                }).error(function (err) {
+                    console.log("Error fetching", url, err)
                 });
             }
 
@@ -372,9 +376,10 @@
                     }
                 }
 
-                //update the current form
+                //update the current form and the max forms in the preview
                 if ($scope.current.index !== null) {
                     $scope.current.form = $scope.study_forms[$scope.current.index];
+                    updatePreviewForms();
                 }
             }
 
@@ -390,44 +395,70 @@
                 }
             }
 
+            function updatePreviewForms() {
+                if (!previewWindow || !$scope.study.form_ids) {
+                    return;
+                }
+                //update the preview's study progress
+                previewWindow.Survana.Workflow.SetProgress($scope.current.index|0, $scope.study.form_ids.length);
+            }
+
             $scope.resize = function (size) {
                 $scope.size = size;
             };
 
             $scope.getStudyDate = function () {
+                if (!$scope.study.created_on) {
+                    return null;
+                }
+
                 return (new Date($scope.study.created_on)).toLocaleDateString();
             };
 
             //when 'theme' changes, notify Survana
             $scope.$watch('theme', function (newTheme, oldTheme) {
+                if (!newTheme) {
+                    return;
+                }
+
+                console.log('set new theme to', newTheme);
                 Survana.Theme.SetTheme(newTheme,
                     function () {
                         fetchTemplate(newTheme, Survana.Version);
                         fetchStudy();
                     },
-                    function () {
-                        console.error('Failed to load Survana Themes!');
+                    function (err) {
+                        console.error('Failed to load Survana theme "' + newTheme + '": ', err);
                     });
             });
 
-            $scope.$on('study:form:changed', function (e, data) {
-                console.log('form changed');
+            //@note callback parameters: e, formWindow
+            $scope.$on('form:load', function (e, newFormWindow) {
+                previewWindow = newFormWindow;
+                updatePreviewForms();
+            });
+
+            //@note callback parameters: e, formWindow
+            $scope.$on('form:next', function (e) {
+                $scope.$apply(function () {
+                    var new_index = ($scope.current.index|0) + 1;
+                    if (new_index >= $scope.study.form_ids.length) {
+                        new_index = 0;
+                    }
+                    //go to the next form (or to the first form)
+                    $scope.current.index = new_index;
+                });
             });
 
             //when the current index changes, change the current form
             $scope.$watch('current.index', function (newIndex, oldIndex) {
-                console.log('watch:current.index has changed from', oldIndex, 'to', newIndex);
                 if ($scope.study && $scope.study_forms && $scope.study_forms.length) {
                     $scope.current.form = $scope.study_forms[newIndex];
+                    updatePreviewForms();
                 }
             });
 
-            $scope.$watch('validate', function (val) {
-                console.log('watch:validate =', val);
-                if (val && typeof $scope[validateFunc] === 'function') {
-                    $scope[validateFunc]();
-                }
-            });
+            fetchStudy();
         }
     ]);
 
@@ -442,7 +473,6 @@
                 form: null,
                 rendered: -1
             };
-            $scope.rendered = null;
 
             $scope.template = null;
             $scope.theme = 'bootstrap';
@@ -491,11 +521,21 @@
                 $scope.error = false;
             };
 
+            var htmlCache = {};
+
             function nextForm() {
                 //if there are forms left
                 if (($scope.current.index + 1) < $scope.study_forms.length) {
                     $scope.current.index++;
-                    $scope.current.form = $scope.study_forms[$scope.current.index];
+                    //check the html cache
+                    var current_form_id = $scope.study_forms[$scope.current.index].id;
+
+                    if (htmlCache[current_form_id] !== undefined) {
+                        saveForm(htmlCache[current_form_id]);
+                    } else {
+                        //change current form so that the preview can update itself
+                        $scope.current.form = $scope.study_forms[$scope.current.index];
+                    }
                 } else {
                     //otherwise, we need to mark the study object as 'published' and save it
                     $scope.study.published = true;
@@ -503,16 +543,10 @@
                 }
             }
 
-            //watch the numerical value of 'current.rendered'. The actual HTML data is going to be stored in $scope.rendered
-            $scope.$watch('current.rendered', function (newVal, oldVal) {
-                if (!$scope.rendered) {
-                    console.warn('No data was rendered.');
-                    return;
-                }
+            function saveForm(html) {
+                var url = "studies/publish?id=" + $scope.study.id + "&f=" + $scope.current.index;
 
-                var url = "studies/publish?id=" + $scope.study.id + "&f=" + $scope.current.rendered;
-
-                $http.post(url, $scope.rendered).success(function (response, code, request) {
+                $http.post(url, html).success(function (response, code, request) {
                     //go to the next form
                     if (code === 204) {
                         nextForm();
@@ -522,6 +556,12 @@
                 }).error(function (response) {
                     $scope.errorPublishing(response);
                 });
+            }
+
+            //watch the numerical value of 'current.rendered'. The actual HTML data is going to be stored in $scope.rendered
+            $scope.$on('form:rendered', function (e, html) {
+                htmlCache[$scope.current.form.id] = html;
+                saveForm(html);
             });
 
             $scope.isCurrent = function (index) {
@@ -547,10 +587,10 @@
                     range.moveToElementText(node);
                     range.select();
                 }
-            }
+            };
 
             function fetchTemplate(theme_id, theme_version) {
-                var url = 'theme?id=' + theme_id + '&version=' + theme_version + '&publish=true&study=true',
+                var url = 'theme?id=' + theme_id + '&version=' + theme_version + '&study=true',
                     cachedTemplate = $templateCache.get(url);
 
                 if (cachedTemplate) {
@@ -561,32 +601,11 @@
                 //fetch the theme template and cache it
                 $http.get(url).success(function (response, code, request) {
                     $templateCache.put(url, response);
+
                     $scope.template = response;
                 }).error(function () {
                     console.log("Error fetching", $location.path())
                 });
-            }
-
-
-            function copyStudy() {
-                //create a copy of $scope.study, and replace all forms with stubs
-                var study = {
-                        name: $scope.study.name,
-                        title: $scope.study.title,
-                        description: $scope.study.description,
-                        published: $scope.study.published,
-                        version: $scope.study.version,
-                        form_ids: []
-                    },
-                    i;
-
-                //extract form IDs, since we don't actually want to send copies of the forms, just the form IDs
-                for (i in $scope.study.form_ids) {
-                    //replace each form with a form-proxy object, which just contains the form id
-                    study.form_ids[i] = { 'id': $scope.study.form_ids[i].id };
-                }
-
-                return study;
             }
 
             function saveStudy(changes) {

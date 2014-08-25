@@ -12,19 +12,10 @@
             require: '?ngModel',
             scope: {
                 size: '@',
-                template: '@'
+                template: '=',
+                study: '='
             },
             link: function (scope, elem, attrs, ngModel) {
-                function updateTemplate() {
-                    if (!scope.template) {
-                        return;
-                    }
-
-                    $compile(elem.contents())(scope);
-
-                    //re-render the model
-                    ngModel.$render();
-                }
 
                 function extract_schemata(form_fields) {
                     var schemata = {},
@@ -87,11 +78,13 @@
                     doc.write(scope.template);
                     doc.close();
 
-                    updateTemplate();
+                    //update template bindings
+                    $compile(doc)(scope);
                 });
 
                 //update the view
                 ngModel.$render = function () {
+
                     var iframe = elem[0].firstChild,
                         doc = iframe.contentDocument || iframe.contentWindow.document,
                         node = doc.getElementById('content'),
@@ -114,6 +107,20 @@
 
                         //send rendered HTML to parent scopes
                         scope.$emit('form:rendered', "<!DOCTYPE html><html>" + doc.documentElement.innerHTML + "</html>")
+                    }
+                };
+
+                var iframe = elem[0].firstChild,
+                    iframeWindow = iframe.contentWindow;
+
+                iframeWindow.Survana = {
+                    Workflow : {
+                        OnPageLoad: function () {
+                            scope.$emit('form:load', iframeWindow);
+                        },
+                        NextPage: function () {
+                            scope.$emit('form:next', iframeWindow);
+                        }
                     }
                 }
             }

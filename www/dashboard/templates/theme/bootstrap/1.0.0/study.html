@@ -1,12 +1,7 @@
-<!-- Study Preview Template
-    Variables:
-        study: survana.Study with resolved study.forms
-        current_form: index pointing to the currently visible form in the study.
--->
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Preview {{ title }}</title>
+        <title>{{ study.title }}</title>
         <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="assets/lib/survana/1.0.0/theme/bootstrap/css/bootstrap-theme.min.css">
@@ -31,7 +26,7 @@
                         <span id="current-progress">0 of 0</span>
                     </div>
                 </div>
-                <button id='btnNext' class="btn btn-danger navbar-btn pull-right" onclick="Survana.Workflow.NextPage(this)">Next <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+                <button id='btnNext' class="btn btn-danger navbar-btn pull-right" onclick="Survana.Workflow.NextPage(this)"><span>Next</span> <span class="glyphicon glyphicon-circle-arrow-right"></span></button>
             </div>
         </div>
 

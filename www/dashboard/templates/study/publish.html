@@ -40,7 +40,9 @@
         </div>
 
         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">
-            <iframe data-questionnaire="survana" data-ng-model="current.form" data-render="rendered" class="study hidden"></iframe>
+            <!-- space to render the form's as HTML -->
+            <form-preview data-ng-model="current.form" size="{{ size }}" template="template" study="study" class="hidden"></form-preview>
+
             <span class="well well-sm" style="font-size:larger" ng-class="{'hidden':!study.published}">
                 <i class="glyphicon glyphicon-link"></i>
                 <a href="{{study_url}}" style="color:#3a3a3a" class="study-link" target="_blank">{{ study_url }}</a>

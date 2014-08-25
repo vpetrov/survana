@@ -38,12 +38,6 @@
             <i class="fa fa-mobile-phone"></i>
         </button>
     </div>
-
-    <span class="text">&nbsp;</span>
-
-    <label class="checkbox-inline">
-            <input type="checkbox" ng-model="validate"> Check responses
-        </label>
 </div>
 
 <!-- Content -->
@@ -54,5 +48,5 @@
     </div>
 
     <!-- space to render the form's as HTML -->
-    <form-preview ng-model="current.form" size="{{ size }}" template="{{ template }}"></form-preview>
+    <form-preview ng-model="current.form" size="{{ size }}" template="template" study="study"></form-preview>
 </div>
