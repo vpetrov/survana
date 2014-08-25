@@ -7,19 +7,25 @@
 }
 
 .table .large {
-    width: 100px
+    width: 150px;
 }
 
 .table .text-warning {
     color: orange;
 }
 
+.table tr td a
+{
+    position:relative;
+    top:2px;
+}
+
 .hover .hover-hidden {
-    display: none;
+    visibility: hidden;
 }
 
 .hover:hover .hover-hidden {
-    display: inherit;
+    visibility: visible;
 }
 
 .thumbnail:hover {
