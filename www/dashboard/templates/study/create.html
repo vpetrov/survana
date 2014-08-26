@@ -18,6 +18,7 @@
         </span>
     </p>
 
+    <!--
     <form class="form-inline">
         <div class="form-group">
             <label>Name</label>
@@ -34,9 +35,10 @@
     </form>
 
     <hr>
+    -->
 
     <div class="row">
-        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
+      <!--  <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
             <ul class="nav nav-pills nav-stacked study-forms">
                 <li class="study-form-placeholder" ng-hide="study.forms.length">
                     <a href="" class="text-center"><i class="glyphicon glyphicon-info-sign"></i> Choose a form</a>
@@ -46,7 +48,7 @@
                         <span class="label label-primary" style="position:relative; left:-10px;">{{ $index + 1}}</span>{{ form.name }}
                         <span class="badge badge-success">{{ form.version }}</span>
                         <!-- stopEvent() is called to prevent location change due to click bubbling -->
-                        <span class="pull-right text-danger hover-hidden remove-form" ng-click="removeForm($index); stopEvent($event);">
+        <!--                <span class="pull-right text-danger hover-hidden remove-form" ng-click="removeForm($index); stopEvent($event);">
                             <i class="glyphicon glyphicon-remove"></i>
                         </span>
 
@@ -55,6 +57,28 @@
             </ul>
             <hr class="visible-xs">
         </div>
+        -->
+
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
+
+            <div class="alert alert-warning text-center" ng-hide="study.form_ids.length" role="alert">
+                <i class="glyphicon glyphicon-info-sign"></i> Pick a form, any form.
+            </div>
+
+            <ul class="list-group study-forms" draggable-list data-ng-model="study.form_ids">
+                <li ng-repeat="form in study_forms track by $index" class="list-group-item hover"
+                    data-list-index="{{ $index }}" draggable="true">
+                    <span class="label label-primary form-index">{{ $index + 1}}</span>
+                    <span>{{ form.name | limitTo:25 }}</span>
+                    <span class="badge form-version">{{ form.version | limitTo:10 }}</span>
+                    <span class="label label-danger hover-hidden remove-form" ng-click="removeForm($index)">
+                        <i class="glyphicon glyphicon-remove"></i>
+                    </span>
+                </li>
+            </ul>
+            <hr class="visible-xs">
+        </div>
+
 
         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">
             <div class="row">

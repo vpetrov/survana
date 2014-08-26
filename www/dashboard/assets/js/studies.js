@@ -87,10 +87,10 @@
     app.controller('StudyEditCtrl', ['$scope', '$http', '$window', '$location', '$routeParams',
         function StudyEditCtrl($scope, $http, $window, $location, $routeParams) {
             $scope.study = {
-                name: "",
-                title: "",
+                name: "Untitled Study",
+                title: "Untitled Study",
                 description: "",
-                version: "",
+                version: "1",
                 form_ids: []
             };
 
@@ -114,6 +114,10 @@
                     //update the list of forms in the study, if the study info has been downloaded already
                     if ($scope.study.form_ids.length) {
                         resolveStudyForms();
+                    }
+
+                    if ($scope.create) {
+                        $scope.ready = true;
                     }
                 } else {
                     console.log('Error message', response.message);
