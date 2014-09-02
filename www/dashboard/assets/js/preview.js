@@ -60,8 +60,7 @@
                         schemata = extract_schemata(ngModel.$viewValue.fields),
                         validation_config = previewSurvana.Validation.ExtractConfiguration(ngModel.$viewValue);
 
-
-                    previewSurvana.Validation.Validate(doc.forms[0], schemata, validation_config);
+                    previewSurvana.Validation.Validate(doc.forms[0], schemata, validation_config, undefined);
                 });
 
                 scope.$watch('template', function (val) {
@@ -98,8 +97,35 @@
                     result = Survana.Theme.Questionnaire(ngModel.$viewValue);
 
                     if (result) {
-                        if (node.hasChildNodes()) {
+                        //remove existing elements
+                        while (node.firstChild) {
                             node.removeChild(node.firstChild);
+                        }
+
+                        //extract validation and form schema
+                        var previewSurvana = iframe.contentWindow.Survana,
+                            form = ngModel.$viewValue;
+
+                        if (previewSurvana.Validation) {
+                            var schemata = extract_schemata(form.fields),
+                                validation_config = previewSurvana.Validation.ExtractConfiguration(form),
+                                form_info = JSON.stringify({
+                                    id: form.id,
+                                    schemata: schemata,
+                                    config: validation_config
+                            });
+
+                            var script = doc.createElement('script');
+                            script.setAttribute('type', 'text/x-survana-schema');
+                            script.setAttribute('class', 'schema');
+                            script.innerHTML = form_info;
+
+                            //bake validation info into the HTML (so that the rendered HTML contains information about its schema)
+                            node.appendChild(script);
+
+                            //update the live validation
+                            previewSurvana.Schema[form.id] = schemata;
+                            previewSurvana.Validation.SetConfiguration(form.id, validation_config, undefined);
                         }
 
                         //append the form
@@ -114,12 +140,26 @@
                     iframeWindow = iframe.contentWindow;
 
                 iframeWindow.Survana = {
-                    Workflow : {
+                    Workflow: {
                         OnPageLoad: function () {
                             scope.$emit('form:load', iframeWindow);
                         },
                         NextPage: function () {
-                            scope.$emit('form:next', iframeWindow);
+                            //read the validation configuration again, because the render() function is sometimes
+                            //called prior to the validation code initialized
+                            var form = ngModel.$viewValue,
+                                form_el = iframe.contentDocument.getElementById(form.id),
+                                previewSurvana = iframeWindow.Survana,
+                                response;
+
+                            response = previewSurvana.Validation.Validate(form_el, form, undefined);
+
+                            console.log('response = ', response);
+
+                            if (response)
+                            {
+                                scope.$emit('form:next', iframeWindow);
+                            }
                         }
                     }
                 }
