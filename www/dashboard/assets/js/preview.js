@@ -120,6 +120,7 @@
                             console.log('FINAL RESPONSE', JSON.stringify(responses, null, 4));
 
                             if (previewSurvana.Validation.Validate(form.id, responses, form)) {
+                                form_el.reset();
                                 scope.$emit('form:next', iframeWindow);
                             }
                         }
