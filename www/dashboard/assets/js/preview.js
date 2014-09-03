@@ -56,11 +56,9 @@
                     }
 
                     var previewSurvana = iframe.contentWindow.Survana,
-                        doc = iframe.contentDocument,
-                        schemata = extract_schemata(ngModel.$viewValue.fields),
-                        validation_config = previewSurvana.Validation.ExtractConfiguration(ngModel.$viewValue);
+                        doc = iframe.contentDocument;
 
-                    previewSurvana.Validation.Validate(doc.forms[0], schemata, validation_config, undefined);
+                    previewSurvana.Validation.Validate(doc.forms[0], ngModel.$viewValue, undefined);
                 });
 
                 scope.$watch('template', function (val) {
@@ -106,26 +104,17 @@
                         var previewSurvana = iframe.contentWindow.Survana,
                             form = ngModel.$viewValue;
 
-                        if (previewSurvana.Validation) {
-                            var schemata = extract_schemata(form.fields),
-                                validation_config = previewSurvana.Validation.ExtractConfiguration(form),
-                                form_info = JSON.stringify({
-                                    id: form.id,
-                                    schemata: schemata,
-                                    config: validation_config
-                            });
+                        var script = doc.createElement('script');
+                        script.setAttribute('type', 'text/x-survana-schema');
+                        script.setAttribute('class', 'schema');
+                        script.innerHTML = JSON.stringify(form);
 
-                            var script = doc.createElement('script');
-                            script.setAttribute('type', 'text/x-survana-schema');
-                            script.setAttribute('class', 'schema');
-                            script.innerHTML = form_info;
+                        //bake the schemata info into the HTML
+                        node.appendChild(script);
 
-                            //bake validation info into the HTML (so that the rendered HTML contains information about its schema)
-                            node.appendChild(script);
-
+                        if (previewSurvana.Schema) {
                             //update the live validation
-                            previewSurvana.Schema[form.id] = schemata;
-                            previewSurvana.Validation.SetConfiguration(form.id, validation_config, undefined);
+                            previewSurvana.Schema[form.id] = form;
                         }
 
                         //append the form
@@ -152,12 +141,9 @@
                                 previewSurvana = iframeWindow.Survana,
                                 response;
 
-                            response = previewSurvana.Validation.Validate(form_el, form, undefined);
+                            console.log('FINAL RESPONSE', JSON.stringify(previewSurvana.FormFields(form_el, form), null, 4));
 
-                            console.log('response = ', response);
-
-                            if (response)
-                            {
+                            if (previewSurvana.Validation.Validate(form_el, form, undefined)) {
                                 scope.$emit('form:next', iframeWindow);
                             }
                         }
