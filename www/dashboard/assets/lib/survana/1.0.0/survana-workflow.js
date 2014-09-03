@@ -134,8 +134,10 @@ window.Survana = window.Survana || {};
             btn.setAttribute('disabled', 'disabled');
         }
 
-        var form_id = document.forms[0].id,
+        var form_el = document.forms[0],
+            form_id = form_el.id,
             schemata = Survana.Schema[form_id],
+            values = Survana.FormFields(form_el, schemata),
             response;
 
         if (!schemata) {
@@ -143,10 +145,13 @@ window.Survana = window.Survana || {};
             return;
         }
 
-        response = Survana.Validation.Validate(document.forms[0], schemata);
+        response = Survana.Validation.Validate(form_el, values, schemata);
 
         //if validation succeeds, save the response and go to the next form
         if (response) {
+            //clear the form
+            form_el.reset();
+
             //don't do anything in designer mode if validation succeeded
             if (Survana.DesignerMode) {
                 return;
@@ -184,7 +189,11 @@ window.Survana = window.Survana || {};
         //remove the entire workflow from storage
         Survana.Storage.Remove(context, function () {
             //but mark this study as completed
-            Survana.Storage.Set('completed', true, null, on_storage_error);
+            Survana.Storage.Set('completed', true, function () {
+                btn = document.getElementById('btnNext');
+                btn.style.visibility = 'hidden';
+                
+            }, on_storage_error);
         }, on_storage_error);
     }
 

@@ -206,7 +206,7 @@ window.Survana = window.Survana || {};
     /**
      * Validate <form> elements, based on a validation configuration pre-built when publishing the form
      * and custom validation messages. Returns all validated responses.
-     * @param form_id {HTMLFormElement} The HTMLFormElement being validated
+     * @param form_id {String} The HTMLFormElement being validated
      * @param values {Object} All form fields with values
      * @param schemata {Object} (optional) The form schemata
      * @return {Boolean} Returns all validated responses as an Object, or false if validation failed
@@ -218,9 +218,9 @@ window.Survana = window.Survana || {};
             result;
 
         //if no schema was provided, attempt to fetch it from Survana.Schema
-        schemata = schemata || Survana.Schema[form.id];
+        schemata = schemata || Survana.Schema[form_id];
         if (!schemata) {
-            Survana.Error('No Schema found for form ' + form.id);
+            Survana.Error('No Schema found for form ' + form_id);
             return false;
         }
 
