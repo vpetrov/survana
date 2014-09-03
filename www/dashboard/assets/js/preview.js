@@ -17,33 +17,6 @@
             },
             link: function (scope, elem, attrs, ngModel) {
 
-                function extract_schemata(form_fields) {
-                    var schemata = {},
-                        field,
-                        id,
-                        i;
-
-                    if (!form_fields) {
-                        return schemata;
-                    }
-
-                    for (i = 0; i < form_fields.length; ++i) {
-                        id = form_fields[i].id;
-                        if (!id) {
-                            //user forgot to supply id
-                            //todo: show error to the user
-                            console.warn("No ID set for question #" + id);
-                        }
-                        schemata[id] = {
-                            "id": id,
-                            "type": form_fields[i].type,
-                            "index": i
-                        }
-                    }
-
-                    return schemata;
-                }
-
                 scope.$on('validate', function () {
                     console.log('VALIDATE!');
                     if (!elem || !elem[0] || !elem[0].firstChild) {
@@ -56,9 +29,12 @@
                     }
 
                     var previewSurvana = iframe.contentWindow.Survana,
-                        doc = iframe.contentDocument;
+                        doc = iframe.contentDocument,
+                        form = ngModel.$viewValue,
+                        form_el = doc.forms[form.id],
+                        responses = previewSurvana.FormFields(form_el, form);
 
-                    previewSurvana.Validation.Validate(doc.forms[0], ngModel.$viewValue, undefined);
+                    previewSurvana.Validation.Validate(form_el, responses, form);
                 });
 
                 scope.$watch('template', function (val) {
@@ -139,11 +115,11 @@
                             var form = ngModel.$viewValue,
                                 form_el = iframe.contentDocument.getElementById(form.id),
                                 previewSurvana = iframeWindow.Survana,
-                                response;
+                                responses = previewSurvana.FormFields(form_el, form);
 
-                            console.log('FINAL RESPONSE', JSON.stringify(previewSurvana.FormFields(form_el, form), null, 4));
+                            console.log('FINAL RESPONSE', JSON.stringify(responses, null, 4));
 
-                            if (previewSurvana.Validation.Validate(form_el, form, undefined)) {
+                            if (previewSurvana.Validation.Validate(form.id, responses, form)) {
                                 scope.$emit('form:next', iframeWindow);
                             }
                         }
