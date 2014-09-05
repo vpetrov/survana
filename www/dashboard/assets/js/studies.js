@@ -487,7 +487,7 @@
             $scope.unpublishing = false;
             $scope.error = false;
 
-            $scope.publishStudy = function () {
+            $scope.startPublishingStudy = function () {
                 $scope.publishing = true;
                 $scope.current.index = 0;
                 $scope.error = false;
@@ -495,10 +495,28 @@
                 $scope.current.form = $scope.study_forms[0];
             };
 
+            $scope.publishStudy = function () {
+                $scope.message = "";
+
+                $http.post('study/publish', null, {params: $routeParams}).
+                    success(function (response, code, request) {
+                        //we're done.
+                        if (code === 200) {
+                            $scope.study.published = response.message.published;
+                            $scope.study.revision = response.message.revision;
+                            $scope.finishPublishing();
+                        } else {
+                            $scope.message = response.message;
+                        }
+                    }).error(function (response) {
+                        $scope.message = response;
+                    });
+            };
+
             $scope.unpublishStudy = function () {
                 $scope.message = "";
 
-                $http.put('studies/edit', {published: false}, {params: $routeParams}).
+                $http.post('study/unpublish', null, {params: $routeParams}).
                     success(function (response, code, request) {
                         //we're done.
                         if (code === 204) {
@@ -541,9 +559,7 @@
                         $scope.current.form = $scope.study_forms[$scope.current.index];
                     }
                 } else {
-                    //otherwise, we need to mark the study object as 'published' and save it
-                    $scope.study.published = true;
-                    saveStudy({published: true});
+                    $scope.publishStudy();
                 }
             }
 
@@ -611,28 +627,6 @@
                     console.log("Error fetching", $location.path())
                 });
             }
-
-            function saveStudy(changes) {
-                //reset state
-                $scope.message = "";
-
-                if (changes === undefined || !changes) {
-                    changes = $scope.study;
-                }
-
-                $http.put('studies/edit', changes, {params: $routeParams}).
-                    success(function (response, code, request) {
-                        //we're done.
-                        if (code === 204) {
-                            $scope.finishPublishing();
-                        } else {
-                            $scope.errorPublishing(response.message);
-                        }
-                    }).error(function (response) {
-                        $scope.errorPublishing(response);
-                    });
-            }
-
 
             function fetchStudy() {
                 //fetch the study JSON and store it in $scope.study

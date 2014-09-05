@@ -46,6 +46,8 @@ func (dashboard *Dashboard) RegisterHandlers() {
 	dashboard.Post("/studies/create", auth.Protect(dashboard.CreateStudy))
 	dashboard.Get("/studies/view", auth.Protect(dashboard.ViewStudyPage))
 	dashboard.Get("/study", auth.Protect(dashboard.GetStudy))
+	dashboard.Post("/study/publish", auth.Protect(dashboard.PublishStudy))
+	dashboard.Post("/study/unpublish", auth.Protect(dashboard.UnpublishStudy))
 	dashboard.Get("/studies/edit", auth.Protect(dashboard.EditStudyPage))
 	dashboard.Put("/studies/edit", auth.Protect(dashboard.EditStudy))
 	dashboard.Delete("/study", auth.Protect(dashboard.DeleteStudy))

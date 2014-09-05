@@ -16,10 +16,12 @@ type Study struct {
 	CreatedOn   *time.Time       `bson:"created_on,omitempty" json:"created_on,omitempty,readonly"`
 	FormIds     *[]string        `bson:"form_ids,omitempty" json:"form_ids,omitempty"`
 	Html        *[][]byte        `bson:"html,omitempty" json:"-"`
-	Published   *bool            `bson:"published,omitempty" json:"published,omitempty"`
+	Published   *bool            `bson:"published,omitempty" json:"published,omitempty,readonly"`
 	Subjects    *map[string]bool `bson:"subjects,omitempty" json:"subjects,omitempty"`
 	AuthEnabled *bool            `bson:"auth_enabled,omitempty" json:"auth_enabled,omitempty"`
 	StoreUrl    *string          `bson:"store_url,omitempty" json:"store_url,omitempty,readonly"`
+	Revision    int              `bson:"revision,omitempty" json:"revision,omitempty,readonly"`
+	//note: revision is not a pointer because 0 is not a valid revision number, which starts at 1
 
 	//ACL
 	OwnerId *string `bson:"owner_id,omitempty" json:"owner_id,omitempty,readonly"`

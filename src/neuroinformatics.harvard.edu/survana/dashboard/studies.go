@@ -53,6 +53,7 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
 	study := &survana.Study{
 		CreatedOn: orm.Time(time.Now()),
 		OwnerId:   session.ProfileId,
+		Revision:  1,
 	}
 
 	//parse input data
@@ -163,6 +164,81 @@ func (d *Dashboard) EditStudy(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	//success
+	perfect.NoContent(w)
+}
+
+func (d *Dashboard) PublishStudy(w http.ResponseWriter, r *perfect.Request) {
+	var (
+		err      error
+		db       = r.Module.Db
+		query    = r.URL.Query()
+		study_id = query.Get("id")
+	)
+
+	if len(study_id) == 0 {
+		perfect.BadRequest(w)
+		return
+	}
+
+	study := &survana.Study{Id: &study_id}
+	err = db.Query(study).Select("revision").One(study)
+	if err != nil {
+		if err == orm.ErrNotFound {
+			perfect.NotFound(w)
+		} else {
+			perfect.Error(w, r, err)
+		}
+		return
+	}
+
+	study.Published = orm.Bool(true)
+	if study.Revision == 0 {
+		study.Revision = 1
+	}
+
+	study.Revision++
+
+	err = db.Save(study)
+	if err != nil {
+		perfect.Error(w, r, err)
+		return
+	}
+
+	perfect.JSONResult(w, r, true, study)
+}
+
+func (d *Dashboard) UnpublishStudy(w http.ResponseWriter, r *perfect.Request) {
+	var (
+		err      error
+		db       = r.Module.Db
+		query    = r.URL.Query()
+		study_id = query.Get("id")
+	)
+
+	if len(study_id) == 0 {
+		perfect.BadRequest(w)
+		return
+	}
+
+	study := &survana.Study{Id: &study_id}
+	err = db.Peek(study)
+	if err != nil {
+		if err == orm.ErrNotFound {
+			perfect.NotFound(w)
+		} else {
+			perfect.Error(w, r, err)
+		}
+		return
+	}
+
+	study.Published = orm.Bool(false)
+
+	err = db.Save(study)
+	if err != nil {
+		perfect.Error(w, r, err)
+		return
+	}
+
 	perfect.NoContent(w)
 }
 

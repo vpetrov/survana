@@ -5,7 +5,7 @@
         <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning active"><i class="glyphicon glyphicon-globe" title="Publish"></i></a>
     </div>
 
-    <button type="button" class="btn btn-success" ng-hide="study.published" ng-disabled="!template || publishing" ng-click="publishStudy()"><i class="glyphicon glyphicon-cloud-upload"></i> Publish</button>
+    <button type="button" class="btn btn-success" ng-hide="study.published" ng-disabled="!template || publishing" ng-click="startPublishingStudy()"><i class="glyphicon glyphicon-cloud-upload"></i> Publish</button>
     <button type="button" class="btn btn-danger" ng-show="study.published" ng-click="unpublishStudy()"><i class="glyphicon glyphicon-cloud-download"></i> Revert to draft</button>
     <a href="#/studies/subjects/{{ study.id }}" class="btn btn-default"><i class="glyphicon glyphicon-user"></i> Participants</a>
 
