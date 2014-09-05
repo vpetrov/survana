@@ -17,6 +17,7 @@ func (study *Study) RegisterHandlers() {
 	study.Static("/assets/")
 
 	study.Get("/", study.NewIndex)
+	study.Get("/manifest", study.Manifest)
 	study.Get("/form", study.Form)
 }
 
@@ -157,6 +158,39 @@ func (s *Study) Index(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	s.RenderTemplate(w, r, "study/index", study)
+}
+
+// sends the app skeleton to the client
+func (s *Study) Manifest(w http.ResponseWriter, r *perfect.Request) {
+	var (
+		err      error
+		study_id string
+		db       = r.Module.Db
+	)
+
+	study_id = r.URL.RawQuery
+
+	//render the home page if no study was mentioned
+	if len(study_id) == 0 {
+		perfect.NotFound(w)
+		return
+	}
+
+	//otherwise, fetch the study
+	study := &survana.Study{Id: &study_id}
+	err = db.Find(study)
+	if err != nil {
+		if err == orm.ErrNotFound {
+			perfect.NotFound(w)
+		} else {
+			perfect.Error(w, r, err)
+		}
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/cache-manifest")
+
+	s.RenderTemplate(w, r, "study/manifest", study)
 }
 
 // sends the app skeleton to the client

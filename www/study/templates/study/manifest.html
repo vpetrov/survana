@@ -1,0 +1,7 @@
+CACHE MANIFEST
+#<% .Id %> r<% .Revision %>
+
+<% $study_id := .Id %>
+<%range $i, $form := .FormIds %>
+form?s=<% $study_id %>&f=<% $i %>
+<%end%>

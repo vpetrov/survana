@@ -26,7 +26,7 @@ func NewModule(path string, db orm.Database, config *Config, key *perfect.Privat
 
 	m := &Study{
 		Module: &perfect.Module{
-			Mux:  perfect.NewMux(),
+			Mux:  perfect.PrettyMux(),
 			Name: NAME,
 			Path: path,
 			Db:   db,
