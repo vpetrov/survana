@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"neuroinformatics.harvard.edu/survana"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -16,12 +15,17 @@ func (study *Study) RegisterHandlers() {
 	//must end with slash
 	study.Static("/assets/")
 
-	study.Get("/", study.NewIndex)
-	study.Get("/manifest", study.Manifest)
-	study.Get("/form", study.Form)
+	study.Get("/", study.HomePage)
+	study.Get("/:study", study.Index)
+	study.Get("/:study/manifest", study.Manifest)
+	study.Get("/:study/:form", study.Form)
 }
 
-func (s *Study) NewIndex(w http.ResponseWriter, r *perfect.Request) {
+func (s *Study) HomePage(w http.ResponseWriter, r *perfect.Request) {
+	s.RenderTemplate(w, r, "home", nil)
+}
+
+func (s *Study) Index(w http.ResponseWriter, r *perfect.Request) {
 	var (
 		err        error
 		study_id   string
@@ -29,20 +33,10 @@ func (s *Study) NewIndex(w http.ResponseWriter, r *perfect.Request) {
 		db         = r.Module.Db
 	)
 
-	//check to see if we have ?study or ?study/index
-	if strings.Contains(r.URL.RawQuery, "/") {
-		params := strings.SplitN(r.URL.RawQuery, "/", 2)
-		study_id = params[0]
-		subject_id = strings.ToUpper(params[1])
-	} else {
-		study_id = r.URL.RawQuery
-	}
+	study_id = r.Values.Get("study")
+	subject_id = r.Values.Get("subject")
 
-	//render the home page if no study was mentioned
-	if len(study_id) == 0 {
-		s.RenderTemplate(w, r, "index", nil)
-		return
-	}
+	log.Println("study_id=", study_id, "subject_id=", subject_id)
 
 	//otherwise, fetch the study
 	study := &survana.Study{Id: &study_id}
@@ -120,7 +114,7 @@ func (s *Study) NewIndex(w http.ResponseWriter, r *perfect.Request) {
 	s.RenderTemplate(w, r, "study/index", study)
 }
 
-// sends the app skeleton to the client
+/*// sends the app skeleton to the client
 func (s *Study) Index(w http.ResponseWriter, r *perfect.Request) {
 	var (
 		err        error
@@ -159,6 +153,7 @@ func (s *Study) Index(w http.ResponseWriter, r *perfect.Request) {
 
 	s.RenderTemplate(w, r, "study/index", study)
 }
+*/
 
 // sends the app skeleton to the client
 func (s *Study) Manifest(w http.ResponseWriter, r *perfect.Request) {
@@ -168,13 +163,7 @@ func (s *Study) Manifest(w http.ResponseWriter, r *perfect.Request) {
 		db       = r.Module.Db
 	)
 
-	study_id = r.URL.RawQuery
-
-	//render the home page if no study was mentioned
-	if len(study_id) == 0 {
-		perfect.NotFound(w)
-		return
-	}
+	study_id = r.Values.Get("study")
 
 	//otherwise, fetch the study
 	study := &survana.Study{Id: &study_id}
@@ -260,10 +249,8 @@ func (s *Study) Form(w http.ResponseWriter, r *perfect.Request) {
 		db  = r.Module.Db
 	)
 
-	query := r.URL.Query()
-
-	study_id := query.Get("s")
-	index := query.Get("f")
+	study_id := r.Values.Get("study")
+	index := r.Values.Get("form")
 
 	form_index, err := strconv.Atoi(index)
 	if err != nil || len(study_id) == 0 || form_index < 0 {

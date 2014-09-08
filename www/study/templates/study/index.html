@@ -7,7 +7,7 @@
             display: none;
         }
     </style>
-    <script type="text/javascript" src="assets/lib/survana/1.0.0/survana-storage.js"></script>
+    <script type="text/javascript" src="<% asset "lib/survana/1.0.0/survana-storage.js" %>"></script>
 </head>
 <body>
     <div id="message" class="hidden"></div>
@@ -49,8 +49,9 @@
 
         var study_id = '<%js .Id %>',
             workflow = [
+                <% $study_id := .Id %>
                 <%range $i, $form := .FormIds %>
-                    "form?s=" + study_id + "&f=<%js $i %>",
+                    "<% abs "/" | js %><%js $study_id %><%js "/" %><% string $i | js %>",
                 <%end%>
             ],
             store_url = '<%js .StoreUrl %>?s=' + study_id,
