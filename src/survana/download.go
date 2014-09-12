@@ -25,7 +25,7 @@ func main() {
 	ParseArguments()
 
 	log.Println("Requesting all responses for study", study_id)
-	data, err := download(store_url + DOWNLOAD_ENDPOINT + "?" + study_id)
+	data, err := download(store_url + DOWNLOAD_ENDPOINT + "/" + study_id)
 	if err != nil {
 		log.Fatalln(err)
 	}

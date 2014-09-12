@@ -14,7 +14,7 @@ func (store *Store) RegisterHandlers() {
 	log.Println("REGISTERING STORE HANDLERS")
 
 	store.Post("/response/:study", store.NewResponse)
-	store.Get("/download", store.Download)
+	store.Get("/download/:study", store.Download)
 }
 
 func (store *Store) NewResponse(w http.ResponseWriter, r *perfect.Request) {
@@ -98,8 +98,7 @@ func (s *Store) Download(w http.ResponseWriter, r *perfect.Request) {
 		db       = r.Module.Db
 	)
 
-	query := r.URL.Query()
-	study_id = query.Get("s")
+	study_id = r.Values.Get("study")
 
 	log.Println("new store download request", study_id)
 
