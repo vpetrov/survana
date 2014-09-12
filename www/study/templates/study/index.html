@@ -54,7 +54,7 @@
                     "<% abs "/" | js %><%js $study_id %><%js "/" %><% string $i | js %>",
                 <%end%>
             ],
-            store_url = '<%js .StoreUrl %>?s=' + study_id,
+            store_url = '<%js .StoreUrl %>/' + study_id,
             session = {
                 current:    null,
                 workflow:   null,

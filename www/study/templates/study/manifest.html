@@ -1,7 +1,27 @@
 CACHE MANIFEST
 #<% .Id %> r<% .Revision %>
-
 <% $study_id := .Id %>
-<%range $i, $form := .FormIds %>
-<% $i %>
+<%range $i, $form := .FormIds %><% $i %>
 <%end%>
+#static resources
+#Survana 1.0
+/study/assets/lib/survana/1.0.0/survana.js
+/study/assets/lib/survana/1.0.0/survana-storage.js
+/study/assets/lib/survana/1.0.0/survana-request.js
+/study/assets/lib/survana/1.0.0/survana-queue.js
+/study/assets/lib/survana/1.0.0/survana-workflow.js
+/study/assets/lib/survana/1.0.0/survana-validation.js
+#Survana 1.0 Bootstrap
+/study/assets/lib/survana/1.0.0/theme/bootstrap/css/bootstrap.min.css
+/study/assets/lib/survana/1.0.0/theme/bootstrap/css/bootstrap-theme.min.css
+/study/assets/lib/survana/1.0.0/theme/bootstrap/css/matrix.css
+/study/assets/lib/survana/1.0.0/theme/bootstrap/css/progress.css
+/study/assets/lib/survana/1.0.0/theme/bootstrap/css/validation.css
+/study/assets/lib/survana/1.0.0/theme/bootstrap/fonts/glyphicons-halflings-regular.woff
+/study/assets/lib/survana/1.0.0/theme/bootstrap/js/survana-validation.js
+/study/assets/lib/survana/1.0.0/theme/bootstrap/js/bootstrap.min.js
+/study/assets/lib/survana/1.0.0/theme/bootstrap/js/jquery.min.js
+/study/assets/lib/survana/1.0.0/theme/bootstrap/js/jquery-2.0.3.min.map
+
+NETWORK:
+<% .StoreUrl %>/<% .Id %>

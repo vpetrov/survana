@@ -158,7 +158,7 @@ window.Survana = window.Survana || {};
             }
 
             //Store the response
-            Survana.Queue.Add(response, function (queue) {
+            Survana.Queue.Add(values, function (queue) {
                 console.log('response queue', queue);
                 Survana.Queue.Send(context['store-url'], goto_next_form, on_queue_send_error);
             }, on_storage_error);
@@ -192,7 +192,7 @@ window.Survana = window.Survana || {};
             Survana.Storage.Set('completed', true, function () {
                 btn = document.getElementById('btnNext');
                 btn.style.visibility = 'hidden';
-                
+
             }, on_storage_error);
         }, on_storage_error);
     }
