@@ -640,7 +640,7 @@
                         }
 
                         //update study_url
-                        $scope.study_url = $window.location.protocol + "//" + $window.location.host + "/study/?" + $scope.study.id;
+                        $scope.study_url = $window.location.protocol + "//" + $window.location.host + "/study/" + $scope.study.id;
                     } else {
                         console.log('Error message', response.message);
                     }
