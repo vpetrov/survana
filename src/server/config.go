@@ -63,7 +63,7 @@ func NewConfig(src io.Reader) (config *Config, err error) {
 		if config.PortNumber == 0 {
 			config.PortNumber = DEFAULT_PORT
 		}
-		config.Port = strconv.Itoa(DEFAULT_PORT)
+		config.Port = strconv.Itoa(config.PortNumber)
 	} else {
 		config.PortNumber, err = strconv.Atoi(config.Port)
 		if err != nil {
