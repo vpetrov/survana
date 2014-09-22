@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	_ "neuroinformatics.harvard.edu/survana"
+	"os"
 	"strings"
 )
 
@@ -17,20 +17,30 @@ const (
 )
 
 var (
-	store_url string
-	study_id  string
+	store_url   string
+	study_id    string
+	output_file string
 )
 
 func main() {
+	var (
+		err error
+	)
+
 	ParseArguments()
 
-	log.Println("Requesting all responses for study", study_id)
+	log.Println("Requesting all responses for study", study_id, "from ", store_url)
 	data, err := download(store_url + DOWNLOAD_ENDPOINT + "/" + study_id)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	log.Println("data=", string(data))
+	err = ioutil.WriteFile(output_file, data, 0400)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println("All responses saved to", output_file)
 }
 
 func ParseArguments() {
@@ -38,11 +48,20 @@ func ParseArguments() {
 	//command line arguments
 	flag.StringVar(&store_url, "store", DEFAULT_STORE_URL, "Survana Store URL")
 	flag.StringVar(&study_id, "study", "", "Survana Study ID")
+	flag.StringVar(&output_file, "output", "responses.json", "Path to output file")
 	flag.Parse()
+
+	if len(study_id) == 0 {
+		log.Fatalln("Error: the -study flag is required. See --help.")
+	}
 
 	//make sure store_url is terminated by a slash
 	if !strings.HasSuffix(store_url, "/") {
 		store_url += "/"
+	}
+
+	if _, err := os.Stat(output_file); err == nil {
+		log.Fatalln("Error:", output_file, ": file exists")
 	}
 }
 

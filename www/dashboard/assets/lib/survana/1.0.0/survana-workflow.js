@@ -3,6 +3,7 @@
 Survana.Workflow contains functions that are responsible for the control flow during the taking of a survey.
 
 Dependencies:   survana-storage.js
+                survana-crypto.js
                 survana-queue.js
 
 @author Victor Petrov <victor_petrov@harvard.edu>
@@ -157,8 +158,10 @@ window.Survana = window.Survana || {};
                 return;
             }
 
+            var encrypted_values = Survana.Crypto.Encrypt(values);
+
             //Store the response
-            Survana.Queue.Add(values, function (queue) {
+            Survana.Queue.Add(encrypted_values, function (queue) {
                 console.log('response queue', queue);
                 Survana.Queue.Send(context['store-url'], goto_next_form, on_queue_send_error);
             }, on_storage_error);
