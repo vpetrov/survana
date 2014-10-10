@@ -18,7 +18,7 @@ func GetPrivateKey(keypath string) (private_key *perfect.PrivateKey, err error) 
 	}
 
 	if create_new_key {
-		private_key, err = perfect.GeneratePrivateKey()
+		private_key, err = perfect.GeneratePrivateKey(perfect.EC_P521)
 		if err != nil {
 			return
 		}
@@ -39,7 +39,7 @@ func ReadPrivateKey(keypath string) (private_key *perfect.PrivateKey, err error)
 		return
 	}
 
-	private_key = perfect.NewPrivateKey()
+	private_key = perfect.NewPrivateKey(perfect.EC_P521)
 	err = private_key.UnmarshalJSON(keydata)
 
 	return
