@@ -57,6 +57,7 @@ func main() {
 		panic(err)
 	}
 
+	log.Println("Reading server key from", config.Key)
 	private_key, err := GetPrivateKey(config.Key)
 	if err != nil {
 		panic(err)
