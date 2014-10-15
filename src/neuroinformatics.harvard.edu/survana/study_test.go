@@ -58,3 +58,27 @@ func TestReadOnlyStudyFields(t *testing.T) {
 		}
 	}
 }
+
+func TestStudy_GenerateKeys(t *testing.T) {
+	var err error
+
+	s := &Study{}
+
+	err = s.GenerateKeys()
+	if err != nil {
+		t.Fatalf("err = %v", err)
+	}
+
+	if s.Keys == nil || len(*s.Keys) == 0 || len(*s.Keys) != MAX_KEYS {
+		t.Fatalf("insufficient number of keys generated: expected %v, found %v", MAX_KEYS, len(*s.Keys))
+	}
+}
+
+func BenchmarkStudy_GenerateKeys(b *testing.B) {
+	s := &Study{}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		s.GenerateKeys()
+	}
+}

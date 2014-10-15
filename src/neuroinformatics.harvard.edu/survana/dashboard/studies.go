@@ -74,6 +74,13 @@ func (d *Dashboard) CreateStudy(w http.ResponseWriter, r *perfect.Request) {
 		return
 	}
 
+	//generate study keys
+	err = study.GenerateKeys()
+	if err != nil {
+		perfect.Error(w, r, err)
+		return
+	}
+
 	//save the study
 	err = db.Save(study)
 	if err != nil {
@@ -102,7 +109,7 @@ func (d *Dashboard) GetStudy(w http.ResponseWriter, r *perfect.Request) {
 	}
 
 	study := &survana.Study{Id: &study_id}
-	err = db.Find(study)
+	err = db.Query(study).Exclude("keys").One(study)
 	if err != nil {
 		if err == orm.ErrNotFound {
 			perfect.NotFound(w)

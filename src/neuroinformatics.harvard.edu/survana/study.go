@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const MAX_KEYS = 100
+
 type Study struct {
 	orm.Object  `bson:",inline,omitempty" json:"-"`
 	Id          *string          `bson:"id,omitempty" json:"id,omitempty,readonly"`
@@ -22,6 +24,8 @@ type Study struct {
 	StoreUrl    *string          `bson:"store_url,omitempty" json:"store_url,omitempty,readonly"`
 	Revision    int              `bson:"revision,omitempty" json:"revision,omitempty,readonly"`
 	//note: revision is not a pointer because 0 is not a valid revision number, which starts at 1
+
+	Keys *[]*perfect.PrivateKey `bson:"keys,omitempty" json:"-"`
 
 	//ACL
 	OwnerId *string `bson:"owner_id,omitempty" json:"owner_id,omitempty,readonly"`
@@ -51,6 +55,22 @@ func (f *Study) GenerateId(db orm.Database) (err error) {
 
 	//if a unique id was found, assign it to this object's Id
 	f.Id = search.Id
+
+	return
+}
+
+func (s *Study) GenerateKeys() (err error) {
+	s.Keys = &[]*perfect.PrivateKey{}
+	var key *perfect.PrivateKey
+
+	for i := 0; i < MAX_KEYS; i++ {
+		key, err = perfect.GeneratePrivateKey(perfect.EC_P384)
+		if err != nil {
+			s.Keys = nil
+			return
+		}
+		*s.Keys = append(*s.Keys, key)
+	}
 
 	return
 }
