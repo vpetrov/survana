@@ -1,16 +1,26 @@
 <div class="toolbar">
     <div class="btn-group">
-        <a href="#/studies/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-eye-open" title="Preview"></i></a>
-        <a href="#/studies/edit/{{ study.id }}" ng-hide="study.published" class="btn btn-warning"><i class="glyphicon glyphicon-edit" title="Edit"></i></a>
-        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning active"><i class="glyphicon glyphicon-globe" title="Publish"></i></a>
+        <a href="#/studies/{{ study.id }}" class="btn btn-warning"><i class="glyphicon glyphicon-eye-open"
+                                                                      title="Preview"></i></a>
+        <a href="#/studies/edit/{{ study.id }}" ng-hide="study.published" class="btn btn-warning"><i
+                class="glyphicon glyphicon-edit" title="Edit"></i></a>
+        <a href="#/studies/publish/{{ study.id }}" class="btn btn-warning active"><i class="glyphicon glyphicon-globe"
+                                                                                     title="Publish"></i></a>
     </div>
 
-    <button type="button" class="btn btn-success" ng-hide="study.published" ng-disabled="!template || publishing" ng-click="startPublishingStudy()"><i class="glyphicon glyphicon-cloud-upload"></i> Publish</button>
-    <button type="button" class="btn btn-danger" ng-show="study.published" ng-click="unpublishStudy()"><i class="glyphicon glyphicon-cloud-download"></i> Revert to draft</button>
-    <a href="#/studies/subjects/{{ study.id }}" class="btn btn-default"><i class="glyphicon glyphicon-user"></i> Participants</a>
+    <button type="button" class="btn btn-success" ng-hide="study.published" ng-disabled="!template || publishing"
+            ng-click="startPublishingStudy()"><i class="glyphicon glyphicon-cloud-upload"></i> Publish
+    </button>
+    <button type="button" class="btn btn-danger" ng-show="study.published" ng-click="unpublishStudy()"><i
+            class="glyphicon glyphicon-cloud-download"></i> Revert to draft
+    </button>
+    <a href="#/studies/subjects/{{ study.id }}" class="btn btn-default"><i class="glyphicon glyphicon-user"></i>
+        Participants</a>
 
-    <div ng-show="publishing || error" ng-class="{'active':publishing}" class="progress progress-striped btn-group" style="width:200px; display:inline-block; margin-bottom:3px; margin-left:5px">
-        <div class="progress-bar" ng-class="{'progress-bar-success':!error, 'progress-bar-danger':error}" role="progressbar" style="width: {{ ((current.index-0) / study_forms.length) * 100 }}%;"></div>
+    <div ng-show="publishing || error" ng-class="{'active':publishing}" class="progress progress-striped btn-group"
+         style="width:200px; display:inline-block; margin-bottom:3px; margin-left:5px">
+        <div class="progress-bar" ng-class="{'progress-bar-success':!error, 'progress-bar-danger':error}"
+             role="progressbar" style="width: {{ ((current.index-0) / study_forms.length) * 100 }}%;"></div>
     </div>
 </div>
 
@@ -19,7 +29,8 @@
     <div class="lead">
         <p class="lead">
             {{ study.name }}
-            <span class="alert alert-sm alert-dismissable" data-ng-class="{'hidden':!message.length, 'alert-danger':message.length}">
+            <span class="alert alert-sm alert-dismissable"
+                  data-ng-class="{'hidden':!message.length, 'alert-danger':message.length}">
                 <i class="glyphicon glyphicon-minus-sign"></i> {{ message }}
             </span>
         </p>
@@ -33,7 +44,8 @@
                         <span class="label label-primary" style="position:relative; left:-10px;">{{ $index + 1}}</span>
                         {{ form.name }}
                         <span class="badge badge-success">{{ form.version }}</span>
-                        <span ng-show="publishing && isCurrent($index)" class="pull-right"><i class="fa fa-spinner fa-spin"></i></span>
+                        <span ng-show="publishing && isCurrent($index)" class="pull-right"><i
+                                class="fa fa-spinner fa-spin"></i></span>
                     </a>
                 </li>
             </ul>
@@ -41,7 +53,39 @@
 
         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">
             <!-- space to render the forms as HTML -->
-            <form-preview data-ng-model="current.form" size="{{ size }}" template="template" study="study" class="hidden"></form-preview>
+            <form-preview data-ng-model="current.form" size="{{ size }}" template="template" study="study"
+                          class="hidden"></form-preview>
+
+            <ul class="nav nav-tabs" role="tablist">
+                <li ng-class="{'active':currentTab==1}"><a href="" role="tab" ng-click="setTab(1)">Step 1: Download</a></li>
+                <li ng-class="{'active':currentTab==2}"><a href="" role="tab" ng-click="setTab(2)">Step 2: Verify</a></li>
+                <li ng-class="{'active':currentTab==3}" class="disabled"><a href="" role="tab" ng-click="setTab(3)">Step 3: Publish</a></li>
+            </ul>
+
+            <br>
+
+            <div class="tab-content">
+                <div id="step1" class="tab-pane" ng-class="{'active':currentTab==1}">
+                    <div class="alert alert-info col-lg-9 col-md-9">
+                        <span class="glyphicon glyphicon-info-sign"></span> Store the secret key on an encrypted USB drive. You <strong>will not</strong> be able to retrieve it later.
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <a href="study/key?id={{study.id}}" target="_blank" class="btn btn-default" ng-click="setTab(2)">
+                                <span class="fa fa-key"></span> Download Secret Key
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step2" class="tab-pane" ng-class="{'active':currentTab==2}">
+                    Upload key
+                </div>
+
+                <div id="step3" class="tab-pane" ng-class="{'active':currentTab==3}">
+                    Publish study
+                </div>
+            </div>
 
             <span class="well well-sm" style="font-size:larger" ng-class="{'hidden':!study.published}">
                 <i class="glyphicon glyphicon-link"></i>

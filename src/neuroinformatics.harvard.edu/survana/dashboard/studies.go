@@ -443,3 +443,9 @@ func (d *Dashboard) AddStudySubjects(w http.ResponseWriter, r *perfect.Request) 
 
 	perfect.JSONResult(w, r, true, study.Subjects)
 }
+
+func (d *Dashboard) DownloadKey(w http.ResponseWriter, r *perfect.Request) {
+	log.Println("download key")
+
+	w.Write([]byte("them keys"))
+}

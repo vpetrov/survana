@@ -487,6 +487,8 @@
             $scope.unpublishing = false;
             $scope.error = false;
 
+            $scope.currentTab = 1;
+
             $scope.startPublishingStudy = function () {
                 $scope.publishing = true;
                 $scope.current.index = 0;
@@ -715,6 +717,10 @@
                         console.error('Failed to load Survana Theme!');
                     });
             });
+
+            $scope.setTab = function (id) {
+                $scope.currentTab = id;
+            };
 
             fetchStudy();
         }
